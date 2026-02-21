@@ -41,6 +41,9 @@
       splitbelow = true;
       splitright = true;
 
+      # Folding
+      foldlevelstart = 99;
+
       # Misc
       updatetime = 300;
       timeoutlen = 500;

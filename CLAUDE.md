@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-This is a NixOS configuration repository managed through Nix Flakes, currently configured for the `amateria` machine (Framework 16 laptop).
+This is a NixOS configuration repository managed through Nix Flakes, supporting multiple hosts (e.g. `amateria`, `selenitic`). Since all hosts share one repository, **always check the current hostname** (via `hostname` command) to determine which host you are on, and use the correct flake target (e.g. `.#selenitic`, `.#amateria`) accordingly. Never assume a specific host.
 
 **Important**: The repository contains old/experimental code in `old/` and `idk/` directories that is NOT currently in use. The configuration has been completely restructured into a modular architecture using:
 
@@ -24,14 +24,14 @@ This is a NixOS configuration repository managed through Nix Flakes, currently c
 ### System Configuration
 
 ```bash
-# Build and switch to NixOS configuration
-sudo nixos-rebuild switch --flake .#amateria
+# Build and switch to NixOS configuration (replace <hostname> with actual hostname)
+sudo nixos-rebuild switch --flake .#<hostname>
 
 # Test configuration without switching
-sudo nixos-rebuild test --flake .#amateria
+sudo nixos-rebuild test --flake .#<hostname>
 
 # Build configuration without activating
-sudo nixos-rebuild build --flake .#amateria
+sudo nixos-rebuild build --flake .#<hostname>
 ```
 
 ### Home Manager Configuration

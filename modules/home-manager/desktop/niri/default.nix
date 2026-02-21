@@ -64,6 +64,12 @@
   };
 
   programs.niri.settings = {
+    input.keyboard.xkb = {
+      layout = "us";
+      variant = "altgr-intl";
+      options = "caps:escape";
+    };
+
     # Note: waybar and mako are started via systemd services (see their configs)
     # Waybar may exceed the default systemd restart limit, so reset it on startup
     spawn-at-startup = [
