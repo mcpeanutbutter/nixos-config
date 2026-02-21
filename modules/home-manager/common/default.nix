@@ -13,6 +13,7 @@
     ../programs/fuzzel
     ../programs/fzf
     ../programs/ghostty
+    ../programs/hyprlock
     ../programs/git
     ../programs/gtk
     ../programs/kitty

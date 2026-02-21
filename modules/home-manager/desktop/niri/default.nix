@@ -39,11 +39,11 @@
     events = [
       {
         event = "before-sleep";
-        command = "${pkgs.swaylock}/bin/swaylock -f";
+        command = "${pkgs.hyprlock}/bin/hyprlock";
       }
       {
         event = "lock";
-        command = "${pkgs.swaylock}/bin/swaylock -f";
+        command = "${pkgs.hyprlock}/bin/hyprlock";
       }
     ];
     timeouts = [
@@ -54,7 +54,7 @@
       }
       {
         timeout = 600;
-        command = "${pkgs.swaylock}/bin/swaylock -f";
+        command = "${pkgs.hyprlock}/bin/hyprlock";
       }
       {
         timeout = 900;
@@ -186,7 +186,7 @@
         action.spawn = [ "fuzzel" ];
         hotkey-overlay.title = "Spawn fuzzel launcher";
       };
-      "Super+Alt+L".action.spawn = [ "swaylock" ];
+      "Super+Alt+L".action.spawn = [ "hyprlock" ];
 
       # Media keys
       "XF86AudioRaiseVolume" = {

@@ -11,9 +11,19 @@
   # so that SSH keys require passphrase entry each time
   services.gnome.gcr-ssh-agent.enable = false;
 
-  # Enable GDM display manager (minimal setup for Niri)
-  services.displayManager.gdm.enable = true;
-  services.displayManager.gdm.wayland = true;
+  # Greetd login manager with tuigreet
+  services.greetd = {
+    enable = true;
+    settings = {
+      default_session = {
+        command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --remember-session --sessions ${pkgs.niri}/share/wayland-sessions";
+        user = "greeter";
+      };
+    };
+  };
+
+  # PAM service for hyprlock authentication
+  security.pam.services.hyprlock = {};
 
   # Configure keymap
   services.xserver.xkb = {
@@ -38,7 +48,7 @@
     fuzzel # application launcher
     mako # notification daemon
     waybar # status bar
-    swaylock # screen locker
+    hyprlock # screen locker
 
     # Screenshot and clipboard
     grim
