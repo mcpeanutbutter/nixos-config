@@ -186,7 +186,7 @@ Place the file generated in Phase 2 at `hosts/<hostname>/hardware-configuration.
 
 #### 4d. Create `home/jonas/<hostname>/default.nix`
 
-This is identical across hosts:
+This is the per-user per-host home config. The imports are the same across hosts, but host-specific settings (like monitor configuration for niri) go here:
 ```nix
 {
   lib,
@@ -205,6 +205,14 @@ This is identical across hosts:
       "${nhModules}/desktop/mako"
       "${nhModules}/desktop/swww"
     ];
+
+  # Monitor configuration (niri only) — omit outputs you want auto-detected
+  programs.niri.settings.outputs = {
+    "eDP-1" = {
+      mode = { width = 1920; height = 1080; refresh = 60.0; };
+      scale = 1.0;
+    };
+  };
 
   programs.home-manager.enable = true;
 
@@ -362,3 +370,7 @@ Defined in `overlays/default.nix` and applied via `modules/nixos/common/`. Used 
 ### stateVersion
 
 Set in the host config object in `flake.nix` and referenced by both `system.stateVersion` and `home.stateVersion`. Should match the NixOS release the host was **first installed** with — do not bump it on upgrades.
+
+## TODO
+
+- **kanshi for automatic display switching**: Add a kanshi home-manager module (`modules/home-manager/desktop/kanshi/`) that auto-disables eDP-1 when an external monitor (e.g. DP-3) is connected, and re-enables it when undocked. kanshi uses wlr-output-management which niri supports. Could reuse `hostConfig.monitors` data to define per-host docking profiles.

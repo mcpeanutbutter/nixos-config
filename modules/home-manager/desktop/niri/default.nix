@@ -429,31 +429,6 @@
       "Mod+Shift+P".action.power-off-monitors = [ ];
     };
 
-    # Configure our actual displays (defaults are generic)
-    outputs = {
-      "eDP-1" = {
-        mode = {
-          width = 2560;
-          height = 1600;
-          refresh = 165.0;
-        };
-        scale = 1.1;
-      };
-
-      "DP-3" = {
-        mode = {
-          width = 3840;
-          height = 2160;
-          refresh = 120.0;
-        };
-        position = {
-          x = 1707; # Position to the right of laptop screen
-          y = 0;
-        };
-        scale = 1.1;
-      };
-    };
-
     # Enable Ozone Wayland support for Electron apps
     environment.NIXOS_OZONE_WL = "1";
   };
