@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//home/jonas/stuff/nix-config/modules/nixos/common/**)",
+      "Read(//home/jonas/stuff/nix-config/**)",
+      "Read(//home/jonas/stuff/nix-config/hosts/**)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:codeberg.org)",
+      "WebSearch",
+      "WebFetch(domain:ghostty.org)",
+      "Read(//home/jonas/.config/BraveSoftware/Brave-Browser/**)",
+      "Read(//etc/**)",
+      "Bash(nix-prefetch-url:*)",
+      "WebFetch(domain:www.bitdefender.com)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

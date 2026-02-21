@@ -1,0 +1,174 @@
+/* Border radius values for grouped pills:
+ * - Full radius (8px): Used for outer corners of pill groups
+ * - Flat radius (3px): Used for inner corners to create visual grouping
+ * Note: GTK CSS doesn't support custom properties for lengths,
+ * so these values are hardcoded throughout the stylesheet.
+ */
+
+window#waybar {
+  background: transparent;
+}
+
+window#waybar > box {
+  border-radius: 10px;
+  background: @base00;
+}
+
+window#waybar * {
+  border: none;
+  min-height: 0;
+}
+
+/* Pill-style modules with slightly brighter gray on dark background */
+#custom-launcher,
+#clock.date,
+#clock.time,
+#workspaces,
+#cpu,
+#memory,
+#temperature,
+#custom-night-light,
+#backlight,
+#pulseaudio,
+#battery,
+#privacy,
+#tray,
+#power-profiles-daemon,
+#custom-power {
+  background-color: @base02;
+  padding: 4px 12px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+/* Left section - 7 pill color scheme
+ * Pill 1 (launcher): base0D (blue) solid
+ * Pill 2 (date+time): base0C (cyan) text
+ * Pill 3 (cpu+ram+temp): base09 (orange) text
+ */
+
+/* Pill 1: Launcher */
+#custom-launcher {
+  font-size: 16px;
+  margin: 0.2em 0.3em;
+  border-radius: 8px;
+  background-color: @base0D;
+  color: @base00;
+}
+
+/* Pill 2: Date + Time */
+#clock.date {
+  margin: 0.2em 0em 0.2em 0.3em;
+  border-radius: 8px 0px 0px 8px;
+  color: @base0C;
+}
+
+#clock.time {
+  margin: 0.2em 0.3em 0.2em 0em;
+  border-radius: 0px 8px 8px 0px;
+  color: @base0C;
+}
+
+/* Pill 3: CPU + Memory + Temperature */
+#cpu {
+  margin: 0.2em 0em 0.2em 0.3em;
+  border-radius: 8px 0px 0px 8px;
+  color: @base09;
+}
+
+#memory {
+  margin: 0.2em 0em;
+  border-radius: 0px;
+  color: @base09;
+}
+
+#temperature {
+  margin: 0.2em 0.3em 0.2em 0em;
+  border-radius: 0px 8px 8px 0px;
+  color: @base09;
+}
+
+/* Center section - Pill 4: Workspaces
+ * Active: base0B (green) solid background
+ * Inactive: base0E (purple) text
+ */
+#workspaces {
+  margin: 0.2em 0.3em;
+  border-radius: 8px;
+}
+
+#workspaces button {
+  background: transparent;
+  color: @base0E;
+  padding: 4px 12px;
+  margin: 0em;
+  border-radius: 8px;
+  border: none;
+  box-shadow: none;
+}
+
+#workspaces button.active {
+  background-color: @base0B;
+  color: @base00;
+  border: none;
+  box-shadow: none;
+  border-bottom: none;
+}
+
+/* Right section
+ * Pill 5 (tray): base0C (cyan) text
+ * Pill 6 (volume+privacy+battery+power-profile+backlight+night-light): base0A (yellow) text
+ * Pill 7 (power button): base08 (red) solid
+ */
+
+/* Pill 5: Tray */
+#tray {
+  margin: 0.2em 0.3em;
+  border-radius: 8px;
+  color: @base0C;
+}
+
+/* Pill 6: Volume + Privacy + Battery + Power Profiles + Backlight + Night Light */
+#pulseaudio {
+  margin: 0.2em 0em 0.2em 0.3em;
+  border-radius: 8px 0px 0px 8px;
+  color: @base0A;
+}
+
+#privacy {
+  margin: 0.2em 0em;
+  border-radius: 0px;
+  color: @base0A;
+}
+
+#battery {
+  margin: 0.2em 0em;
+  border-radius: 0px;
+  color: @base0A;
+}
+
+#power-profiles-daemon {
+  margin: 0.2em 0em;
+  border-radius: 0px;
+  color: @base0A;
+}
+
+#backlight {
+  margin: 0.2em 0em;
+  border-radius: 0px;
+  color: @base0A;
+}
+
+#custom-night-light {
+  margin: 0.2em 0.3em 0.2em 0em;
+  border-radius: 0px 8px 8px 0px;
+  color: @base0A;
+}
+
+/* Pill 7: Power Button */
+#custom-power {
+  margin: 0.2em 0.3em;
+  border-radius: 8px;
+  background-color: @base08;
+  color: @base00;
+}
