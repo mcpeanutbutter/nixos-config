@@ -69,7 +69,7 @@
       htop
       inkscape
       jdk
-      jetbrains.idea-community-bin
+      jetbrains.idea-oss
       kind
       kubectl
       libreoffice
@@ -79,7 +79,7 @@
       mprime
       mpv
       pkgs.unstable.nixd
-      pkgs.unstable.nixfmt-rfc-style
+      nixfmt
       obsidian
       openfortivpn
       opentofu

@@ -7,6 +7,10 @@
   # Enable Niri window manager
   programs.niri.enable = true;
 
+  # Disable GCR SSH agent (enabled by niri-flake via gnome-keyring)
+  # so that SSH keys require passphrase entry each time
+  services.gnome.gcr-ssh-agent.enable = false;
+
   # Enable GDM display manager (minimal setup for Niri)
   services.displayManager.gdm.enable = true;
   services.displayManager.gdm.wayland = true;

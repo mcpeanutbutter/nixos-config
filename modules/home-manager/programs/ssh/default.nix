@@ -9,6 +9,7 @@ in
 
   programs.ssh = {
     enable = true;
+    enableDefaultConfig = false;
     includes = [
       config.sops.secrets."work-config".path
     ];

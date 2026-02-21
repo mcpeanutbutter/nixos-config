@@ -8,8 +8,8 @@
 
     # Home manager
     home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      url = "github:nix-community/home-manager/release-25.11";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nix-vscode-extensions = {
@@ -21,7 +21,7 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     # Automated ricing
-    stylix.url = "github:danth/stylix";
+    stylix.url = "github:danth/stylix/release-25.11";
 
     # Niri compositor
     niri.url = "github:sodiboo/niri-flake";
