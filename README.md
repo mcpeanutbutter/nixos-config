@@ -126,15 +126,19 @@ These steps require the new hardware.
 
 1. **Install NixOS** using the standard installer (minimal or graphical). Boot into the fresh install.
 
-2. **Generate `hardware-configuration.nix`**:
+2. **Clone the repo**:
 
    ```bash
-   nixos-generate-config --show-hardware-config > /tmp/hardware-configuration.nix
+   git clone https://github.com/mcpeanutbutter/nixos-config.git ~/nixos-config
    ```
 
-   Transfer this file back to the repo on the existing machine (via `scp`, USB, etc.) and place it at `hosts/<hostname>/hardware-configuration.nix`.
+3. **Generate `hardware-configuration.nix`** directly into the repo:
 
-3. **Place the user age key** — copy from your password manager or another machine:
+   ```bash
+   nixos-generate-config --show-hardware-config > ~/nixos-config/hosts/<hostname>/hardware-configuration.nix
+   ```
+
+4. **Place the user age key** — copy from your password manager or another machine:
 
    ```bash
    mkdir -p ~/.config/sops/age
@@ -196,11 +200,11 @@ NixOS-level sops uses the **host's SSH ed25519 key** converted to age. There's a
 
 ### Phase 4: Deploy `[new machine]`
 
-1. **Clone the repo** (or pull the latest changes):
+1. **Pull the latest changes** (the repo was cloned in Phase 2):
 
    ```bash
-   git clone <repo-url> ~/nixos-config
    cd ~/nixos-config
+   git pull
    ```
 
 2. **Stage all files** — flake requires tracked files:

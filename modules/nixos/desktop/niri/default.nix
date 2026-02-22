@@ -7,6 +7,9 @@
   # Enable Niri window manager
   programs.niri.enable = true;
 
+  # Enable dconf for GNOME app settings (e.g. GNOME Text Editor)
+  programs.dconf.enable = true;
+
   # Disable GCR SSH agent (enabled by niri-flake via gnome-keyring)
   # so that SSH keys require passphrase entry each time
   services.gnome.gcr-ssh-agent.enable = false;
@@ -67,9 +70,10 @@
     networkmanagerapplet # nm-applet for system tray
 
     # File management
-    xfce.thunar # lightweight file manager
+    xfce.thunar
     xfce.thunar-volman # removable media
     xfce.thunar-archive-plugin # archive support
+    gnome-text-editor
 
     # Archive management
     file-roller # archive manager
