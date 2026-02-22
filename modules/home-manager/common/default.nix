@@ -70,7 +70,7 @@
       htop
       inkscape
       jdk
-      jetbrains.idea-oss
+      pkgs.unstable.jetbrains.idea-oss
       kind
       kubectl
       libreoffice
