@@ -14,6 +14,7 @@
       clipboard-read = "allow";
       clipboard-write = "allow";
       shell-integration = "zsh";
+      background-opacity = 0.9;
     };
   };
 }
