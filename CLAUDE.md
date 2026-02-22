@@ -158,9 +158,13 @@ hosts = {
     theme = "material-darker";
     stateVersion = "25.05";
     desktopEnvironment = "niri";
+    thermalZone = null;  # integer index into /sys/class/thermal/thermal_zone*, or null
+    hwmon = null;        # null, or { path = "/sys/devices/.../hwmon"; input = "temp1_input"; }
   };
 };
 ```
+
+`thermalZone` and `hwmon` configure Waybar's temperature module. Use `thermalZone` on hosts with ACPI thermal zones (e.g. Intel laptops). Use `hwmon` on hosts where thermal zones are absent (e.g. AMD desktops) — it maps to Waybar's `hwmon-path-abs` + `input-filename`. Both can be null.
 
 **NixOS Configuration Builder**:
 The `mkNixosConfiguration` function creates a NixOS system configuration for a given hostname and username, automatically:

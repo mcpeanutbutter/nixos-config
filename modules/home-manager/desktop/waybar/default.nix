@@ -137,6 +137,9 @@ in
           format-icons = temperature-icons;
         } // lib.optionalAttrs (hostConfig.thermalZone != null) {
           thermal-zone = hostConfig.thermalZone;
+        } // lib.optionalAttrs (hostConfig.hwmon != null) {
+          hwmon-path-abs = hostConfig.hwmon.path;
+          input-filename = hostConfig.hwmon.input;
         };
 
         backlight = {

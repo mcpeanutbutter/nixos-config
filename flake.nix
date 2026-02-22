@@ -58,6 +58,7 @@
           stateVersion = "25.05";
           desktopEnvironment = "niri";
           thermalZone = null; # TODO: determine on amateria (look for k10temp zone)
+          hwmon = null;
         };
         selenitic = {
           system = "x86_64-linux";
@@ -65,13 +66,18 @@
           stateVersion = "25.05";
           desktopEnvironment = "niri";
           thermalZone = 5; # x86_pkg_temp (CPU package temp)
+          hwmon = null;
         };
         spire = {
           system = "x86_64-linux";
           theme = "material-darker";
           stateVersion = "25.11";
           desktopEnvironment = "niri";
-          thermalZone = null; # Determine on spire hardware later
+          thermalZone = null;
+          hwmon = {
+            path = "/sys/devices/pci0000:00/0000:00:18.3/hwmon";
+            input = "temp1_input"; # Tctl (CPU control temp)
+          };
         };
       };
 
