@@ -82,7 +82,6 @@
       pkgs.unstable.nixd
       nixfmt
       obsidian
-      openfortivpn
       opentofu
       pdfarranger
       poetry

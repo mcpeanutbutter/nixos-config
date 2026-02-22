@@ -21,6 +21,11 @@ in
         identityFile = sshSettings.personalPrivateKey;
         identitiesOnly = true;
       };
+      gitlab-work = {
+        host = "gitlab.bbf-it.at";
+        identityFile = sshSettings.workPrivateKey;
+        identitiesOnly = true;
+      };
     };
   };
 }

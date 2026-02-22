@@ -5,6 +5,7 @@
   hashedPassword = "$y$j9T$p2llLelVTKXOO3ephZft8/$BsdRjNGLf8e.ypu1q2j72o2rT5e/OPcQmXNMKown/E.";
   ssh = {
     personalPrivateKey = "~/.ssh/id_ed25519_personal";
+    workPrivateKey = "~/.ssh/id_ed25519_ingenium";
   };
   git = {
     name = "Jonas Schmoele";
