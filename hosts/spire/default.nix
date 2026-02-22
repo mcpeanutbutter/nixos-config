@@ -11,6 +11,9 @@
     "${nixosModules}/desktop/${hostConfig.desktopEnvironment}"
     "${nixosModules}/programs/docker"
     "${nixosModules}/services/stylix"
+    "${nixosModules}/services/sops"
+    "${nixosModules}/services/bitdefender"
+    "${nixosModules}/services/clamav"
   ];
 
   # Set hostname
