@@ -48,6 +48,7 @@ All config files can be written on any machine where the repo already lives.
        stateVersion = "25.11";          # Match the NixOS release you'll install
        desktopEnvironment = "niri";
        thermalZone = null;              # Optional — can be set after first boot
+      hwmon = null;                    # Optional — alternative to thermalZone for AMD systems
      };
    };
    ```
@@ -223,7 +224,9 @@ NixOS-level sops uses the **host's SSH ed25519 key** converted to age. There's a
 
    - **Monitor config**: check output names with `niri msg outputs` or `wlr-randr`, then update `programs.niri.settings.outputs` in `home/jonas/<hostname>/default.nix`.
 
-   - **Thermal zone** (for waybar CPU temperature): find the right sensor, then set `thermalZone` in `flake.nix`:
+   - **CPU temperature** (for waybar): there are two options depending on hardware. Set the relevant field in the host's config in `flake.nix`.
+
+     **Option A — `thermalZone`** (Intel laptops and other systems with ACPI thermal zones):
 
      ```bash
      for zone in /sys/class/thermal/thermal_zone*; do
@@ -231,11 +234,31 @@ NixOS-level sops uses the **host's SSH ed25519 key** converted to age. There's a
      done
      ```
 
-     Look for `x86_pkg_temp`, `k10temp`, or similar CPU package sensor. Use the zone number (e.g., `5` for `thermal_zone5`), or leave as `null` to disable.
+     Look for `x86_pkg_temp` or similar. Use the zone number (e.g., `5` for `thermal_zone5`).
 
-5. **Commit and push**:
+     **Option B — `hwmon`** (AMD desktops and other systems without thermal zones):
+
+     ```bash
+     for dir in /sys/class/hwmon/hwmon*; do
+       echo "$(basename $dir): $(cat $dir/name)"
+     done
+     ```
+
+     Look for `k10temp` (AMD) or similar. Then set `hwmon` in `flake.nix`:
+
+     ```nix
+     hwmon = {
+       path = "/sys/devices/pci0000:00/0000:00:18.3/hwmon";  # readlink -f /sys/class/hwmon/hwmonN
+       input = "temp1_input";  # Tctl (CPU control temp)
+     };
+     ```
+
+     If neither applies, leave both as `null` to disable the temperature display.
+
+5. **Commit and push** — the repo was cloned over HTTPS (read-only). To push, switch the remote to SSH and ensure the machine has an SSH key registered with your Git host:
 
    ```bash
+   git remote set-url origin git@github.com:mcpeanutbutter/nixos-config.git
    git add .
    git commit -m "Add <hostname> host configuration"
    git push
