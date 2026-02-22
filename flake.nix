@@ -66,6 +66,13 @@
           desktopEnvironment = "niri";
           thermalZone = 5; # x86_pkg_temp (CPU package temp)
         };
+        spire = {
+          system = "x86_64-linux";
+          theme = "material-darker";
+          stateVersion = "25.11";
+          desktopEnvironment = "niri";
+          thermalZone = null; # Determine on spire hardware later
+        };
       };
 
       # Function for NixOS system configuration
@@ -111,6 +118,7 @@
       nixosConfigurations = {
         amateria = mkNixosConfiguration "amateria" "jonas";
         selenitic = mkNixosConfiguration "selenitic" "jonas";
+        spire = mkNixosConfiguration "spire" "jonas";
       };
 
       overlays = import ./overlays { inherit inputs; };
