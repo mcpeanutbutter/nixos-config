@@ -35,7 +35,7 @@
 
   # Default applications for file types
   # All associations must be declared here since home-manager manages
-  # mimeapps.list as a read-only symlink (Thunar can't write to it)
+  # mimeapps.list as a read-only symlink
   xdg.mimeApps = {
     enable = true;
     defaultApplications =
@@ -43,7 +43,7 @@
         editor = "org.gnome.TextEditor.desktop";
       in
       {
-        "inode/directory" = "thunar.desktop";
+        "inode/directory" = "org.gnome.Nautilus.desktop";
         "text/plain" = editor;
         "text/markdown" = editor;
         "text/x-nix" = editor;

@@ -70,9 +70,7 @@
     networkmanagerapplet # nm-applet for system tray
 
     # File management
-    xfce.thunar
-    xfce.thunar-volman # removable media
-    xfce.thunar-archive-plugin # archive support
+    nautilus # GNOME file manager (needed by xdg-desktop-portal-gnome for FileChooser)
     gnome-text-editor
 
     # Archive management

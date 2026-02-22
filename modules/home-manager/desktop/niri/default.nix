@@ -101,14 +101,6 @@ in
           "waybar.service"
         ];
       }
-      {
-        command = [
-          "systemctl"
-          "--user"
-          "start"
-          "thunar.service"
-        ];
-      }
     ];
 
     # Disable client-side decorations (title bars) for a cleaner look
