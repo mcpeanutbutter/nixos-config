@@ -28,6 +28,7 @@ window#waybar * {
 #memory,
 #temperature,
 #custom-night-light,
+#custom-bitdefender,
 #backlight,
 #pulseaudio,
 #battery,
@@ -128,7 +129,7 @@ window#waybar * {
   color: @base0C;
 }
 
-/* Pill 6: Volume + Privacy + Battery + Power Profiles + Backlight + Night Light */
+/* Pill 6: Volume + Privacy + Battery + Power Profiles + Backlight + Night Light + BitDefender */
 #pulseaudio {
   margin: 0.2em 0em 0.2em 0.3em;
   border-radius: 8px 0px 0px 8px;
@@ -160,9 +161,19 @@ window#waybar * {
 }
 
 #custom-night-light {
+  margin: 0.2em 0em;
+  border-radius: 0px;
+  color: @base0A;
+}
+
+#custom-bitdefender {
   margin: 0.2em 0.3em 0.2em 0em;
   border-radius: 0px 8px 8px 0px;
   color: @base0A;
+}
+
+#custom-bitdefender.inactive {
+  color: @base08;
 }
 
 /* Pill 7: Power Button */
