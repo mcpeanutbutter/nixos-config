@@ -14,6 +14,7 @@
     "${nixosModules}/services/sops"
     "${nixosModules}/services/bitdefender"
     "${nixosModules}/services/clamav"
+    "${nixosModules}/services/vpn"
   ];
 
   # Set hostname
