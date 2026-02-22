@@ -16,7 +16,7 @@
     };
     fonts = {
       monospace = {
-        package = pkgs.maple-mono.NF-unhinted;
+        package = pkgs.maple-mono.NF;
         name = "Maple Mono NF";
       };
       sansSerif = {
@@ -32,7 +32,7 @@
         name = "Noto Color Emoji";
       };
       sizes = {
-        applications = 14;
+        applications = 12;
         terminal = 12;
         desktop = 10;
         popups = 12;

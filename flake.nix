@@ -62,6 +62,7 @@
           desktopEnvironment = "niri";
           thermalZone = null; # TODO: determine on amateria (look for k10temp zone)
           hwmon = null;
+          subpixelLayout = "none"; # mixed OLED/IPS monitors, grayscale AA
         };
         selenitic = {
           system = "x86_64-linux";
@@ -70,6 +71,7 @@
           desktopEnvironment = "niri";
           thermalZone = 5; # x86_pkg_temp (CPU package temp)
           hwmon = null;
+          subpixelLayout = "rgb"; # standard IPS panel
         };
         spire = {
           system = "x86_64-linux";
@@ -81,6 +83,7 @@
             path = "/sys/devices/pci0000:00/0000:00:18.3/hwmon";
             input = "temp1_input"; # Tctl (CPU control temp)
           };
+          subpixelLayout = "none"; # OLED display
         };
       };
 

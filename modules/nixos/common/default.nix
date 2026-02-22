@@ -4,6 +4,7 @@
   lib,
   config,
   userConfig,
+  hostConfig,
   pkgs,
   ...
 }:
@@ -137,6 +138,15 @@
     nerd-fonts.meslo-lg
     roboto
   ];
+
+  fonts.fontconfig = {
+    antialias = true;
+    hinting = {
+      enable = true;
+      style = "full";
+    };
+    subpixel.rgba = hostConfig.subpixelLayout;
+  };
 
   # System packages
   environment.systemPackages = with pkgs; [
