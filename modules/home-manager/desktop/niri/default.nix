@@ -59,7 +59,7 @@
       }
       {
         timeout = 600;
-        command = "${pkgs.hyprlock}/bin/hyprlock";
+        command = "pidof hyprlock || ${pkgs.hyprlock}/bin/hyprlock &";
       }
       {
         timeout = 900;
