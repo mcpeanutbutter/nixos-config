@@ -293,6 +293,27 @@ The configuration uses **Niri**, a scrollable-tiling Wayland compositor:
 - Keyboard layout: US with altgr-intl variant
 - Theming: Stylix for system-wide theme management (Material Darker)
 
+### CachyOS Dual-Boot (Spire)
+
+Spire dual-boots NixOS + CachyOS. NixOS GRUB directly boots the CachyOS kernel from the CachyOS ESP (no chainloading — chainloading systemd-boot from GRUB doesn't work because systemd-boot misidentifies the ESP).
+
+**Disk layout:**
+- `sda1` (vfat, `FC6A-791C`): NixOS ESP (GRUB lives here)
+- `sda2` (LUKS): NixOS root
+- `nvme2n1p1` (vfat, `0F06-0878`): CachyOS ESP (kernel + initramfs)
+- `nvme2n1p2` (LUKS, `52464ea2-...`): CachyOS root (decrypted UUID: `db42ec0c-...`)
+
+**If CachyOS GRUB entry stops working** (e.g. after CachyOS kernel package rename):
+1. Boot into NixOS (default GRUB entry)
+2. Mount CachyOS ESP: `sudo mount /dev/nvme2n1p1 /mnt`
+3. Check current kernel filenames: `ls /mnt/vmlinuz* /mnt/initramfs*`
+4. Check systemd-boot entries: `cat /mnt/loader/entries/*.conf`
+5. Update `hosts/spire/default.nix` `boot.loader.grub.extraEntries` with the correct kernel/initramfs filenames and boot args from step 4
+6. Rebuild: `sudo nixos-rebuild switch --flake .#spire`
+7. Unmount: `sudo umount /mnt`
+
+**Alternative boot method:** CachyOS can always be booted via the UEFI firmware temporary boot device menu (F12/F8/Del at POST) by selecting `nvme2n1` — this works independently of GRUB.
+
 ## Git Workflow
 
 This is a Git-tracked flake. Changes must be staged (`git add .`) for flake commands to recognize new files. Flake lock file (`flake.lock`) pins input versions for reproducibility.
