@@ -1,9 +1,11 @@
 keys:
   - &selenitic age15kvpw8grrnjn3e609rju5e0p5f3fs4gradxr36dh9mksl25g3vssz54v43
+  - &spire age1lugqpptacuyj0h9th3yrfa8y5fz8sumnsasn4hsxhyp6cse4t4lse8wq8k
   - &jonas age1dlcau98tlksg4xcg32rae7cyrhdxky8gtlagjhma5xprwfqqks2q7hs6k6
 creation_rules:
   - path_regex: secrets/.*\.yaml$
     key_groups:
       - age:
           - *selenitic
+          - *spire
           - *jonas
