@@ -182,7 +182,7 @@
         softness = 8; # Sharp shadow (minimal blur)
         offset = {
           x = 0;
-          y = 6; # 8px vertical offset
+          y = 6; # 6px vertical offset
         };
         color = "#00000040"; # Semi-transparent black
       };

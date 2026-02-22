@@ -11,7 +11,7 @@
       action.spawn = [ "fuzzel" ];
       hotkey-overlay.title = "Spawn fuzzel launcher";
     };
-    "Super+Alt+L".action.spawn = [ "hyprlock" ];
+    "Mod+Alt+L".action.spawn = [ "loginctl" "lock-session" ];
 
     # Media keys
     "XF86AudioRaiseVolume" = {
@@ -116,11 +116,11 @@
     "Mod+Home".action.focus-column-first = [ ];
     "Mod+End".action.focus-column-last = [ ];
     "Mod+Shift+WheelScrollDown" = {
-      action.focus-column-left = [ ];
+      action.focus-column-right = [ ];
       cooldown-ms = 150;
     };
     "Mod+Shift+WheelScrollUp" = {
-      action.focus-column-right = [ ];
+      action.focus-column-left = [ ];
       cooldown-ms = 150;
     };
 
@@ -136,11 +136,11 @@
     "Mod+Ctrl+Home".action.move-column-to-first = [ ];
     "Mod+Ctrl+End".action.move-column-to-last = [ ];
     "Mod+Ctrl+Shift+WheelScrollDown" = {
-      action.move-column-left = [ ];
+      action.move-column-right = [ ];
       cooldown-ms = 150;
     };
     "Mod+Ctrl+Shift+WheelScrollUp" = {
-      action.move-column-right = [ ];
+      action.move-column-left = [ ];
       cooldown-ms = 150;
     };
 
@@ -238,6 +238,12 @@
     "Mod+F".action.maximize-column = [ ];
     "Mod+Shift+F".action.fullscreen-window = [ ];
     "Mod+Ctrl+F".action.expand-column-to-available-width = [ ];
+
+    # Interactive resize
+    "Mod+Minus".action.set-column-width = "-10%";
+    "Mod+Equal".action.set-column-width = "+10%";
+    "Mod+Shift+Minus".action.set-window-height = "-10%";
+    "Mod+Shift+Equal".action.set-window-height = "+10%";
 
     "Mod+C".action.center-column = [ ];
     "Mod+Ctrl+C".action.center-visible-columns = [ ];
