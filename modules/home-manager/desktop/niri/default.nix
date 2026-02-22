@@ -13,6 +13,13 @@
   # Note: niri.homeModules.niri is automatically imported by the NixOS module
   # when home-manager is detected, so we don't need to import it here
 
+  # Disable XDG autostart for blueman-applet (it races Waybar and loses the tray icon)
+  # We use our own systemd service below with proper ordering instead
+  xdg.configFile."autostart/blueman-applet.desktop".text = ''
+    [Desktop Entry]
+    Hidden=true
+  '';
+
   # System tray applets
   systemd.user.services.nm-applet = {
     Unit = {
@@ -29,9 +36,11 @@
   systemd.user.services.blueman-applet = {
     Unit = {
       Description = "Blueman Applet";
-      After = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" "waybar.service" ];
     };
     Service = {
+      # Wait for Waybar's StatusNotifierWatcher to be available on D-Bus
+      ExecStartPre = "${pkgs.bash}/bin/bash -c 'for i in $(seq 1 50); do ${pkgs.dbus}/bin/dbus-send --session --dest=org.freedesktop.DBus --type=method_call --print-reply /org/freedesktop/DBus org.freedesktop.DBus.GetNameOwner string:org.kde.StatusNotifierWatcher >/dev/null 2>&1 && exit 0; sleep 0.1; done; echo \"StatusNotifierWatcher not found, starting anyway\"; exit 0'";
       ExecStart = "${pkgs.blueman}/bin/blueman-applet";
       Restart = "on-failure";
     };
