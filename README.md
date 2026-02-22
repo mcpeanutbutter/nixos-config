@@ -1,6 +1,14 @@
 # NixOS Configuration
 
-A modular NixOS configuration managed through Nix Flakes. Currently configured for two machines — `amateria` (Framework 16 laptop) and `selenitic`. The repository uses a clean separation between host-specific, user-specific, and reusable module layers.
+A modular NixOS configuration managed through Nix Flakes. Currently configured for three machines — `amateria` (Framework 16 laptop), `selenitic` (ThinkPad T480s), and `spire` (AMD desktop). The repository uses a clean separation between host-specific, user-specific, and reusable module layers.
+
+## Hosts
+
+| Host        | Machine               | CPU              | GPU               | nixos-hardware modules                                                                                         |
+| ----------- | --------------------- | ---------------- | ----------------- | -------------------------------------------------------------------------------------------------------------- |
+| `amateria`  | Framework Laptop 16   | AMD Ryzen 7840HS | AMD Radeon (iGPU) | `framework-16-7040-amd` (fwupd, fprintd, SSD TRIM, AMD iGPU KMS, touchpad, bluetooth)                          |
+| `selenitic` | Lenovo ThinkPad T480s | Intel i7-8650U   | Intel UHD 620     | `lenovo-thinkpad-t480s` (throttled, SSD TRIM, Intel microcode, ThinkPad common)                                |
+| `spire`     | ASRock B550 desktop   | AMD Ryzen 5900X  | AMD RX 9070 XT    | `common-cpu-amd` + `common-gpu-amd` + `common-pc-ssd` (AMD microcode, GPU early KMS, 32-bit support, SSD TRIM) |
 
 ## Directory Structure
 
@@ -150,9 +158,11 @@ These steps require the new hardware.
    The key's public half must match the `&jonas` anchor in `.sops.yaml`. No changes to `.sops.yaml` are needed — the user key is already listed.
 
    If you don't have a user age key yet (first-time setup):
+
    ```bash
    nix-shell -p age --run "age-keygen -o ~/.config/sops/age/keys.txt"
    ```
+
    Then add the public key to `.sops.yaml` and run `sops updatekeys` on all secret files.
 
 ### Phase 3: NixOS-level sops setup `[both machines, optional]`
@@ -179,7 +189,7 @@ NixOS-level sops uses the **host's SSH ed25519 key** converted to age. There's a
    ```yaml
    keys:
      - &selenitic age15kvpw8grrnjn3e609rju5e0p5f3fs4gradxr36dh9mksl25g3vssz54v43
-     - &<hostname> age1...   # public key from step 2
+     - &<hostname> age1... # public key from step 2
      - &jonas age1dlcau98tlksg4xcg32rae7cyrhdxky8gtlagjhma5xprwfqqks2q7hs6k6
    creation_rules:
      - path_regex: secrets/.*\.yaml$
@@ -221,7 +231,6 @@ NixOS-level sops uses the **host's SSH ed25519 key** converted to age. There's a
    ```
 
 4. **After first boot** — tune hardware-specific settings and rebuild:
-
    - **Monitor config**: check output names with `niri msg outputs` or `wlr-randr`, then update `programs.niri.settings.outputs` in `home/jonas/<hostname>/default.nix`.
 
    - **CPU temperature** (for waybar): there are two options depending on hardware. Set the relevant field in the host's config in `flake.nix`.
@@ -270,6 +279,7 @@ NixOS-level sops uses the **host's SSH ed25519 key** converted to age. There's a
 You forgot `git add .` — flake can't see untracked files.
 
 **Sops decryption failure at activation**
+
 - Home-manager sops: check that `~/.config/sops/age/keys.txt` exists and its public key matches the `&jonas` entry in `.sops.yaml`.
 - NixOS-level sops: check that `/etc/ssh/ssh_host_ed25519_key` exists and its derived age key is in `.sops.yaml`. Ensure you ran `sops updatekeys` on all secret files.
 
@@ -288,25 +298,25 @@ A reinstall generates a new SSH host key. Re-derive the age key with `ssh-to-age
 
 This configuration uses [sops-nix](https://github.com/Mic92/sops-nix) with two types of age keys:
 
-| Type | Derived from | Used by | Purpose |
-|------|-------------|---------|---------|
-| **User key** | Standalone age key | Home Manager sops (`modules/home-manager/programs/sops/`) | Decrypts user-level secrets (git emails, SSH config). Required on all hosts. |
-| **Host key** | Host's SSH ed25519 key | NixOS-level sops (`modules/nixos/services/sops/`) | Decrypts system-level secrets at boot. Only needed if importing the sops NixOS service. |
+| Type         | Derived from           | Used by                                                   | Purpose                                                                                 |
+| ------------ | ---------------------- | --------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| **User key** | Standalone age key     | Home Manager sops (`modules/home-manager/programs/sops/`) | Decrypts user-level secrets (git emails, SSH config). Required on all hosts.            |
+| **Host key** | Host's SSH ed25519 key | NixOS-level sops (`modules/nixos/services/sops/`)         | Decrypts system-level secrets at boot. Only needed if importing the sops NixOS service. |
 
 ### Key reference
 
-| Key | Path | Purpose |
-|-----|------|---------|
-| User private key | `~/.config/sops/age/keys.txt` | Decrypts user-level secrets; also used to edit secrets via `sops` CLI |
-| Host private key | `/etc/ssh/ssh_host_ed25519_key` | Converted to age at boot to decrypt NixOS-level secrets |
-| Public keys | Listed in `.sops.yaml` | Determine which keys can decrypt the secret files |
+| Key              | Path                            | Purpose                                                               |
+| ---------------- | ------------------------------- | --------------------------------------------------------------------- |
+| User private key | `~/.config/sops/age/keys.txt`   | Decrypts user-level secrets; also used to edit secrets via `sops` CLI |
+| Host private key | `/etc/ssh/ssh_host_ed25519_key` | Converted to age at boot to decrypt NixOS-level secrets               |
+| Public keys      | Listed in `.sops.yaml`          | Determine which keys can decrypt the secret files                     |
 
 ### Current keys
 
-| Name | Type | Age public key |
-|------|------|---------------|
+| Name        | Type | Age public key                                                   |
+| ----------- | ---- | ---------------------------------------------------------------- |
 | `selenitic` | Host | `age15kvpw8grrnjn3e609rju5e0p5f3fs4gradxr36dh9mksl25g3vssz54v43` |
-| `jonas` | User | `age1dlcau98tlksg4xcg32rae7cyrhdxky8gtlagjhma5xprwfqqks2q7hs6k6` |
+| `jonas`     | User | `age1dlcau98tlksg4xcg32rae7cyrhdxky8gtlagjhma5xprwfqqks2q7hs6k6` |
 
 ### Editing secrets
 
@@ -368,6 +378,7 @@ Home Manager is integrated as a NixOS module — it rebuilds automatically with 
 ### mkNixosConfiguration
 
 The `mkNixosConfiguration` function in `flake.nix` wires everything together for a given hostname and username. It automatically:
+
 - Loads `hosts/<hostname>/` (NixOS config)
 - Loads `home/<username>/<hostname>/` (Home Manager config)
 - Passes `userConfig`, `hostConfig`, and module path variables to all modules

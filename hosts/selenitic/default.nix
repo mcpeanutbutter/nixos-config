@@ -1,4 +1,5 @@
 {
+  inputs,
   hostname,
   nixosModules,
   hostConfig,
@@ -7,6 +8,7 @@
 {
   imports = [
     ./hardware-configuration.nix
+    inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t480s
     "${nixosModules}/common"
     "${nixosModules}/desktop/${hostConfig.desktopEnvironment}"
     "${nixosModules}/programs/docker"

@@ -1,4 +1,5 @@
 {
+  inputs,
   hostname,
   nixosModules,
   hostConfig,
@@ -7,6 +8,9 @@
 {
   imports = [
     ./hardware-configuration.nix
+    inputs.nixos-hardware.nixosModules.common-cpu-amd
+    inputs.nixos-hardware.nixosModules.common-gpu-amd
+    inputs.nixos-hardware.nixosModules.common-pc-ssd
     "${nixosModules}/common"
     "${nixosModules}/desktop/${hostConfig.desktopEnvironment}"
     "${nixosModules}/programs/docker"

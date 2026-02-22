@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-This is a NixOS configuration repository managed through Nix Flakes, supporting multiple hosts (e.g. `amateria`, `selenitic`). Since all hosts share one repository, **always check the current hostname** (via `hostname` command) to determine which host you are on, and use the correct flake target (e.g. `.#selenitic`, `.#amateria`) accordingly. Never assume a specific host.
+This is a NixOS configuration repository managed through Nix Flakes, supporting multiple hosts (`amateria`, `selenitic`, `spire`). Since all hosts share one repository, **always check the current hostname** (via `hostname` command) to determine which host you are on, and use the correct flake target (e.g. `.#selenitic`, `.#amateria`) accordingly. Never assume a specific host.
 
 **Important**: The repository contains old/experimental code in `old/` and `idk/` directories that is NOT currently in use. The configuration has been completely restructured into a modular architecture using:
 
@@ -60,14 +60,15 @@ nix flake check
 
 **Key Flake Inputs**:
 
-- `nixpkgs` (nixos-unstable): Primary package source
-- `nixpkgs-stable` (nixos-25.05): Stable packages
+- `nixpkgs` (nixos-25.11): Primary package source
+- `nixpkgs-unstable`: Unstable channel packages
 - `home-manager`: User-space configuration management, integrated as NixOS module
 - `nix-vscode-extensions`: VSCode extensions
 - `nixvim`: Neovim configuration framework
-- `nixgl`: OpenGL wrapper for non-NixOS systems (not currently used)
 - `stylix`: System-wide theming
 - `niri`: Niri compositor flake for Wayland window management
+- `sops-nix`: Secrets management (age-encrypted)
+- `nixos-hardware`: Device-specific hardware optimizations (firmware updates, thermal management, SSD TRIM, GPU early KMS)
 
 **Directory Structure**:
 
@@ -254,6 +255,7 @@ Home Manager modules receive:
 2. Add host configuration to the `hosts` object in `flake.nix`
 3. Create corresponding home configuration at `home/${username}/${hostname}/default.nix`
 4. Register in `nixosConfigurations` using `mkNixosConfiguration "${hostname}" "${username}"`
+5. Check the [nixos-hardware module list](https://github.com/NixOS/nixos-hardware/blob/master/flake.nix) for device-specific modules and import them in the host's `default.nix` (e.g. `inputs.nixos-hardware.nixosModules.<device>`). If no board-specific module exists, use the relevant `common-cpu-*`, `common-gpu-*`, and `common-pc-ssd` modules.
 
 ### Custom Package Overlays
 
@@ -331,8 +333,12 @@ This is a Git-tracked flake. Changes must be staged (`git add .`) for flake comm
 
 ### Hardware Support
 
-- Framework 16 laptop (using nixos-hardware flake)
-- Latest kernel for best hardware compatibility
+Each host imports device-specific modules from the `nixos-hardware` flake:
+
+- **amateria** (Framework 16): `framework-16-7040-amd` — fwupd, fprintd, SSD TRIM, AMD iGPU early KMS, touchpad, bluetooth
+- **selenitic** (ThinkPad T480s): `lenovo-thinkpad-t480s` — throttled thermal management, SSD TRIM, Intel microcode
+- **spire** (AMD desktop): `common-cpu-amd` + `common-gpu-amd` + `common-pc-ssd` — AMD microcode, GPU early KMS + 32-bit support, SSD TRIM
+- Latest kernel (`linuxPackages_latest`) on all hosts for best hardware compatibility
 
 ### Development Tools
 
