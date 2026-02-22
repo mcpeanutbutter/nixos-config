@@ -1,4 +1,4 @@
-{ config, ... }:
+{ ... }:
 {
   programs.zsh = {
     enable = true;
@@ -10,8 +10,10 @@
       theme = "agnoster";
     };
     shellAliases = {
-      "my-nix-update" = "nix flake update --flake ${config.xdg.configHome}/home-manager";
-      "my-nix-switch" = "home-manager switch --flake ${config.xdg.configHome}/home-manager";
+      nfu = "nix flake update";
     };
+    initExtra = ''
+      nrs() { sudo nixos-rebuild switch --flake ~/nixos-config#"$(hostname)" "$@"; }
+    '';
   };
 }
