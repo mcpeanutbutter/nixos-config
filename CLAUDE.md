@@ -92,7 +92,6 @@ nix flake check
 │   ├── nixos/                          # NixOS modules (system-level)
 │   │   ├── common/                     # Common system configuration
 │   │   ├── desktop/
-│   │   │   ├── kde/                    # KDE Plasma 6 desktop module
 │   │   │   └── niri/                   # Niri compositor module
 │   │   ├── programs/
 │   │   │   └── docker/                 # Docker configuration
@@ -158,7 +157,7 @@ hosts = {
     system = "x86_64-linux";
     theme = "material-darker";
     stateVersion = "25.05";
-    desktopEnvironment = "niri";  # Options: "kde" or "niri"
+    desktopEnvironment = "niri";
   };
 };
 ```
@@ -214,7 +213,6 @@ Home Manager modules receive:
 
 **modules/nixos/desktop/**: Desktop environment modules:
 
-- `kde/`: KDE Plasma 6 desktop with SDDM and Wayland support
 - `niri/`: Niri scrollable-tiling Wayland compositor with polkit, portals, and GREETD
 
 **home/jonas/amateria/default.nix**: User+host specific home configuration that:
@@ -253,23 +251,6 @@ Home Manager modules receive:
 3. Create corresponding home configuration at `home/${username}/${hostname}/default.nix`
 4. Register in `nixosConfigurations` using `mkNixosConfiguration "${hostname}" "${username}"`
 
-### Switching Desktop Environments
-
-Change `desktopEnvironment` in the host configuration (in `flake.nix`):
-
-```nix
-hosts = {
-  amateria = {
-    desktopEnvironment = "niri";  # or "kde"
-  };
-};
-```
-
-The system will automatically:
-
-- Load the appropriate NixOS desktop module from `modules/nixos/desktop/`
-- Conditionally import relevant home-manager desktop modules in `home/jonas/amateria/default.nix`
-
 ### Custom Package Overlays
 
 The repository uses overlays in `overlays/default.nix` to override package versions. These are automatically applied via `modules/nixos/common/default.nix`. Example pattern:
@@ -290,13 +271,9 @@ The repository uses overlays in `overlays/default.nix` to override package versi
 }
 ```
 
-## Desktop Environments
+## Desktop Environment
 
-The configuration supports two desktop environments, switchable via `hostConfig.desktopEnvironment`:
-
-### Niri (Current: Active)
-
-**Niri** is a scrollable-tiling Wayland compositor with dynamic workspaces:
+The configuration uses **Niri**, a scrollable-tiling Wayland compositor:
 
 - Display manager: GREETD with `agreety` greeter
 - Compositor: Niri with custom keybindings and window rules
@@ -305,14 +282,6 @@ The configuration supports two desktop environments, switchable via `hostConfig.
 - Notifications: Mako
 - Terminal: Ghostty (configured with custom theming)
 - Features: Rounded corners, themed window borders, focus follows mouse
-
-### KDE Plasma 6 (Available)
-
-**KDE Plasma 6** desktop environment with:
-
-- Display manager: SDDM (Wayland enabled)
-- Full-featured desktop with extensive configuration options
-- To activate: Set `desktopEnvironment = "kde"` in `hosts.amateria` in `flake.nix`
 
 ### Common Desktop Features
 

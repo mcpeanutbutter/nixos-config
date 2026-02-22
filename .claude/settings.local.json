@@ -12,7 +12,8 @@
       "Read(//home/jonas/.config/BraveSoftware/Brave-Browser/**)",
       "Read(//etc/**)",
       "Bash(nix-prefetch-url:*)",
-      "WebFetch(domain:www.bitdefender.com)"
+      "WebFetch(domain:www.bitdefender.com)",
+      "Bash(xargs -I{} sh -c 'test -f \"\"{}/flake.nix\"\" && head -1 \"\"{}/flake.nix\"\"')"
     ],
     "deny": [],
     "ask": []

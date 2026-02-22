@@ -16,7 +16,7 @@ A modular NixOS configuration managed through Nix Flakes. Currently configured f
 ├── modules/
 │   ├── nixos/                   # Reusable NixOS modules (system-level)
 │   │   ├── common/              # Bootloader, kernel, networking, audio, users, locale
-│   │   ├── desktop/             # Desktop environments (kde/, niri/)
+│   │   ├── desktop/             # Desktop environment (niri/)
 │   │   ├── programs/            # System programs (docker/)
 │   │   └── services/            # System services (stylix/, sops/, bitdefender/, clamav/)
 │   └── home-manager/            # Reusable Home Manager modules (user-level)
@@ -46,8 +46,8 @@ All config files can be written on any machine where the repo already lives.
        system = "x86_64-linux";
        theme = "material-darker";
        stateVersion = "25.11";          # Match the NixOS release you'll install
-       desktopEnvironment = "niri";     # "niri" or "kde"
-       thermalZone = null;              # Placeholder — determined in Phase 2
+       desktopEnvironment = "niri";
+       thermalZone = null;              # Optional — can be set after first boot
      };
    };
    ```
@@ -134,17 +134,7 @@ These steps require the new hardware.
 
    Transfer this file back to the repo on the existing machine (via `scp`, USB, etc.) and place it at `hosts/<hostname>/hardware-configuration.nix`.
 
-3. **Find the thermal zone** (for waybar CPU temperature display):
-
-   ```bash
-   for zone in /sys/class/thermal/thermal_zone*; do
-     echo "$(basename $zone): $(cat $zone/type)"
-   done
-   ```
-
-   Look for `x86_pkg_temp`, `k10temp`, or similar CPU package sensor. Update `thermalZone` in `flake.nix` with the zone number (e.g., `5` for `thermal_zone5`), or leave as `null` to disable.
-
-4. **Place the user age key** — copy from your password manager or another machine:
+3. **Place the user age key** — copy from your password manager or another machine:
 
    ```bash
    mkdir -p ~/.config/sops/age
@@ -219,13 +209,25 @@ NixOS-level sops uses the **host's SSH ed25519 key** converted to age. There's a
    git add .
    ```
 
-3. **Build and switch**:
+3. **Build and switch** (a fresh NixOS install doesn't have flakes enabled, so pass the flag inline — the config enables them permanently after this):
 
    ```bash
-   sudo nixos-rebuild switch --flake .#<hostname>
+   sudo NIX_CONFIG="experimental-features = nix-command flakes" nixos-rebuild switch --flake .#<hostname>
    ```
 
-4. **After first boot**: check monitor output names with `niri msg outputs` or `wlr-randr`, update `programs.niri.settings.outputs` in `home/jonas/<hostname>/default.nix`, and rebuild.
+4. **After first boot** — tune hardware-specific settings and rebuild:
+
+   - **Monitor config**: check output names with `niri msg outputs` or `wlr-randr`, then update `programs.niri.settings.outputs` in `home/jonas/<hostname>/default.nix`.
+
+   - **Thermal zone** (for waybar CPU temperature): find the right sensor, then set `thermalZone` in `flake.nix`:
+
+     ```bash
+     for zone in /sys/class/thermal/thermal_zone*; do
+       echo "$(basename $zone): $(cat $zone/type)"
+     done
+     ```
+
+     Look for `x86_pkg_temp`, `k10temp`, or similar CPU package sensor. Use the zone number (e.g., `5` for `thermal_zone5`), or leave as `null` to disable.
 
 5. **Commit and push**:
 
@@ -318,16 +320,6 @@ nix flake check
 Home Manager is integrated as a NixOS module — it rebuilds automatically with `nixos-rebuild switch`. There's no separate `home-manager` command.
 
 ## Common Tasks
-
-### Switching desktop environments
-
-Change `desktopEnvironment` in the host's entry in `flake.nix`:
-```nix
-<hostname> = {
-  desktopEnvironment = "niri";  # or "kde"
-};
-```
-Then rebuild. The system automatically loads the matching NixOS desktop module and conditionally imports the relevant home-manager desktop modules.
 
 ### Adding a user-level application
 
