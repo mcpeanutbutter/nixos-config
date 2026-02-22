@@ -29,210 +29,206 @@ A modular NixOS configuration managed through Nix Flakes. Currently configured f
 
 ## Adding a New Host
 
-This is the step-by-step process for adding a new machine to this configuration.
+This guide walks through adding a new machine to this configuration. Most of the work happens on an **existing machine** where the repo already lives — only hardware discovery and key placement require the new machine.
 
-### Phase 1: Install NixOS on the target machine
+> **Why sops matters**: `modules/home-manager/common` unconditionally imports `programs/sops`, which the `git` module (email identities) and `ssh` module (work config) depend on. This means every host needs the **user age key** at `~/.config/sops/age/keys.txt` — without it, the build fails. Separately, some hosts may also use **NixOS-level sops** (via `services/sops`) for system-level secrets like antivirus tokens — this uses the host's SSH key and is only needed if you import that module.
 
-1. Install NixOS on the target machine using the standard installer (graphical or minimal ISO).
-2. Boot into the fresh install and verify you can log in.
-3. Clone this repository onto the new machine:
-   ```bash
-   git clone <repo-url> ~/nixos-config
-   cd ~/nixos-config
+### Phase 1: Create the host configuration `[existing machine]`
+
+All config files can be written on any machine where the repo already lives.
+
+1. **Add the host entry to `flake.nix`** in the `hosts` object:
+
+   ```nix
+   hosts = {
+     # ... existing hosts ...
+     <hostname> = {
+       system = "x86_64-linux";
+       theme = "material-darker";
+       stateVersion = "25.11";          # Match the NixOS release you'll install
+       desktopEnvironment = "niri";     # "niri" or "kde"
+       thermalZone = null;              # Placeholder — determined in Phase 2
+     };
+   };
    ```
 
-### Phase 2: Gather hardware info
+2. **Register in `nixosConfigurations`** (also in `flake.nix`):
 
-1. **Generate the hardware configuration** — this captures your disk layout, kernel modules, firmware, etc.:
-   ```bash
-   nixos-generate-config --show-hardware-config > hosts/<hostname>/hardware-configuration.nix
+   ```nix
+   nixosConfigurations = {
+     # ... existing hosts ...
+     <hostname> = mkNixosConfiguration "<hostname>" "jonas";
+   };
    ```
-   Create the directory first: `mkdir -p hosts/<hostname>`
 
-2. **Determine the thermal zone** (used by waybar for CPU temperature display):
+3. **Create `hosts/<hostname>/default.nix`** — copy from an existing host like `amateria` and adjust. Leave `hardware-configuration.nix` absent for now (generated in Phase 2):
+
+   ```nix
+   {
+     hostname,
+     nixosModules,
+     hostConfig,
+     ...
+   }:
+   {
+     imports = [
+       ./hardware-configuration.nix
+       "${nixosModules}/common"
+       "${nixosModules}/desktop/${hostConfig.desktopEnvironment}"
+       "${nixosModules}/programs/docker"
+       "${nixosModules}/services/stylix"
+       # "${nixosModules}/services/sops"        # Only if using NixOS-level secrets (see Phase 3)
+       # "${nixosModules}/services/bitdefender"  # Optional, requires services/sops
+       # "${nixosModules}/services/clamav"       # Optional
+     ];
+
+     networking.hostName = hostname;
+
+     system.stateVersion = hostConfig.stateVersion;
+   }
+   ```
+
+4. **Create `home/jonas/<hostname>/default.nix`** — copy from an existing host. Monitor config is a placeholder until first boot:
+
+   ```nix
+   {
+     lib,
+     nhModules,
+     hostConfig,
+     ...
+   }:
+   {
+     imports =
+       [
+         "${nhModules}/common"
+       ]
+       ++ lib.optionals (hostConfig.desktopEnvironment == "niri") [
+         "${nhModules}/desktop/niri"
+         "${nhModules}/desktop/waybar"
+         "${nhModules}/desktop/mako"
+         "${nhModules}/desktop/swww"
+       ];
+
+     # Monitor configuration — update after first boot with actual output names
+     programs.niri.settings.outputs = { };
+
+     programs.home-manager.enable = true;
+
+     home.stateVersion = hostConfig.stateVersion;
+   }
+   ```
+
+5. **Commit and push** so the configuration is available to clone on the new machine.
+
+### Phase 2: Prepare the new machine `[new machine]`
+
+These steps require the new hardware.
+
+1. **Install NixOS** using the standard installer (minimal or graphical). Boot into the fresh install.
+
+2. **Generate `hardware-configuration.nix`**:
+
    ```bash
-   # List all thermal zones and their types:
+   nixos-generate-config --show-hardware-config > /tmp/hardware-configuration.nix
+   ```
+
+   Transfer this file back to the repo on the existing machine (via `scp`, USB, etc.) and place it at `hosts/<hostname>/hardware-configuration.nix`.
+
+3. **Find the thermal zone** (for waybar CPU temperature display):
+
+   ```bash
    for zone in /sys/class/thermal/thermal_zone*; do
      echo "$(basename $zone): $(cat $zone/type)"
    done
    ```
-   Look for `x86_pkg_temp`, `k10temp`, or similar CPU package temperature zone. Note the zone number (e.g., `5` for `thermal_zone5`). If you don't need CPU temp in waybar or the machine is headless, use `null`.
 
-### Phase 3: Set up sops on the new machine
+   Look for `x86_pkg_temp`, `k10temp`, or similar CPU package sensor. Update `thermalZone` in `flake.nix` with the zone number (e.g., `5` for `thermal_zone5`), or leave as `null` to disable.
 
-Every host needs sops at the home-manager level — it's unconditionally imported by `modules/home-manager/common/` and used by the `git` and `ssh` modules. Home-manager sops uses a **user age key**, not the host's SSH key.
+4. **Place the user age key** — copy from your password manager or another machine:
 
-#### Required for all hosts: user age key
+   ```bash
+   mkdir -p ~/.config/sops/age
+   # Paste or copy your key into ~/.config/sops/age/keys.txt
+   chmod 600 ~/.config/sops/age/keys.txt
+   ```
 
-Copy your existing age private key to the new machine:
-```bash
-mkdir -p ~/.config/sops/age
-# Copy from another machine or password manager:
-cp /path/to/keys.txt ~/.config/sops/age/keys.txt
-chmod 600 ~/.config/sops/age/keys.txt
-```
+   The key's public half must match the `&jonas` anchor in `.sops.yaml`. No changes to `.sops.yaml` are needed — the user key is already listed.
 
-The user key (`jonas`) is already in `.sops.yaml`, so no changes to `.sops.yaml` are needed for home-manager sops. The key file just needs to exist at `~/.config/sops/age/keys.txt` on the new machine.
+   If you don't have a user age key yet (first-time setup):
+   ```bash
+   nix-shell -p age --run "age-keygen -o ~/.config/sops/age/keys.txt"
+   ```
+   Then add the public key to `.sops.yaml` and run `sops updatekeys` on all secret files.
 
-If you don't have a user age key yet:
-```bash
-mkdir -p ~/.config/sops/age
-nix-shell -p age --run "age-keygen -o ~/.config/sops/age/keys.txt"
-```
-Then add the public key to `.sops.yaml` and run `sops updatekeys` on all secret files (see below).
+### Phase 3: NixOS-level sops setup `[both machines, optional]`
 
-#### Conditional: NixOS-level sops (only if importing `services/sops`)
+**Skip this phase entirely** if the host's `default.nix` does not import `"${nixosModules}/services/sops"`. You only need this for hosts that run services requiring system-level secrets (e.g., BitDefender reads tokens from `secrets.yaml` at boot).
 
-This is only needed if your host's `default.nix` imports `"${nixosModules}/services/sops"` (e.g., for system-level secrets like antivirus tokens). If you skip this import, you can skip this entire section.
-
-NixOS-level sops uses the **host's SSH ed25519 key** converted to age. There's a chicken-and-egg problem: sops-nix needs the host key to decrypt secrets at boot, but the key doesn't exist until openssh first activates. Solution: manually pre-generate the key.
+NixOS-level sops uses the **host's SSH ed25519 key** converted to age. There's a chicken-and-egg problem: sops-nix needs the host key to decrypt secrets at boot, but the key doesn't exist until openssh first starts. Solution: pre-generate the key.
 
 1. **Generate the SSH host key** on the new machine:
+
    ```bash
    sudo mkdir -p /etc/ssh
    sudo ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ""
    ```
 
-2. **Derive the host's age public key**:
+2. **Derive the age public key** from the new host's SSH key:
+
    ```bash
-   nix-shell -p ssh-to-age --run 'cat /etc/ssh/ssh_host_ed25519_key.pub | ssh-to-age'
+   nix-shell -p ssh-to-age --run 'ssh-to-age < /etc/ssh/ssh_host_ed25519_key.pub'
    ```
 
-3. **Add the host key to `.sops.yaml`** — on any machine with the user age key:
+3. **Add the host key to `.sops.yaml`** (on the existing machine or any machine with the repo):
+
    ```yaml
    keys:
      - &selenitic age15kvpw8grrnjn3e609rju5e0p5f3fs4gradxr36dh9mksl25g3vssz54v43
-     - &newhostname age1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+     - &<hostname> age1...   # public key from step 2
      - &jonas age1dlcau98tlksg4xcg32rae7cyrhdxky8gtlagjhma5xprwfqqks2q7hs6k6
    creation_rules:
      - path_regex: secrets/.*\.yaml$
        key_groups:
          - age:
              - *selenitic
-             - *newhostname
+             - *<hostname>
              - *jonas
    ```
 
-4. **Re-encrypt secrets for the new host**:
+4. **Re-encrypt all secret files** so the new host key can decrypt them:
+
    ```bash
    sops updatekeys secrets/secrets.yaml
    sops updatekeys secrets/ssh.yaml
    ```
-   You must run this on **both** encrypted files. This re-encrypts them so the new host can decrypt.
 
-5. Commit and push (or transfer the updated files to the new machine).
+5. Commit and push the updated `.sops.yaml` and re-encrypted secrets.
 
-### Phase 4: Create configuration files
+### Phase 4: Deploy `[new machine]`
 
-You need to create/modify four files.
+1. **Clone the repo** (or pull the latest changes):
 
-#### 4a. Add the host to `flake.nix`
+   ```bash
+   git clone <repo-url> ~/nixos-config
+   cd ~/nixos-config
+   ```
 
-Add an entry to the `hosts` object:
-```nix
-hosts = {
-  amateria = { ... };
-  selenitic = { ... };
-  <hostname> = {
-    system = "x86_64-linux";
-    theme = "material-darker";
-    stateVersion = "25.11";          # Match the NixOS release you installed with
-    desktopEnvironment = "niri";     # "niri" or "kde"
-    thermalZone = 5;                 # From Phase 2, or null to disable
-  };
-};
-```
+2. **Stage all files** — flake requires tracked files:
 
-Add to `nixosConfigurations`:
-```nix
-nixosConfigurations = {
-  amateria = mkNixosConfiguration "amateria" "jonas";
-  selenitic = mkNixosConfiguration "selenitic" "jonas";
-  <hostname> = mkNixosConfiguration "<hostname>" "jonas";
-};
-```
-
-#### 4b. Create `hosts/<hostname>/default.nix`
-
-Minimal host config (without NixOS-level sops):
-```nix
-{
-  hostname,
-  nixosModules,
-  hostConfig,
-  ...
-}:
-{
-  imports = [
-    ./hardware-configuration.nix
-    "${nixosModules}/common"
-    "${nixosModules}/desktop/${hostConfig.desktopEnvironment}"
-    "${nixosModules}/programs/docker"
-    "${nixosModules}/services/stylix"
-    # "${nixosModules}/services/sops"        # Only if using NixOS-level secrets
-    # "${nixosModules}/services/bitdefender"  # Optional
-    # "${nixosModules}/services/clamav"       # Optional
-  ];
-
-  networking.hostName = hostname;
-
-  system.stateVersion = hostConfig.stateVersion;
-}
-```
-
-#### 4c. Copy `hardware-configuration.nix`
-
-Place the file generated in Phase 2 at `hosts/<hostname>/hardware-configuration.nix`.
-
-#### 4d. Create `home/jonas/<hostname>/default.nix`
-
-This is the per-user per-host home config. The imports are the same across hosts, but host-specific settings (like monitor configuration for niri) go here:
-```nix
-{
-  lib,
-  nhModules,
-  hostConfig,
-  ...
-}:
-{
-  imports =
-    [
-      "${nhModules}/common"
-    ]
-    ++ lib.optionals (hostConfig.desktopEnvironment == "niri") [
-      "${nhModules}/desktop/niri"
-      "${nhModules}/desktop/waybar"
-      "${nhModules}/desktop/mako"
-      "${nhModules}/desktop/swww"
-    ];
-
-  # Monitor configuration (niri only) — omit outputs you want auto-detected
-  programs.niri.settings.outputs = {
-    "eDP-1" = {
-      mode = { width = 1920; height = 1080; refresh = 60.0; };
-      scale = 1.0;
-    };
-  };
-
-  programs.home-manager.enable = true;
-
-  home.stateVersion = hostConfig.stateVersion;
-}
-```
-
-### Phase 5: Build and deploy
-
-1. **Stage all new files** — flake won't see untracked files without this:
    ```bash
    git add .
    ```
 
-2. **Build and switch**:
+3. **Build and switch**:
+
    ```bash
    sudo nixos-rebuild switch --flake .#<hostname>
    ```
 
-3. **Verify**, then commit and push:
+4. **After first boot**: check monitor output names with `niri msg outputs` or `wlr-randr`, update `programs.niri.settings.outputs` in `home/jonas/<hostname>/default.nix`, and rebuild.
+
+5. **Commit and push**:
+
    ```bash
    git add .
    git commit -m "Add <hostname> host configuration"
@@ -245,8 +241,8 @@ This is the per-user per-host home config. The imports are the same across hosts
 You forgot `git add .` — flake can't see untracked files.
 
 **Sops decryption failure at activation**
-- Home-manager sops: check that `~/.config/sops/age/keys.txt` exists and the public key is in `.sops.yaml`.
-- NixOS-level sops: check that `/etc/ssh/ssh_host_ed25519_key` exists and the derived age key is in `.sops.yaml`. Ensure you ran `sops updatekeys` on all secret files.
+- Home-manager sops: check that `~/.config/sops/age/keys.txt` exists and its public key matches the `&jonas` entry in `.sops.yaml`.
+- NixOS-level sops: check that `/etc/ssh/ssh_host_ed25519_key` exists and its derived age key is in `.sops.yaml`. Ensure you ran `sops updatekeys` on all secret files.
 
 **"attribute '<hostname>' missing"**
 The hostname isn't in the `hosts` object or `nixosConfigurations` in `flake.nix`.
