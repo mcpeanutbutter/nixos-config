@@ -4,6 +4,19 @@
   inputs,
   ...
 }:
+let
+  lockCmd = "pidof hyprlock || ${pkgs.hyprlock}/bin/hyprlock &";
+  powerOffCmd = "${config.programs.niri.package}/bin/niri msg action power-off-monitors";
+
+  # Suspend if on battery (battery exists and AC not online) and screen is locked.
+  # Desktops have no BAT* entries, so this is a no-op for them.
+  batterySuspendCmd = pkgs.writeShellScript "idle-battery-suspend" ''
+    if ls /sys/class/power_supply/BAT* >/dev/null 2>&1 && \
+       ! grep -q 1 /sys/class/power_supply/A*/online 2>/dev/null; then
+      pidof hyprlock && systemctl suspend
+    fi
+  '';
+in
 {
   imports = [
     ./keybindings.nix
@@ -51,28 +64,21 @@
   services.swayidle = {
     enable = true;
     events = [
-      {
-        event = "before-sleep";
-        command = "${pkgs.hyprlock}/bin/hyprlock";
-      }
-      {
-        event = "lock";
-        command = "${pkgs.hyprlock}/bin/hyprlock";
-      }
+      { event = "before-sleep"; command = lockCmd; }
+      { event = "lock"; command = lockCmd; }
     ];
     timeouts = [
       {
-        timeout = 300;
-        command = "${pkgs.brightnessctl}/bin/brightnessctl set 10%";
-        resumeCommand = "${pkgs.brightnessctl}/bin/brightnessctl set 100%";
+        timeout = 300; # 5 min — auto-lock
+        command = lockCmd;
       }
       {
-        timeout = 600;
-        command = "pidof hyprlock || ${pkgs.hyprlock}/bin/hyprlock &";
+        timeout = 600; # 10 min — suspend on battery (no-op on AC / desktops)
+        command = toString batterySuspendCmd;
       }
       {
-        timeout = 900;
-        command = "${config.programs.niri.package}/bin/niri msg action power-off-monitors";
+        timeout = 900; # 15 min — power off monitors (only reached when plugged in)
+        command = powerOffCmd;
       }
     ];
   };
