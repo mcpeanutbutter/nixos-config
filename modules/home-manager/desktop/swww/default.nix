@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  hostConfig,
   ...
 }:
 let
@@ -48,12 +49,25 @@ let
     sha256 = "1frivc1xv35cada7lbqiswbgracsp6mkc37dv2zklgcg0f2x0w4f";
   };
 
+  # Apply Gaussian blur to a wallpaper at build time (for overview backdrop)
+  blurSigma = hostConfig.backdropBlur;
+  mkBlurredWallpaper =
+    wallpaper:
+    if blurSigma == 0 then
+      wallpaper
+    else
+      pkgs.runCommand "blurred-${baseNameOf (toString wallpaper)}" {
+        nativeBuildInputs = [ pkgs.imagemagick ];
+      } ''
+        magick ${wallpaper} -blur 0x${toString blurSigma} $out
+      '';
+
   # Function to create a wallpaper setter script
   mkWallpaperScript =
     name: dayWallpaper: nightWallpaper:
     pkgs.writeShellScript "set-wallpaper-${name}" ''
       ${pkgs.swww}/bin/swww img ${dayWallpaper} --namespace desktop --transition-type any --transition-duration 2
-      ${pkgs.swww}/bin/swww img ${nightWallpaper} --namespace backdrop --transition-type any --transition-duration 2
+      ${pkgs.swww}/bin/swww img ${mkBlurredWallpaper nightWallpaper} --namespace backdrop --transition-type any --transition-duration 2
     '';
 
   # Wallpaper sets configuration
@@ -137,7 +151,7 @@ in
       };
       Service = {
         ExecStart = "${pkgs.swww}/bin/swww-daemon --namespace backdrop";
-        ExecStartPost = "${pkgs.swww}/bin/swww img ${bigSurNight} --namespace backdrop";
+        ExecStartPost = "${pkgs.swww}/bin/swww img ${mkBlurredWallpaper bigSurNight} --namespace backdrop";
         Restart = "on-failure";
       };
       Install.WantedBy = [ "graphical-session.target" ];

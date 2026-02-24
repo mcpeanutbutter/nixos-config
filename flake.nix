@@ -63,6 +63,7 @@
           thermalZone = null; # TODO: determine on amateria (look for k10temp zone)
           hwmon = null;
           subpixelLayout = "none"; # mixed OLED/IPS monitors, grayscale AA
+          backdropBlur = 25; # Gaussian blur sigma for overview backdrop (0 = no blur)
         };
         selenitic = {
           system = "x86_64-linux";
@@ -72,6 +73,7 @@
           thermalZone = 5; # x86_pkg_temp (CPU package temp)
           hwmon = null;
           subpixelLayout = "rgb"; # standard IPS panel
+          backdropBlur = 25; # Gaussian blur sigma for overview backdrop (0 = no blur)
         };
         spire = {
           system = "x86_64-linux";
@@ -84,6 +86,7 @@
             input = "temp1_input"; # Tctl (CPU control temp)
           };
           subpixelLayout = "none"; # OLED display
+          backdropBlur = 25; # Gaussian blur sigma for overview backdrop (0 = no blur)
         };
       };
 
