@@ -49,7 +49,10 @@ in
   systemd.user.services.blueman-applet = {
     Unit = {
       Description = "Blueman Applet";
-      After = [ "graphical-session.target" "waybar.service" ];
+      After = [
+        "graphical-session.target"
+        "waybar.service"
+      ];
     };
     Service = {
       # Wait for Waybar's StatusNotifierWatcher to be available on D-Bus
@@ -64,8 +67,14 @@ in
   services.swayidle = {
     enable = true;
     events = [
-      { event = "before-sleep"; command = lockCmd; }
-      { event = "lock"; command = lockCmd; }
+      {
+        event = "before-sleep";
+        command = lockCmd;
+      }
+      {
+        event = "lock";
+        command = lockCmd;
+      }
     ];
     timeouts = [
       {
@@ -157,20 +166,21 @@ in
       # Transparent background allows backdrop wallpaper to show through
       background-color = "transparent";
 
-      # Outer gaps to screen edges (4x larger)
+      # Outer gaps to screen edges
       struts = {
-        left = 16;
-        right = 16;
-        top = 16;
-        bottom = 16;
+        left = 24;
+        right = 24;
+        top = 24;
+        bottom = 24;
       };
 
       border = {
-        width = 6; # 2x larger border
+        width = 4;
         active.gradient = {
           from = "#${config.lib.stylix.colors.base0D}"; # Blue accent
           to = "#${config.lib.stylix.colors.base0B}"; # Green accent
           angle = -45;
+          in' = "oklch longer hue";
         };
         inactive.color = "#${config.lib.stylix.colors.base03}"; # Dimmed color for inactive
       };
