@@ -13,7 +13,19 @@
     "${nixosModules}/desktop/${hostConfig.desktopEnvironment}"
     "${nixosModules}/programs/docker"
     "${nixosModules}/services/stylix"
+    "${nixosModules}/services/sops"
+    "${nixosModules}/services/bitdefender"
+    "${nixosModules}/services/clamav"
+    "${nixosModules}/services/vpn"
   ];
+
+  # Chainload Fedora's GRUB from the Fedora ESP (nvme1n1p1)
+  boot.loader.grub.extraEntries = ''
+    menuentry "Fedora" {
+      search --set=root --fs-uuid BC87-918F
+      chainloader /EFI/fedora/shimx64.efi
+    }
+  '';
 
   # Set hostname
   networking.hostName = hostname;
