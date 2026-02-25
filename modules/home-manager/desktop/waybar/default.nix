@@ -91,7 +91,7 @@ in
           "power-profiles-daemon"
           "backlight"
           "custom/night-light"
-          "custom/bitdefender"
+          "custom/BSC"
           "custom/power"
         ];
 
@@ -233,9 +233,9 @@ in
           tooltip = false;
         };
 
-        "custom/bitdefender" = {
-          exec = "${pkgs.writeShellScript "bitdefender-status" ''
-            if ${pkgs.systemd}/bin/systemctl is-active --quiet podman-bitdefender.service; then
+        "custom/BSC" = {
+          exec = "${pkgs.writeShellScript "BSC-status" ''
+            if ${pkgs.systemd}/bin/systemctl is-active --quiet podman-BSC.service; then
               echo '{"text": "󰒃", "class": "active", "tooltip": "BitDefender: Running"}'
             else
               echo '{"text": "󰒃", "class": "inactive", "tooltip": "BitDefender: Stopped"}'
@@ -243,11 +243,11 @@ in
           ''}";
           return-type = "json";
           interval = 5;
-          on-click = "${pkgs.writeShellScript "bitdefender-toggle" ''
-            if ${pkgs.systemd}/bin/systemctl is-active --quiet podman-bitdefender.service; then
-              ${pkgs.systemd}/bin/busctl call --system org.freedesktop.systemd1 /org/freedesktop/systemd1 org.freedesktop.systemd1.Manager StopUnit ss "podman-bitdefender.service" "replace"
+          on-click = "${pkgs.writeShellScript "BSC-toggle" ''
+            if ${pkgs.systemd}/bin/systemctl is-active --quiet podman-BSC.service; then
+              ${pkgs.systemd}/bin/busctl call --system org.freedesktop.systemd1 /org/freedesktop/systemd1 org.freedesktop.systemd1.Manager StopUnit ss "podman-BSC.service" "replace"
             else
-              ${pkgs.systemd}/bin/busctl call --system org.freedesktop.systemd1 /org/freedesktop/systemd1 org.freedesktop.systemd1.Manager StartUnit ss "podman-bitdefender.service" "replace"
+              ${pkgs.systemd}/bin/busctl call --system org.freedesktop.systemd1 /org/freedesktop/systemd1 org.freedesktop.systemd1.Manager StartUnit ss "podman-BSC.service" "replace"
             fi
           ''}";
           tooltip = true;

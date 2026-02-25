@@ -3,7 +3,7 @@
   security.polkit.extraConfig = ''
     polkit.addRule(function(action, subject) {
       if (action.id == "org.freedesktop.systemd1.manage-units" &&
-          action.lookup("unit") == "podman-bitdefender.service" &&
+          action.lookup("unit") == "podman-BSC.service" &&
           subject.isInGroup("wheel")) {
         return polkit.Result.YES;
       }
@@ -20,10 +20,10 @@
 
   systemd.tmpfiles.rules = [ "d /mnt/data 0755 root root -" ];
 
-  virtualisation.oci-containers.containers.bitdefender = {
+  virtualisation.oci-containers.containers.BSC = {
     image = "bdfbusiness/bitdefender-security-container:7.0";
     user = ":10000";
-    environment.BSC_SERVER = "https://cloudgz-ecs.gravityzone.bitdefender.com";
+    environment.BSC_SERVER = "cloudgz-ecs.gravityzone.bitdefender.com";
     environmentFiles = [ config.sops.templates."bitdefender-env".path ];
     volumes = [
       "/mnt/data:/data"

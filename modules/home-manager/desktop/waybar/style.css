@@ -28,7 +28,7 @@ window#waybar * {
 #memory,
 #temperature,
 #custom-night-light,
-#custom-bitdefender,
+#custom-BSC,
 #backlight,
 #pulseaudio,
 #battery,
@@ -166,13 +166,13 @@ window#waybar * {
   color: @base0A;
 }
 
-#custom-bitdefender {
+#custom-BSC {
   margin: 0.2em 0.3em 0.2em 0em;
   border-radius: 0px 8px 8px 0px;
   color: @base0A;
 }
 
-#custom-bitdefender.inactive {
+#custom-BSC.inactive {
   color: @base08;
 }
 
