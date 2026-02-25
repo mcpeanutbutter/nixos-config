@@ -88,6 +88,7 @@ in
       {
         timeout = 900; # 15 min — power off monitors (only reached when plugged in)
         command = powerOffCmd;
+        resumeCommand = "${pkgs.systemd}/bin/systemctl --user restart waybar.service";
       }
     ];
   };
