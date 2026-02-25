@@ -17,6 +17,7 @@
     "${nixosModules}/services/bitdefender"
     "${nixosModules}/services/clamav"
     "${nixosModules}/services/vpn"
+    "${nixosModules}/services/glpi-agent"
   ];
 
   # Chainload Fedora's GRUB from the Fedora ESP (nvme1n1p1)

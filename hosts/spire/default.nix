@@ -19,6 +19,7 @@
     "${nixosModules}/services/bitdefender"
     "${nixosModules}/services/clamav"
     "${nixosModules}/services/vpn"
+    "${nixosModules}/services/glpi-agent"
   ];
 
   # Set hostname
