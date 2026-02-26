@@ -5,16 +5,15 @@
   ...
 }:
 {
-  imports =
-    [
-      "${nhModules}/common"
-    ]
-    ++ lib.optionals (hostConfig.desktopEnvironment == "niri") [
-      "${nhModules}/desktop/niri"
-      "${nhModules}/desktop/waybar"
-      "${nhModules}/desktop/mako"
-      "${nhModules}/desktop/swww"
-    ];
+  imports = [
+    "${nhModules}/common"
+  ]
+  ++ lib.optionals (hostConfig.desktopEnvironment == "niri") [
+    "${nhModules}/desktop/niri"
+    "${nhModules}/desktop/waybar"
+    "${nhModules}/desktop/mako"
+    "${nhModules}/desktop/swww"
+  ];
 
   # Monitor configuration for amateria (Framework 16 laptop + external display)
   programs.niri.settings.outputs = {
@@ -24,7 +23,7 @@
         height = 1600;
         refresh = 165.0;
       };
-      scale = 1.1;
+      scale = 1.25;
     };
     "DP-3" = {
       mode = {
