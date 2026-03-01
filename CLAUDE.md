@@ -19,6 +19,10 @@ This is a NixOS configuration repository managed through Nix Flakes, supporting 
 
 **Ignore** the `old/` and `idk/` directories when working with the current configuration.
 
+## Formatting
+
+After modifying any `.nix` files, always run `nixfmt` on the changed files before committing or building. Example: `nixfmt path/to/file.nix`. This ensures consistent formatting across the repository.
+
 ## Build and Development Commands
 
 ### System Configuration

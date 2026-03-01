@@ -56,18 +56,20 @@ let
     if blurSigma == 0 then
       wallpaper
     else
-      pkgs.runCommand "blurred-${baseNameOf (toString wallpaper)}" {
-        nativeBuildInputs = [ pkgs.imagemagick ];
-      } ''
-        magick ${wallpaper} -blur 0x${toString blurSigma} $out
-      '';
+      pkgs.runCommand "blurred-${baseNameOf (toString wallpaper)}"
+        {
+          nativeBuildInputs = [ pkgs.imagemagick ];
+        }
+        ''
+          magick ${wallpaper} -blur 0x${toString blurSigma} $out
+        '';
 
   # Function to create a wallpaper setter script
   mkWallpaperScript =
     name: dayWallpaper: nightWallpaper:
     pkgs.writeShellScript "set-wallpaper-${name}" ''
-      ${pkgs.swww}/bin/swww img ${dayWallpaper} --namespace desktop --transition-type any --transition-duration 2
-      ${pkgs.swww}/bin/swww img ${mkBlurredWallpaper nightWallpaper} --namespace backdrop --transition-type any --transition-duration 2
+      ${pkgs.swww}/bin/swww img ${dayWallpaper} --namespace desktop --transition-type simple --transition-duration 2
+      ${pkgs.swww}/bin/swww img ${mkBlurredWallpaper nightWallpaper} --namespace backdrop --transition-type simple --transition-duration 2
     '';
 
   # Wallpaper sets configuration

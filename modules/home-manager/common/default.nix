@@ -66,6 +66,7 @@
       gdk
       gemini-cli
       gimp
+      glab
       handbrake
       htop
       inkscape
