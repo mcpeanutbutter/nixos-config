@@ -14,6 +14,7 @@
     overlays = [
       outputs.overlays.unstable-packages
       outputs.overlays.custom-packages
+      inputs.claude-code-nix.overlays.default
     ];
 
     config = {

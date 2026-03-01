@@ -34,6 +34,12 @@
 
     # Hardware-specific optimizations
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+
+    # Claude Code
+    claude-code-nix = {
+      url = "github:sadjow/claude-code-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =

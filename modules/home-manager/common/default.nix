@@ -56,7 +56,7 @@
     [
       ansible
       ansible-lint
-      pkgs.unstable.claude-code-bin
+      claude-code
       clusterctl
       dbeaver-bin
       devenv
