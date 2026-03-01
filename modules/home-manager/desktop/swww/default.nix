@@ -5,131 +5,119 @@
   ...
 }:
 let
-  # Wallpaper Set 0: macOS Mojave 10.14 (Day/Night)
-  mojaveDay = pkgs.fetchurl {
-    url = "https://512pixels.net/downloads/macos-wallpapers-6k/10-14-Day-6k.jpg";
-    sha256 = "0fc71x1hwsng647qfl2s6yxzwc0rlcrlpz3x81vmxd6dpbs6y0kq";
-  };
+  # Wallpaper list — to add/remove wallpapers, edit this list. Schedules auto-adjust.
+  # Use `nix-prefetch-url --name <clean-name> <url>` to get sha256 for new entries.
+  # The `name` field must be a valid Nix store name (no spaces or special characters).
+  wallpapers = [
+    {
+      name = "bliss";
+      url = "https://ia601200.us.archive.org/11/items/theoriginalfilesofsomewindowswallpapers/bliss%20600dpi.jpg";
+      sha256 = "0xm27x6dnzns8dca08w2y4wjr35kqf90lbnk57hbkqk4x0w8fv6z";
+    }
+    {
+      name = "catalina";
+      url = "https://512pixels.net/downloads/macos-wallpapers/10-15-Day.jpg";
+      sha256 = "0j8mhpdy0dz141d6s2a242kwrhqjlnjcrv7ks2c3x33ii7fs4hyr";
+    }
+    {
+      name = "bigsur";
+      url = "https://512pixels.net/downloads/macos-wallpapers/11-0-Day.jpg";
+      sha256 = "17bmm234nj3xikr7q76c35mqxnc0mncpfk7hksj0zn8x397h0a6j";
+    }
+    {
+      name = "mojave";
+      url = "https://512pixels.net/downloads/macos-wallpapers-6k/10-14-Day-6k.jpg";
+      sha256 = "0fc71x1hwsng647qfl2s6yxzwc0rlcrlpz3x81vmxd6dpbs6y0kq";
+    }
+  ];
 
-  mojaveNight = pkgs.fetchurl {
-    url = "https://512pixels.net/downloads/macos-wallpapers-6k/10-14-Night-6k.jpg";
-    sha256 = "09vgyvrjbi5zdrgifdq8zpp9qb9yf70g1npc0ldz3j5kbydnq4fn";
-  };
+  n = builtins.length wallpapers;
 
-  # Wallpaper Set 1: macOS Catalina 10.15 (Day/Night)
-  catalinaDay = pkgs.fetchurl {
-    url = "https://512pixels.net/downloads/macos-wallpapers/10-15-Day.jpg";
-    sha256 = "0j8mhpdy0dz141d6s2a242kwrhqjlnjcrv7ks2c3x33ii7fs4hyr";
-  };
+  # Fetch a wallpaper, using `name` to ensure a clean Nix store path
+  fetchWallpaper =
+    wp:
+    pkgs.fetchurl {
+      inherit (wp) url sha256;
+      name = "${wp.name}.jpg";
+    };
 
-  catalinaNight = pkgs.fetchurl {
-    url = "https://512pixels.net/downloads/macos-wallpapers/10-15-Night.jpg";
-    sha256 = "08cd0lacb2l0kal1zvxk7xhignqvhwdznwgqmsxy2iw7kzy12yfa";
-  };
-
-  # Wallpaper Set 2: macOS Big Sur 11.0 (Day/Night)
-  bigSurDay = pkgs.fetchurl {
-    url = "https://512pixels.net/downloads/macos-wallpapers/11-0-Day.jpg";
-    sha256 = "17bmm234nj3xikr7q76c35mqxnc0mncpfk7hksj0zn8x397h0a6j";
-  };
-
-  bigSurNight = pkgs.fetchurl {
-    url = "https://512pixels.net/downloads/macos-wallpapers/11-0-Night.jpg";
-    sha256 = "0h7mhf7yr0n6b0g6iklbvkshgxpxyy7lldyf5wxvzggff26r7hbw";
-  };
-
-  # Wallpaper Set 3: Lake Tahoe Beach (Day/Night)
-  tahoeDay = pkgs.fetchurl {
-    url = "https://512pixels.net/downloads/macos-wallpapers-6k/26-Tahoe-Beach-Day.png";
-    sha256 = "0nj9w3b3ayl3j31wnf339z97x9aywk1aq809flp6wqhjkgy8cfjc";
-  };
-
-  tahoeNight = pkgs.fetchurl {
-    url = "https://512pixels.net/downloads/macos-wallpapers-6k/26-Tahoe-Beach-Night.png";
-    sha256 = "1frivc1xv35cada7lbqiswbgracsp6mkc37dv2zklgcg0f2x0w4f";
-  };
-
-  # Apply Gaussian blur to a wallpaper at build time (for overview backdrop)
+  # Generate a night + optionally blurred version of a wallpaper for the overview backdrop.
+  # Night transform: reduce red/green, boost blue, darken + desaturate.
   blurSigma = hostConfig.backdropBlur;
-  mkBlurredWallpaper =
-    wallpaper:
-    if blurSigma == 0 then
-      wallpaper
-    else
-      pkgs.runCommand "blurred-${baseNameOf (toString wallpaper)}"
-        {
-          nativeBuildInputs = [ pkgs.imagemagick ];
-        }
-        ''
-          magick ${wallpaper} -blur 0x${toString blurSigma} $out
-        '';
-
-  # Function to create a wallpaper setter script
-  mkWallpaperScript =
-    name: dayWallpaper: nightWallpaper:
-    pkgs.writeShellScript "set-wallpaper-${name}" ''
-      ${pkgs.swww}/bin/swww img ${dayWallpaper} --namespace desktop --transition-type simple --transition-duration 2
-      ${pkgs.swww}/bin/swww img ${mkBlurredWallpaper nightWallpaper} --namespace backdrop --transition-type simple --transition-duration 2
+  mkBackdropWallpaper =
+    wp:
+    let
+      src = fetchWallpaper wp;
+    in
+    pkgs.runCommand "backdrop-${wp.name}.jpg" { nativeBuildInputs = [ pkgs.imagemagick ]; } ''
+      magick ${src} \
+        -channel R -evaluate multiply 0.4 \
+        -channel G -evaluate multiply 0.5 \
+        -channel B -evaluate multiply 0.8 \
+        +channel -modulate 50,40 \
+        ${lib.optionalString (blurSigma != 0) "-blur 0x${toString blurSigma}"} \
+        $out
     '';
 
-  # Wallpaper sets configuration
-  wallpaperSets = {
-    mojave = {
-      day = mojaveDay;
-      night = mojaveNight;
-      schedule = "00/4:00:00"; # 0:00, 4:00, 8:00, 12:00, 16:00, 20:00
-    };
-    catalina = {
-      day = catalinaDay;
-      night = catalinaNight;
-      schedule = "01/4:00:00"; # 1:00, 5:00, 9:00, 13:00, 17:00, 21:00
-    };
-    bigsur = {
-      day = bigSurDay;
-      night = bigSurNight;
-      schedule = "02/4:00:00"; # 2:00, 6:00, 10:00, 14:00, 18:00, 22:00
-    };
-    tahoe = {
-      day = tahoeDay;
-      night = tahoeNight;
-      schedule = "03/4:00:00"; # 3:00, 7:00, 11:00, 15:00, 19:00, 23:00
-    };
-  };
+  # Zero-padded two-digit hour string
+  pad = i: lib.fixedWidthString 2 "0" (toString i);
 
-  # Function to create a systemd timer that directly runs the wallpaper script
-  mkWallpaperTimer = name: set: {
-    Unit = {
-      Description = "Rotate to ${name} wallpapers";
-    };
-    Timer = {
-      OnCalendar = set.schedule;
-      Persistent = true;
-    };
-    Install.WantedBy = [ "timers.target" ];
-  };
+  # Wallpaper setter script for a given wallpaper entry
+  mkWallpaperScript =
+    wp:
+    let
+      day = fetchWallpaper wp;
+      backdrop = mkBackdropWallpaper wp;
+    in
+    pkgs.writeShellScript "set-wallpaper-${wp.name}" ''
+      ${pkgs.swww}/bin/swww img ${day} --namespace desktop --transition-type simple --transition-duration 2
+      ${pkgs.swww}/bin/swww img ${backdrop} --namespace backdrop --transition-type simple --transition-duration 2
+    '';
 
-  # Function to create the service that the timer triggers
-  mkWallpaperService = name: set: {
-    Unit = {
-      Description = "Set ${name} wallpapers";
-      After = [
-        "swww-desktop.service"
-        "swww-backdrop.service"
-      ];
-    };
-    Service = {
-      Type = "oneshot";
-      ExecStart = "${mkWallpaperScript name set.day set.night}";
-    };
-  };
+  # Generate indexed wallpaper entries: [ { i = 0; wp = { name = ...; }; } ... ]
+  indexed = lib.imap0 (i: wp: { inherit i wp; }) wallpapers;
+
+  # First wallpaper (used as initial wallpaper on daemon start)
+  first = builtins.head wallpapers;
+
+  # Generate swww-set-* services and timers from the wallpaper list
+  rotationServices = lib.listToAttrs (
+    map (
+      { i, wp }:
+      lib.nameValuePair "swww-set-${wp.name}" {
+        Unit = {
+          Description = "Set ${wp.name} wallpapers";
+          After = [
+            "swww-desktop.service"
+            "swww-backdrop.service"
+          ];
+        };
+        Service = {
+          Type = "oneshot";
+          ExecStart = "${mkWallpaperScript wp}";
+        };
+      }
+    ) indexed
+  );
+
+  rotationTimers = lib.listToAttrs (
+    map (
+      { i, wp }:
+      lib.nameValuePair "swww-set-${wp.name}" {
+        Unit.Description = "Rotate to ${wp.name} wallpapers";
+        Timer = {
+          OnCalendar = "*-*-* ${pad i}/${toString n}:00:00";
+          Persistent = true;
+        };
+        Install.WantedBy = [ "timers.target" ];
+      }
+    ) indexed
+  );
 in
 {
-  # Install swww package
   home.packages = [ pkgs.swww ];
 
-  # Systemd services: daemon services + wallpaper rotation services
   systemd.user.services = {
-    # Desktop wallpaper daemon (regular workspace background)
     swww-desktop = {
       Unit = {
         Description = "Wallpaper daemon for desktop (swww)";
@@ -138,35 +126,30 @@ in
       };
       Service = {
         ExecStart = "${pkgs.swww}/bin/swww-daemon --namespace desktop";
-        ExecStartPost = "${pkgs.swww}/bin/swww img ${bigSurDay} --namespace desktop";
+        ExecStartPost = "${pkgs.swww}/bin/swww img ${fetchWallpaper first} --namespace desktop";
         Restart = "on-failure";
       };
       Install.WantedBy = [ "graphical-session.target" ];
     };
 
-    # Backdrop wallpaper daemon (overview background)
     swww-backdrop = {
       Unit = {
         Description = "Wallpaper daemon for backdrop (swww)";
-        After = [ "graphical-session.target" ];
+        After = [
+          "graphical-session.target"
+          "swww-desktop.service"
+        ];
         PartOf = [ "graphical-session.target" ];
       };
       Service = {
         ExecStart = "${pkgs.swww}/bin/swww-daemon --namespace backdrop";
-        ExecStartPost = "${pkgs.swww}/bin/swww img ${mkBlurredWallpaper bigSurNight} --namespace backdrop";
+        ExecStartPost = "${pkgs.swww}/bin/swww img ${mkBackdropWallpaper first} --namespace backdrop";
         Restart = "on-failure";
       };
       Install.WantedBy = [ "graphical-session.target" ];
     };
   }
-  // lib.mapAttrs' (
-    name: set:
-    # Generate rotation services for each wallpaper set
-    lib.nameValuePair "swww-set-${name}" (mkWallpaperService name set)
-  ) wallpaperSets;
+  // rotationServices;
 
-  # Generate timers for each wallpaper set
-  systemd.user.timers = lib.mapAttrs' (
-    name: set: lib.nameValuePair "swww-set-${name}" (mkWallpaperTimer name set)
-  ) wallpaperSets;
+  systemd.user.timers = rotationTimers;
 }
