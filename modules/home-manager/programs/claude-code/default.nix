@@ -10,6 +10,12 @@ let
     "\\033[38;2;${toString colors."${name}-rgb-r"};${toString colors."${name}-rgb-g"};${
       toString colors."${name}-rgb-b"
     }m";
+  anthropics-skills = pkgs.fetchFromGitHub {
+    owner = "anthropics";
+    repo = "skills";
+    rev = "7029232b9212482c0476da354b83364bd28fab2f";
+    hash = "sha256-rQXOcZk0nF9ZqYK0CUelGoY4oj/gYZgcdh1qUdwvx2k=";
+  };
   statuslineScript = pkgs.writeShellScript "claude-statusline" ''
     set -f
 
@@ -308,6 +314,11 @@ let
   '';
 in
 {
+  home.file.".claude/skills/skill-creator" = {
+    source = "${anthropics-skills}/skills/skill-creator";
+    recursive = true;
+  };
+
   programs.claude-code = {
     enable = true;
     package = pkgs.claude-code;
