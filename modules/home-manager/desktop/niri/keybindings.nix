@@ -4,14 +4,20 @@
     "Mod+Shift+Slash".action.show-hotkey-overlay = [ ];
     # Application shortcuts
     "Mod+T" = {
-      action.spawn = [ "ghostty" ];
+      action.spawn = [
+        "ghostty"
+        "+new-window"
+      ];
       hotkey-overlay.title = "Spawn GhosTTY Terminal";
     };
     "Mod+D" = {
       action.spawn = [ "fuzzel" ];
       hotkey-overlay.title = "Spawn fuzzel launcher";
     };
-    "Mod+Alt+L".action.spawn = [ "loginctl" "lock-session" ];
+    "Mod+Alt+L".action.spawn = [
+      "loginctl"
+      "lock-session"
+    ];
 
     # Media keys
     "XF86AudioRaiseVolume" = {

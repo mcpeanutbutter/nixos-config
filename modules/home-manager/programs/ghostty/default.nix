@@ -3,6 +3,7 @@
   programs.ghostty = {
     enable = true;
     package = pkgs.ghostty;
+    systemd.enable = true;
     enableZshIntegration = true;
     installBatSyntax = true;
     settings = {

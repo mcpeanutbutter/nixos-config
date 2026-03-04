@@ -135,16 +135,15 @@
 
   # Fonts configuration
   fonts.packages = with pkgs; [
-    nerd-fonts.jetbrains-mono
-    nerd-fonts.meslo-lg
-    roboto
+    maple-mono.NF
+    dejavu_fonts
   ];
 
   fonts.fontconfig = {
     antialias = true;
     hinting = {
       enable = true;
-      style = "full";
+      style = "slight";
     };
     subpixel.rgba = hostConfig.subpixelLayout;
   };

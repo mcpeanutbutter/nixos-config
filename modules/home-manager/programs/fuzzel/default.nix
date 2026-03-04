@@ -7,7 +7,7 @@
     settings = {
       main = {
         # Set terminal for terminal applications like btop
-        terminal = "${pkgs.ghostty}/bin/ghostty -e";
+        terminal = "${pkgs.ghostty}/bin/ghostty +new-window -e";
 
         # Display settings
         show-actions = true;

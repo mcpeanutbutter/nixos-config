@@ -7,6 +7,7 @@
 {
   imports = [
     ../programs/brave
+    ../programs/claude-code
     ../programs/direnv
     ../programs/sops
     ../programs/eza
@@ -56,7 +57,6 @@
     [
       ansible
       ansible-lint
-      claude-code
       clusterctl
       dbeaver-bin
       devenv
