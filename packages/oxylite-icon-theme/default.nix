@@ -5,15 +5,9 @@
   gtk3,
   hicolor-icon-theme,
   kdePackages,
-  # Attrset mapping alias icon names to target icon names (without .svg extension).
-  # Symlinks are created in every icon category directory where the target exists.
-  aliases ? {
-    brave-browser = "internet-web-browser";
-    "com.mitchellh.ghostty" = "utilities-terminal";
-    vscodium = "accessories-text-editor";
-    kitty = "utilities-terminal";
-    "dev.zed.Zed" = "accessories-text-editor";
-  },
+  # Path to a directory of custom SVG icons mirroring the theme's category structure
+  # (e.g. custom-icons/apps/my-app.svg). Merged into the theme before alias creation.
+  customIconsDir ? ./custom-icons,
 }:
 
 stdenvNoCC.mkDerivation {
@@ -46,16 +40,10 @@ stdenvNoCC.mkDerivation {
     mkdir -p $out/share/icons/oxylite
     cp -a actions apps categories devices emblems emotes mimetypes places preferences status ui index.theme $out/share/icons/oxylite/
 
-    # Create icon aliases
-    ${lib.concatStringsSep "\n" (
-      lib.mapAttrsToList (alias: target: ''
-        for dir in $out/share/icons/oxylite/*/; do
-          if [ -f "$dir/${target}.svg" ]; then
-            ln -sf "${target}.svg" "$dir/${alias}.svg"
-          fi
-        done
-      '') aliases
-    )}
+    # Merge custom icons (preserving category subdirectory structure)
+    if [ -d "${customIconsDir}" ]; then
+      cp -r ${customIconsDir}/* $out/share/icons/oxylite/ 2>/dev/null || true
+    fi
 
     gtk-update-icon-cache --force $out/share/icons/oxylite
 
