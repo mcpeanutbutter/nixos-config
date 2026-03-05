@@ -1,10 +1,13 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
+let
+  colors = config.lib.stylix.colors;
+in
 {
   gtk = {
     enable = true;
 
     iconTheme = {
-      package = pkgs.oxylite-icon-theme;
+      package = pkgs.oxylite-icon-theme.override { folderColor = "${colors.base0A}"; };
       name = "oxylite";
     };
 
