@@ -2,9 +2,9 @@
 {
   programs.vscode = {
     enable = true;
-    package = pkgs.vscodium;
+    package = pkgs.unstable.vscodium;
     profiles.default.extensions =
-      with (vscode-extensions.forVSCodeVersion pkgs.vscodium.version).vscode-marketplace; [
+      with (vscode-extensions.forVSCodeVersion pkgs.unstable.vscodium.version).vscode-marketplace; [
         # Nix
         mkhl.direnv
         jnoortheen.nix-ide
