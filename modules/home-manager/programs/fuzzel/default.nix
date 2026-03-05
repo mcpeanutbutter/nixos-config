@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
   # Enable fuzzel so stylix can theme it automatically
   programs.fuzzel = {
@@ -12,8 +12,12 @@
         # Display settings
         show-actions = true;
         dpi-aware = "no"; # Disable automatic DPI scaling to ensure consistent font size
+        icon-theme = "oxylite";
 
         # Window appearance
+        font = lib.mkForce "monospace:size=20";
+        icon-size-ratio = 1.0;
+        line-height = 35;
         width = 50;
         lines = 15;
       };

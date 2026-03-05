@@ -13,5 +13,8 @@
   custom-packages = final: prev: {
     # Fix missing xrdb alias - home-manager xresources module expects pkgs.xrdb
     xrdb = prev.xorg.xrdb;
+
+    # Oxylite skeuomorphic icon theme
+    oxylite-icon-theme = final.callPackage ../packages/oxylite-icon-theme { };
   };
 }
