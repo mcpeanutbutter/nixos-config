@@ -59,6 +59,51 @@ in
     enable = true;
   };
 
+  systemd.user.services.gammastep = {
+    Unit = {
+      Description = "Night light (gammastep)";
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+    };
+    Service = {
+      ExecStart = "${pkgs.gammastep}/bin/gammastep -O 4000";
+    };
+  };
+
+  systemd.user.services.night-light-on = {
+    Unit.Description = "Auto-enable night light";
+    Service = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.systemd}/bin/systemctl --user start gammastep.service";
+    };
+  };
+
+  systemd.user.timers.night-light-on = {
+    Unit.Description = "Auto-enable night light at 21:00";
+    Timer = {
+      OnCalendar = "*-*-* 21:00:00";
+      Persistent = true;
+    };
+    Install.WantedBy = [ "timers.target" ];
+  };
+
+  systemd.user.services.night-light-off = {
+    Unit.Description = "Auto-disable night light";
+    Service = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.systemd}/bin/systemctl --user stop gammastep.service";
+    };
+  };
+
+  systemd.user.timers.night-light-off = {
+    Unit.Description = "Auto-disable night light at 08:00";
+    Timer = {
+      OnCalendar = "*-*-* 08:00:00";
+      Persistent = true;
+    };
+    Install.WantedBy = [ "timers.target" ];
+  };
+
   programs.waybar = {
     enable = true;
     systemd.enable = true;
@@ -136,9 +181,11 @@ in
           critical-threshold = 80;
           format = "{icon} {temperatureC}°C";
           format-icons = temperature-icons;
-        } // lib.optionalAttrs (hostConfig.thermalZone != null) {
+        }
+        // lib.optionalAttrs (hostConfig.thermalZone != null) {
           thermal-zone = hostConfig.thermalZone;
-        } // lib.optionalAttrs (hostConfig.hwmon != null) {
+        }
+        // lib.optionalAttrs (hostConfig.hwmon != null) {
           hwmon-path-abs = hostConfig.hwmon.path;
           input-filename = hostConfig.hwmon.input;
         };
@@ -222,15 +269,23 @@ in
         };
 
         "custom/night-light" = {
-          format = "󰖔";
-          on-click = "${pkgs.writeShellScript "night-light-toggle" ''
-            if ${pkgs.procps}/bin/pgrep gammastep > /dev/null; then
-              ${pkgs.procps}/bin/pkill gammastep
+          exec = "${pkgs.writeShellScript "night-light-status" ''
+            if ${pkgs.systemd}/bin/systemctl --user is-active --quiet gammastep.service; then
+              echo '{"text": "󰖔", "class": "active", "tooltip": "Night Light: On"}'
             else
-              ${pkgs.gammastep}/bin/gammastep -O 4000 &
+              echo '{"text": "󰖔", "class": "inactive", "tooltip": "Night Light: Off"}'
             fi
           ''}";
-          tooltip = false;
+          return-type = "json";
+          interval = 5;
+          on-click = "${pkgs.writeShellScript "night-light-toggle" ''
+            if ${pkgs.systemd}/bin/systemctl --user is-active --quiet gammastep.service; then
+              ${pkgs.systemd}/bin/systemctl --user stop gammastep.service
+            else
+              ${pkgs.systemd}/bin/systemctl --user start gammastep.service
+            fi
+          ''}";
+          tooltip = true;
         };
 
         "custom/BSC" = {
