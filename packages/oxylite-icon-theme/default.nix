@@ -98,6 +98,10 @@ stdenvNoCC.mkDerivation {
       cp -r ${customIconsDir}/* $out/share/icons/oxylite/ 2>/dev/null || true
     fi
 
+    # Map Blueman icon names to Oxylite's bluetooth device icon
+    ln -s ../devices/bluetooth.svg $out/share/icons/oxylite/apps/blueman.svg
+    ln -s ../devices/bluetooth.svg $out/share/icons/oxylite/apps/blueman-device.svg
+
     ${lib.optionalString (folderColor != null) ''
       # Recolor folder icons (skip explicit color variants)
       SED_ARGS=$(python3 -c ${lib.escapeShellArg recolorScript} ${folderColor} ${lib.concatStringsSep " " yellowHexes})
