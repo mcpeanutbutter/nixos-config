@@ -1,14 +1,11 @@
-{ pkgs, config, ... }:
-let
-  colors = config.lib.stylix.colors;
-in
+{ pkgs, ... }:
 {
   gtk = {
     enable = true;
 
     iconTheme = {
-      package = pkgs.oxylite-icon-theme.override { folderColor = "${colors.base0A}"; };
-      name = "oxylite";
+      package = pkgs.hatter-icon-theme;
+      name = "Hatter-kde-dark";
     };
 
     gtk3.extraConfig = {
@@ -21,6 +18,6 @@ in
   };
 
   dconf.settings."org/gnome/desktop/interface" = {
-    icon-theme = "oxylite";
+    icon-theme = "Hatter-kde-dark";
   };
 }

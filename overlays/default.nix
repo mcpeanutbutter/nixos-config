@@ -14,7 +14,10 @@
     # Fix missing xrdb alias - home-manager xresources module expects pkgs.xrdb
     xrdb = prev.xorg.xrdb;
 
-    # Oxylite skeuomorphic icon theme
-    oxylite-icon-theme = final.callPackage ../packages/oxylite-icon-theme { };
+    # Oxylite skeuomorphic icon theme (disabled, kept for reference)
+    # oxylite-icon-theme = final.callPackage ../packages/oxylite-icon-theme { };
+
+    # Hatter rounded-square icon theme (KDE dark variant)
+    hatter-icon-theme = final.callPackage ../packages/hatter-icon-theme { };
   };
 }

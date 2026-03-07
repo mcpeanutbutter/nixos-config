@@ -12,11 +12,11 @@
         # Display settings
         show-actions = true;
         dpi-aware = "no"; # Disable automatic DPI scaling to ensure consistent font size
-        icon-theme = "oxylite";
+        icon-theme = "Hatter-kde-dark";
 
         # Window appearance
         font = lib.mkForce "monospace:size=20";
-        icon-size-ratio = 1.0;
+        image-size-ratio = 0.5;
         line-height = 35;
         width = 50;
         lines = 15;
