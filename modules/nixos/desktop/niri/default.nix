@@ -1,4 +1,9 @@
-{ pkgs, inputs, ... }:
+{
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 {
   imports = [
     inputs.niri.nixosModules.niri
@@ -26,7 +31,7 @@
   };
 
   # PAM service for hyprlock authentication
-  security.pam.services.hyprlock = {};
+  security.pam.services.hyprlock = { };
 
   # Configure keymap
   services.xserver.xkb = {
@@ -44,6 +49,22 @@
 
   # Power management (not in niri-flake defaults)
   services.upower.enable = true;
+
+  # Replace niri-flake's broken polkit-kde-agent with polkit-gnome
+  # (polkit-kde-agent fails to register with the host portal outside Plasma)
+  systemd.user.services.niri-flake-polkit = lib.mkForce {
+    description = "PolicyKit Authentication Agent";
+    partOf = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+    wantedBy = [ "niri.service" ];
+    serviceConfig = {
+      ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+      Type = "simple";
+      Restart = "on-failure";
+      RestartSec = 1;
+      TimeoutStopSec = 10;
+    };
+  };
 
   # Essential Niri packages
   environment.systemPackages = with pkgs; [
@@ -70,7 +91,8 @@
     networkmanagerapplet # nm-applet for system tray
 
     # File management
-    nautilus # GNOME file manager (needed by xdg-desktop-portal-gnome for FileChooser)
+    nemo-with-extensions # Cinnamon file manager (GTK, dual pane, extensions)
+    cinnamon-desktop # gsettings schemas for Nemo (terminal, default apps)
     gnome-text-editor
 
     # Archive management

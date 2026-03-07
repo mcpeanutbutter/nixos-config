@@ -22,6 +22,12 @@
     line-height = 1.1;
   };
 
+  # Nemo terminal emulator for "Open in Terminal"
+  dconf.settings."org/cinnamon/desktop/applications/terminal" = {
+    exec = "ghostty";
+    exec-arg = "-e";
+  };
+
   # Register .nix as a known MIME type (not in the standard MIME database)
   xdg.dataFile."mime/packages/text-x-nix.xml".text = ''
     <?xml version="1.0" encoding="UTF-8"?>
@@ -43,7 +49,7 @@
         editor = "org.gnome.TextEditor.desktop";
       in
       {
-        "inode/directory" = "org.gnome.Nautilus.desktop";
+        "inode/directory" = "nemo.desktop";
         "text/plain" = editor;
         "text/markdown" = editor;
         "text/x-nix" = editor;
