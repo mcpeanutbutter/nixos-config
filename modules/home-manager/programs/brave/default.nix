@@ -9,4 +9,11 @@
       # Example: { id = "cjpalhdlnbpafiamejdnhcphjbkeiagm"; } # uBlock Origin
     ];
   };
+
+  xdg.desktopEntries.claude-ai = {
+    name = "Claude AI";
+    exec = "${pkgs.brave}/bin/brave --app=https://claude.ai/";
+    icon = "claude";
+    categories = [ "Utility" ];
+  };
 }

@@ -1,5 +1,18 @@
-{ ... }:
+{ pkgs, ... }:
 {
+  xdg.desktopEntries.nvim = {
+    name = "Neovim";
+    genericName = "Text Editor";
+    comment = "Edit text files";
+    exec = "${pkgs.ghostty}/bin/ghostty -e nvim %F";
+    terminal = false;
+    icon = "nvim";
+    categories = [
+      "Utility"
+      "TextEditor"
+    ];
+  };
+
   programs.nixvim = {
     enable = true;
     defaultEditor = true;
