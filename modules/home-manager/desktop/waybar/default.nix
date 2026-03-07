@@ -147,7 +147,7 @@ in
         };
 
         "custom/launcher" = {
-          format = "";
+          format = " ";
           on-click = "${pkgs.fuzzel}/bin/fuzzel";
           tooltip = false;
         };
@@ -309,20 +309,20 @@ in
         };
 
         "custom/power" = {
-          format = "⏻";
+          format = " ";
           on-click = "${pkgs.writeShellScript "power-menu" ''
-            choice=$(echo -e "💤 Sleep\n🚪 Logout\n🔄 Reboot\n⏻ Shutdown" | ${pkgs.fuzzel}/bin/fuzzel --dmenu --prompt "Power: ")
+            choice=$(printf "Sleep\0icon\x1fsuspend\nLogout\0icon\x1flog-out\nReboot\0icon\x1freboot\nShutdown\0icon\x1fshutdown\n" | ${pkgs.fuzzel}/bin/fuzzel --dmenu --prompt "Power: ")
             case "$choice" in
-              "💤 Sleep")
+              "Sleep")
                 systemctl suspend
                 ;;
-              "🚪 Logout")
+              "Logout")
                 ${pkgs.niri}/bin/niri msg action quit
                 ;;
-              "🔄 Reboot")
+              "Reboot")
                 systemctl reboot
                 ;;
-              "⏻ Shutdown")
+              "Shutdown")
                 systemctl poweroff
                 ;;
             esac
@@ -332,7 +332,23 @@ in
       };
     };
 
-    style = lib.mkAfter (builtins.readFile ./style.css);
+    style = lib.mkAfter ''
+      ${builtins.readFile ./style.css}
+
+      #custom-launcher {
+        background-image: url("${pkgs.hatter-icon-theme}/share/icons/Hatter/scalable/apps/distributor-logo-nixos.svg");
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+      }
+
+      #custom-power {
+        background-image: url("${pkgs.hatter-icon-theme}/share/icons/Hatter/scalable/apps/shutdown.svg");
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+      }
+    '';
   };
 
 }

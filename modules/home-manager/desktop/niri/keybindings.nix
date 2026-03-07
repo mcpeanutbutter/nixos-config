@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 {
   programs.niri.settings.binds = {
     "Mod+Shift+Slash".action.show-hotkey-overlay = [ ];
@@ -18,10 +18,35 @@
       action.spawn = [ "brave" ];
       hotkey-overlay.title = "Spawn Brave Browser";
     };
-    "Mod+Alt+L".action.spawn = [
-      "loginctl"
-      "lock-session"
-    ];
+    "Mod+X" = {
+      action.spawn = [
+        "loginctl"
+        "lock-session"
+      ];
+      hotkey-overlay.title = "Lock screen";
+    };
+    "Mod+P" = {
+      action.spawn = [
+        "${pkgs.writeShellScript "power-menu" ''
+          choice=$(printf "Sleep\0icon\x1fsuspend\nLogout\0icon\x1flog-out\nReboot\0icon\x1freboot\nShutdown\0icon\x1fshutdown\n" | ${pkgs.fuzzel}/bin/fuzzel --dmenu --prompt "Power: ")
+          case "$choice" in
+            "Sleep")
+              systemctl suspend
+              ;;
+            "Logout")
+              ${pkgs.niri}/bin/niri msg action quit
+              ;;
+            "Reboot")
+              systemctl reboot
+              ;;
+            "Shutdown")
+              systemctl poweroff
+              ;;
+          esac
+        ''}"
+      ];
+      hotkey-overlay.title = "Power menu";
+    };
 
     # Media keys
     "XF86AudioRaiseVolume" = {

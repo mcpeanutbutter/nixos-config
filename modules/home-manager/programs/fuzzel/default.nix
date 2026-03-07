@@ -12,6 +12,7 @@
         # Display settings
         show-actions = true;
         dpi-aware = "no"; # Disable automatic DPI scaling to ensure consistent font size
+        keyboard-focus = "on-demand"; # Allow closing by clicking outside
         icon-theme = "Hatter-kde-dark";
 
         # Window appearance

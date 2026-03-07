@@ -37,7 +37,7 @@ window#waybar * {
 #power-profiles-daemon,
 #custom-power {
   background-color: @base02;
-  padding: 4px 12px;
+  padding: 2px 12px;
   margin-top: 2px;
   margin-bottom: 2px;
 }
@@ -50,41 +50,42 @@ window#waybar * {
 
 /* Pill 1: Launcher */
 #custom-launcher {
-  font-size: 16px;
   margin: 0.2em 0.3em;
   border-radius: 8px;
-  background-color: @base0D;
-  color: @base00;
+  background-color: transparent;
+  color: transparent;
+  min-width: 28px;
+  padding: 4px;
 }
 
 /* Pill 2: Date + Time */
 #clock.date {
-  margin: 0.2em 0em 0.2em 0.3em;
+  margin: 0.3em 0em 0.3em 0.3em;
   border-radius: 8px 0px 0px 8px;
   color: @base0C;
 }
 
 #clock.time {
-  margin: 0.2em 0.3em 0.2em 0em;
+  margin: 0.3em 0.3em 0.3em 0em;
   border-radius: 0px 8px 8px 0px;
   color: @base0C;
 }
 
 /* Pill 3: CPU + Memory + Temperature */
 #cpu {
-  margin: 0.2em 0em 0.2em 0.3em;
+  margin: 0.3em 0em 0.3em 0.3em;
   border-radius: 8px 0px 0px 8px;
   color: @base09;
 }
 
 #memory {
-  margin: 0.2em 0em;
+  margin: 0.3em 0em;
   border-radius: 0px;
   color: @base09;
 }
 
 #temperature {
-  margin: 0.2em 0.3em 0.2em 0em;
+  margin: 0.3em 0.3em 0.3em 0em;
   border-radius: 0px 8px 8px 0px;
   color: @base09;
 }
@@ -94,7 +95,7 @@ window#waybar * {
  * Inactive: base0E (purple) text
  */
 #workspaces {
-  margin: 0.2em 0.3em;
+  margin: 0.3em 0.3em;
   border-radius: 8px;
 }
 
@@ -124,44 +125,44 @@ window#waybar * {
 
 /* Pill 5: Tray */
 #tray {
-  margin: 0.2em 0.3em;
+  margin: 0.3em 0.3em;
   border-radius: 8px;
   color: @base0C;
 }
 
 /* Pill 6: Volume + Privacy + Battery + Power Profiles + Backlight + Night Light + BitDefender */
 #pulseaudio {
-  margin: 0.2em 0em 0.2em 0.3em;
+  margin: 0.3em 0em 0.3em 0.3em;
   border-radius: 8px 0px 0px 8px;
   color: @base0A;
 }
 
 #privacy {
-  margin: 0.2em 0em;
+  margin: 0.3em 0em;
   border-radius: 0px;
   color: @base0A;
 }
 
 #battery {
-  margin: 0.2em 0em;
+  margin: 0.3em 0em;
   border-radius: 0px;
   color: @base0A;
 }
 
 #power-profiles-daemon {
-  margin: 0.2em 0em;
+  margin: 0.3em 0em;
   border-radius: 0px;
   color: @base0A;
 }
 
 #backlight {
-  margin: 0.2em 0em;
+  margin: 0.3em 0em;
   border-radius: 0px;
   color: @base0A;
 }
 
 #custom-night-light {
-  margin: 0.2em 0em;
+  margin: 0.3em 0em;
   border-radius: 0px;
   color: @base0A;
 }
@@ -171,7 +172,7 @@ window#waybar * {
 }
 
 #custom-BSC {
-  margin: 0.2em 0.3em 0.2em 0em;
+  margin: 0.3em 0.3em 0.3em 0em;
   border-radius: 0px 8px 8px 0px;
   color: @base0A;
 }
@@ -184,6 +185,8 @@ window#waybar * {
 #custom-power {
   margin: 0.2em 0.3em;
   border-radius: 8px;
-  background-color: @base08;
-  color: @base00;
+  background-color: transparent;
+  color: transparent;
+  min-width: 28px;
+  padding: 4px;
 }
