@@ -44,7 +44,6 @@
         "*.tftpl" = "jinja-yaml";
       };
 
-      # "editor.fontSize" = 17;
       "nix.enableLanguageServer" = true;
       "nix.serverPath" = "nixd";
       "nix.serverSettings" = {
@@ -55,13 +54,10 @@
           "formatting" = {
             "command" = [ "nixfmt" ];
           };
-          "options" = {
-            # nixpkgs = "${pkgs.path}";
-          };
+          "options" = { };
         };
       };
       "redhat.telemetry.enabled" = false;
-      # "terminal.integrated.fontSize" = 17;
       "terminal.integrated.defaultProfile.linux" = "zsh";
       "workbench.editor.tabSizing" = "shrink";
       "zig.zls.enabled" = "on";

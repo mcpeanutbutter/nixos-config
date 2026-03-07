@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, powerMenuScript, ... }:
 {
   programs.niri.settings.binds = {
     "Mod+Shift+Slash".action.show-hotkey-overlay = [ ];
@@ -20,8 +20,8 @@
     };
     "Mod+A" = {
       action.spawn = [
-        "gtk-launch"
-        "claude-ai"
+        "brave"
+        "--app=https://claude.ai/"
       ];
       hotkey-overlay.title = "Claude AI";
     };
@@ -33,25 +33,7 @@
       hotkey-overlay.title = "Lock screen";
     };
     "Mod+P" = {
-      action.spawn = [
-        "${pkgs.writeShellScript "power-menu" ''
-          choice=$(printf "Sleep\0icon\x1fsuspend\nLogout\0icon\x1flog-out\nReboot\0icon\x1freboot\nShutdown\0icon\x1fshutdown\n" | ${pkgs.fuzzel}/bin/fuzzel --dmenu --lines=4)
-          case "$choice" in
-            "Sleep")
-              systemctl suspend
-              ;;
-            "Logout")
-              ${pkgs.niri}/bin/niri msg action quit
-              ;;
-            "Reboot")
-              systemctl reboot
-              ;;
-            "Shutdown")
-              systemctl poweroff
-              ;;
-          esac
-        ''}"
-      ];
+      action.spawn = [ "${powerMenuScript}" ];
       hotkey-overlay.title = "Power menu";
     };
 

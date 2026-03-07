@@ -19,6 +19,7 @@ let
 in
 {
   imports = [
+    ../power-menu.nix
     ./keybindings.nix
     ./xdg.nix
   ];
