@@ -20,6 +20,7 @@
     ../programs/kitty
     ../programs/nixvim
     ../programs/ssh
+    ../programs/starship
     ../programs/vscode
     ../programs/yazi
     # ../programs/zed

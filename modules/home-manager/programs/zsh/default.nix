@@ -4,11 +4,6 @@
     enable = true;
     enableCompletion = true;
     autosuggestion.enable = true;
-    oh-my-zsh = {
-      enable = true;
-      plugins = [ "git" ];
-      theme = "agnoster";
-    };
     shellAliases = {
       nfu = "nix flake update";
     };

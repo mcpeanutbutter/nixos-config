@@ -114,6 +114,7 @@
     isNormalUser = true;
     description = userConfig.fullName;
     hashedPassword = userConfig.hashedPassword;
+    shell = pkgs.zsh;
     extraGroups = [
       "networkmanager"
       "wheel"
