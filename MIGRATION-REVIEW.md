@@ -37,28 +37,6 @@ Docker TUI. Was installed as a package in `idk/` common home config. No dedicate
 ### tmux
 Terminal multiplexer with Vi keybinds, C-q prefix, smart Vim-aware pane switching (C-hjkl), v/s for splits, project selector (C-f). Catppuccin theming was available but commented out.
 
-### starship
-Custom shell prompt with Nerd Font symbols for K8s (with AWS EKS context alias parsing), Docker, Terraform, Go, Rust, Python, Java, etc. K8s context shown on right side. Would replace the current agnoster oh-my-zsh theme.
-```nix
-programs.starship = {
-  enable = true;
-  enableZshIntegration = true;
-  settings = {
-    add_newline = false;
-    kubernetes = {
-      disabled = false;
-      symbol = "󱃾 ";
-      format = "[$symbol$context( \($namespace\))]($style)";
-      contexts = [{
-        context_pattern = "arn:aws:eks:(?P<var_region>.*):(?P<var_account>[0-9]{12}):cluster/(?P<var_cluster>.*)";
-        context_alias = "$var_cluster";
-      }];
-    };
-    right_format = "$kubernetes";
-  };
-};
-```
-
 ### atuin
 Shell history manager with fuzzy search (skim mode), compact UI, secrets filtering, 25-line inline height. Up-arrow disabled to not conflict with zsh defaults.
 ```nix

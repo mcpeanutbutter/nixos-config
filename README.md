@@ -26,7 +26,7 @@ A modular NixOS configuration managed through Nix Flakes. Currently configured f
 │   │   ├── common/              # Bootloader, kernel, networking, audio, users, locale
 │   │   ├── desktop/             # Desktop environment (niri/)
 │   │   ├── programs/            # System programs (docker/)
-│   │   └── services/            # System services (stylix/, sops/, bitdefender/, clamav/)
+│   │   └── services/            # System services (stylix/, sops/, bitdefender/, clamav/, glpi-agent/, vpn/)
 │   └── home-manager/            # Reusable Home Manager modules (user-level)
 │       ├── common/              # Shared packages, programs, session config
 │       ├── desktop/             # Desktop user config (niri/, waybar/, mako/, swww/)

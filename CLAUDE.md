@@ -101,23 +101,36 @@ nix flake check
 │   │   ├── programs/
 │   │   │   └── docker/                 # Docker configuration
 │   │   └── services/
-│   │       └── stylix/                 # Stylix theming service
+│   │       ├── bitdefender/            # BitDefender antivirus (containerized)
+│   │       ├── clamav/                 # ClamAV antivirus
+│   │       ├── glpi-agent/             # GLPI inventory agent
+│   │       ├── sops/                   # NixOS-level sops secrets
+│   │       ├── stylix/                 # Stylix theming service
+│   │       └── vpn/                    # VPN configuration
 │   └── home-manager/                   # Home Manager modules (user-level)
 │       ├── common/                     # Common user configuration & packages
 │       ├── desktop/
 │       │   ├── mako/                   # Notification daemon (for Niri)
 │       │   ├── niri/                   # Niri compositor user config
+│       │   ├── swww/                   # Wallpaper daemon (for Niri)
 │       │   └── waybar/                 # Waybar status bar (for Niri)
 │       └── programs/                   # Per-program configurations
+│           ├── brave/                  # Brave browser
+│           ├── claude-code/            # Claude Code CLI
 │           ├── direnv/
 │           ├── eza/
 │           ├── fuzzel/                 # Application launcher (for Niri)
 │           ├── fzf/
 │           ├── ghostty/                # Terminal emulator
 │           ├── git/
+│           ├── gtk/                    # GTK theming
+│           ├── hyprlock/               # Lock screen
 │           ├── kitty/                  # Terminal emulator
 │           ├── nixvim/                 # Neovim configuration
+│           ├── sops/                   # User-level sops secrets
 │           ├── ssh/
+│           ├── starship/               # Shell prompt
+│           ├── vesktop/                # Discord client
 │           ├── vscode/
 │           ├── yazi/                   # File manager
 │           ├── zed/
@@ -364,9 +377,8 @@ Common packages include:
 
 ## Notes
 
-- System state version: 25.05
+- System state version: 25.05 (amateria, selenitic) / 25.11 (spire)
 - User hashedPassword is defined in `users/${username}/default.nix` (yescrypt)
 - Unfree packages are allowed
 - Experimental features enabled: nix-command, flakes
 - Auto-optimise Nix store enabled
-- Current branch: `complete-rework` (architectural overhaul)
