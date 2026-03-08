@@ -93,33 +93,8 @@
     '';
   };
 
-  # Declarative printer configuration
-  hardware.printers = {
-    ensurePrinters = [
-      {
-        name = "Brother-HL-L3240CDW";
-        location = "Network";
-        deviceUri = "dnssd://Brother%20HL-L3240CDW%20series._ipp._tcp.local/?uuid=e3248000-80ce-11db-8000-94ddf86c1994";
-        model = "everywhere";
-        ppdOptions = {
-          PageSize = "A4";
-          Duplex = "DuplexNoTumble";
-        };
-      }
-      {
-        name = "HP-OfficeJet-Pro-9010";
-        location = "Network";
-        deviceUri = "dnssd://HP%20OfficeJet%20Pro%209010%20series%20%5B2FD783%5D._ipp._tcp.local/?uuid=bdff4232-e4ee-53b6-51ff-6406bed98eb1";
-        model = "everywhere";
-        ppdOptions = {
-          PageSize = "A4";
-        };
-      }
-    ];
-    ensureDefaultPrinter = "Brother-HL-L3240CDW";
-  };
-
   # Enable Avahi for network printer discovery (mDNS/DNS-SD)
+  # Printers are auto-discovered via Avahi/DNS-SD — no ensurePrinters needed
   services.avahi = {
     enable = true;
     nssmdns4 = true;
