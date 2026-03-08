@@ -16,4 +16,21 @@
     icon = "claude";
     categories = [ "Utility" ];
   };
+
+  xdg.desktopEntries.youtube = {
+    name = "YouTube";
+    exec = "${pkgs.brave}/bin/brave --app=https://www.youtube.com/";
+    icon = "youtube";
+    categories = [ "AudioVideo" ];
+  };
+
+  xdg.desktopEntries.microsoft-teams = {
+    name = "Microsoft Teams";
+    exec = "${pkgs.brave}/bin/brave --app=https://teams.cloud.microsoft/";
+    icon = "com.microsoft.Teams";
+    categories = [
+      "Network"
+      "Chat"
+    ];
+  };
 }
