@@ -24,7 +24,7 @@
     ../programs/vesktop
     ../programs/vscode
     ../programs/yazi
-    # ../programs/zed
+    ../programs/zed
     ../programs/zsh
   ];
 
