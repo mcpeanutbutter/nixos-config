@@ -95,7 +95,7 @@
       slack
       stress-ng
       sysbench
-      telegram-desktop
+      pkgs.unstable.telegram-desktop
       thunderbird
     ];
 

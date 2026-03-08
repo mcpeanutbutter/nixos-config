@@ -8,15 +8,15 @@
         "ghostty"
         "+new-window"
       ];
-      hotkey-overlay.title = "Spawn GhosTTY Terminal";
+      hotkey-overlay.title = "GhosTTY Terminal";
     };
     "Mod+D" = {
       action.spawn = [ "fuzzel" ];
-      hotkey-overlay.title = "Spawn fuzzel launcher";
+      hotkey-overlay.title = "fuzzel launcher";
     };
     "Mod+B" = {
       action.spawn = [ "brave" ];
-      hotkey-overlay.title = "Spawn Brave Browser";
+      hotkey-overlay.title = "Brave Browser";
     };
     "Mod+A" = {
       action.spawn = [
@@ -32,7 +32,7 @@
       ];
       hotkey-overlay.title = "Lock screen";
     };
-    "Mod+P" = {
+    "Mod+Alt+X" = {
       action.spawn = [ "${powerMenuScript}" ];
       hotkey-overlay.title = "Power menu";
     };

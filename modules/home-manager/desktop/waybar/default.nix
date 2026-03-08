@@ -114,7 +114,7 @@ in
         layer = "top";
         position = "top";
         height = 0; # Auto-height allows border-radius to work
-        margin = "8 8 0 8"; # top right bottom left
+        margin = "8 40 0 40"; # top right bottom left
 
         modules-left = [
           "custom/launcher"

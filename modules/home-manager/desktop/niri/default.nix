@@ -165,6 +165,15 @@ in
     layout = {
       gaps = 16; # Gaps between windows
 
+      preset-column-widths = [
+        { proportion = 1. / 4.; }
+        { proportion = 1. / 3.; }
+        { proportion = 1. / 2.; }
+        { proportion = 2. / 3.; }
+      ];
+
+      default-column-width.proportion = 1. / 3.;
+
       # Transparent background allows backdrop wallpaper to show through
       background-color = "transparent";
 
@@ -172,7 +181,7 @@ in
       struts = {
         left = 24;
         right = 24;
-        top = 24;
+        top = 0;
         bottom = 24;
       };
 
