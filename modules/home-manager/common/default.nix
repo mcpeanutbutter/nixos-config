@@ -21,6 +21,7 @@
     ../programs/nixvim
     ../programs/ssh
     ../programs/starship
+    ../programs/vesktop
     ../programs/vscode
     ../programs/yazi
     # ../programs/zed
