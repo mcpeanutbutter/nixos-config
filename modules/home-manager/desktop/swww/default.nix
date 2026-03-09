@@ -1,7 +1,6 @@
 {
   pkgs,
   lib,
-  hostConfig,
   ...
 }:
 let
@@ -43,7 +42,7 @@ let
 
   # Generate a night + optionally blurred version of a wallpaper for the overview backdrop.
   # Night transform: reduce red/green, boost blue, darken + desaturate.
-  blurSigma = hostConfig.backdropBlur;
+  blurSigma = 25; # Gaussian blur sigma for overview backdrop (0 = no blur)
   mkBackdropWallpaper =
     wp:
     let
