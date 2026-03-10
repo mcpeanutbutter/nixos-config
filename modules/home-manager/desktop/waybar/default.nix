@@ -118,6 +118,11 @@ in
 
         modules-left = [
           "custom/launcher"
+          "custom/media-prev"
+          "custom/media-toggle"
+          "custom/media-next"
+          "mpris"
+          "custom/media-icon"
           "clock#date"
           "clock#time"
           "cpu"
@@ -150,6 +155,54 @@ in
         "custom/launcher" = {
           format = " ";
           on-click = "${pkgs.fuzzel}/bin/fuzzel";
+          tooltip = false;
+        };
+
+        mpris = {
+          format = "{player_icon} {artist} - {title}";
+          format-paused = "{player_icon} {artist} - {title}";
+          player-icons = {
+            default = "";
+            firefox = "";
+            chromium = "";
+            spotify = "";
+            brave = "";
+          };
+          max-length = 40;
+          on-click = "${pkgs.playerctl}/bin/playerctl play-pause";
+          on-click-middle = "";
+          on-click-right = "";
+        };
+
+        "custom/media-icon" = {
+          format = "♪";
+          tooltip = false;
+        };
+
+        "custom/media-prev" = {
+          format = "󰒮";
+          on-click = "${pkgs.playerctl}/bin/playerctl previous";
+          tooltip = false;
+        };
+
+        "custom/media-toggle" = {
+          exec = "${pkgs.writeShellScript "media-toggle-status" ''
+            ${pkgs.playerctl}/bin/playerctl -F status 2>/dev/null | while read -r status; do
+              if [ "$status" = "Playing" ]; then
+                echo '{"text": "󰏤", "tooltip": "Pause"}'
+              else
+                echo '{"text": "󰐊", "tooltip": "Play"}'
+              fi
+            done
+          ''}";
+          return-type = "json";
+          on-click = "${pkgs.playerctl}/bin/playerctl play-pause";
+          tooltip = true;
+        };
+
+        "custom/media-next" = {
+          format = "󰒭";
+          on-click = "${pkgs.playerctl}/bin/playerctl next";
           tooltip = false;
         };
 
