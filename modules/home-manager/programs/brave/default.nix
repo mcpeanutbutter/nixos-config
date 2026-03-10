@@ -24,6 +24,13 @@
     categories = [ "AudioVideo" ];
   };
 
+  xdg.desktopEntries.youtube-music = {
+    name = "YouTube Music";
+    exec = "${pkgs.brave}/bin/brave --app=https://music.youtube.com/";
+    icon = "youtube-music";
+    categories = [ "AudioVideo" ];
+  };
+
   xdg.desktopEntries.microsoft-teams = {
     name = "Microsoft Teams";
     exec = "${pkgs.brave}/bin/brave --app=https://teams.cloud.microsoft/";

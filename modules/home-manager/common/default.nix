@@ -92,11 +92,9 @@
       qalculate-qt
       ripgrep
       s-tui
-      signal-desktop
       slack
       stress-ng
       sysbench
-      pkgs.unstable.telegram-desktop
       thunderbird
     ];
 
