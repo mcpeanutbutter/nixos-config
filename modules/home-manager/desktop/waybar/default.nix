@@ -281,10 +281,10 @@ in
             critical = 15;
           };
           format = "{icon} {capacity}%";
-          format-charging = "󰂄";
-          format-plugged = "󰚥";
+          format-charging = "󰂄 {capacity}%";
+          format-plugged = "󰚥 {capacity}%";
           format-icons = battery-icons;
-          tooltip-format = "{time}, {cycles} cycles, {health}% health";
+          tooltip-format = "{capacity}% — {time}, {cycles} cycles, {health}% health";
         };
 
         pulseaudio = {
