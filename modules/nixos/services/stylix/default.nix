@@ -48,6 +48,7 @@
     targets = {
       # Disable browser theming to avoid "managed by organization" issues
       chromium.enable = false;
+
     };
   };
 }

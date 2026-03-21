@@ -19,6 +19,7 @@
     ../programs/gtk
     ../programs/kitty
     ../programs/nixvim
+    ../programs/obsidian
     ../programs/ssh
     ../programs/starship
     ../programs/vesktop
@@ -84,7 +85,7 @@
       mpv
       pkgs.unstable.nixd
       nixfmt
-      obsidian
+
       opentofu
       pdfarranger
       poetry
