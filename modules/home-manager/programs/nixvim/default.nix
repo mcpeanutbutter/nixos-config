@@ -27,6 +27,15 @@
     ];
   };
 
+  stylix.targets.nixvim = {
+    enable = true;
+    transparentBackground = {
+      main = true;
+      numberLine = false;
+      signColumn = false;
+    };
+  };
+
   programs.nixvim = {
     enable = true;
     defaultEditor = true;

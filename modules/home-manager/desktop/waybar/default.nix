@@ -248,9 +248,9 @@ in
 
         memory = {
           interval = 1;
-          format = "  {percentage}%";
+          format = " {percentage}%";
           format-icons = generic-percent-icons;
-          tooltip-format = "{used} GiB / {total} GiB";
+          tooltip-format = "{used} GiB\n{total} GiB";
         };
 
         temperature = {
@@ -284,7 +284,7 @@ in
           format-charging = "󰂄 {capacity}%";
           format-plugged = "󰚥 {capacity}%";
           format-icons = battery-icons;
-          tooltip-format = "{capacity}% — {time}, {cycles} cycles, {health}% health";
+          tooltip-format = "{capacity}%\n{time}\n{cycles} cycles\n{health}% health";
         };
 
         pulseaudio = {
