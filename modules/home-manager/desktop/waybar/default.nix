@@ -105,6 +105,29 @@ in
     Install.WantedBy = [ "timers.target" ];
   };
 
+  # Restart Waybar shortly after login so modules that depend on
+  # system D-Bus services (e.g. power-profiles-daemon) can reconnect
+  # after those services finish starting.
+  systemd.user.services.waybar-deferred-restart = {
+    Unit = {
+      Description = "Restart Waybar after system services are ready";
+      After = [ "waybar.service" ];
+    };
+    Service = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.systemd}/bin/systemctl --user restart waybar.service";
+    };
+  };
+
+  systemd.user.timers.waybar-deferred-restart = {
+    Unit.Description = "Restart Waybar after system services are ready";
+    Timer = {
+      OnActiveSec = "10s";
+      Unit = "waybar-deferred-restart.service";
+    };
+    Install.WantedBy = [ "timers.target" ];
+  };
+
   programs.waybar = {
     enable = true;
     systemd.enable = true;
