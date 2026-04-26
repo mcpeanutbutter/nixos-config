@@ -4,7 +4,10 @@
     enable = true;
     package = pkgs.unstable.vscodium;
     profiles.default.extensions =
-      with (vscode-extensions.forVSCodeVersion pkgs.unstable.vscodium.version).vscode-marketplace; [
+      # TODO: restore forVSCodeVersion filtering once nix-vscode-extensions handles
+      # non-semver versions (currently breaks on vscodium 1.112.01907)
+      # with (vscode-extensions.forVSCodeVersion pkgs.unstable.vscodium.version).vscode-marketplace; [
+      with vscode-extensions.vscode-marketplace; [
         # Nix
         mkhl.direnv
         jnoortheen.nix-ide
