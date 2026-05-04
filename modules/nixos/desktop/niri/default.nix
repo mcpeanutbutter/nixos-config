@@ -50,6 +50,20 @@
   # Power management (not in niri-flake defaults)
   services.upower.enable = true;
 
+  # niri-flake pulls in xdg-desktop-portal-gnome but gnome.portal has
+  # `UseIn=gnome`, so on niri none of its interfaces (ScreenCast, Settings,
+  # Notification, ...) are auto-selected — screen sharing in Brave/Teams ends
+  # up with no ScreenCast backend. Make gnome the explicit default for all
+  # portals, then override FileChooser to use the GTK portal (avoids gnome's
+  # Nautilus delegation, which we don't have since we use Nemo).
+  xdg.portal = {
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+    config.common = {
+      default = [ "gnome" ];
+      "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
+    };
+  };
+
   # Replace niri-flake's broken polkit-kde-agent with polkit-gnome
   # (polkit-kde-agent fails to register with the host portal outside Plasma)
   systemd.user.services.niri-flake-polkit = lib.mkForce {
