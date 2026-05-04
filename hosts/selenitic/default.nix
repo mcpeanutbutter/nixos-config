@@ -14,9 +14,7 @@
     "${nixosModules}/programs/docker"
     "${nixosModules}/services/stylix"
     "${nixosModules}/services/sops"
-    "${nixosModules}/services/bitdefender"
     "${nixosModules}/services/clamav"
-    "${nixosModules}/services/vpn"
   ];
 
   # Set hostname

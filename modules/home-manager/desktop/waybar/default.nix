@@ -165,9 +165,9 @@ in
           "power-profiles-daemon"
           "backlight"
           "custom/night-light"
-          "custom/BSC"
-          "custom/power"
-        ];
+        ]
+        ++ lib.optionals hostConfig.workMachine [ "custom/BSC" ]
+        ++ [ "custom/power" ];
 
         # Niri-specific modules
         "niri/workspaces" = {
@@ -365,6 +365,13 @@ in
           tooltip = true;
         };
 
+        "custom/power" = {
+          format = " ";
+          on-click = "${powerMenuScript}";
+          tooltip = false;
+        };
+      }
+      // lib.optionalAttrs hostConfig.workMachine {
         "custom/BSC" = {
           exec = "${pkgs.writeShellScript "BSC-status" ''
             if ${pkgs.systemd}/bin/systemctl is-active --quiet podman-BSC.service; then
@@ -383,12 +390,6 @@ in
             fi
           ''}";
           tooltip = true;
-        };
-
-        "custom/power" = {
-          format = " ";
-          on-click = "${powerMenuScript}";
-          tooltip = false;
         };
       };
     };

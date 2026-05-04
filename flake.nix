@@ -72,6 +72,7 @@
             input = "temp1_input"; # Tctl (CPU control temp)
           };
           subpixelLayout = "none"; # mixed OLED/IPS monitors, grayscale AA
+          workMachine = true;
         };
         selenitic = {
           system = "x86_64-linux";
@@ -81,6 +82,7 @@
           thermalZone = 5; # x86_pkg_temp (CPU package temp)
           hwmon = null;
           subpixelLayout = "rgb"; # standard IPS panel
+          workMachine = false;
         };
         spire = {
           system = "x86_64-linux";
@@ -93,6 +95,7 @@
             input = "temp1_input"; # Tctl (CPU control temp)
           };
           subpixelLayout = "none"; # OLED display
+          workMachine = false;
         };
       };
 

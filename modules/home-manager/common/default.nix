@@ -1,6 +1,8 @@
 {
+  lib,
   outputs,
   userConfig,
+  hostConfig,
   pkgs,
   ...
 }:
@@ -27,7 +29,8 @@
     ../programs/yazi
     ../programs/zed
     ../programs/zsh
-  ];
+  ]
+  ++ lib.optionals hostConfig.workMachine [ ../work ];
 
   # Nixpkgs configuration is managed at the system level when using home-manager as a NixOS module
   # with useGlobalPkgs = true

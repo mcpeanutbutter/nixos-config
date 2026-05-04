@@ -9,6 +9,8 @@
   ...
 }:
 {
+  imports = lib.optionals hostConfig.workMachine [ ../work ];
+
   # Nixpkgs configuration
   nixpkgs = {
     overlays = [

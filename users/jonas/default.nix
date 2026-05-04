@@ -12,7 +12,6 @@
     # Directory -> sops key suffix mapping for per-project email overrides
     emailOverrides = {
       personal = "~/projects/personal";
-      work = "~/projects/work";
     };
   };
 }
