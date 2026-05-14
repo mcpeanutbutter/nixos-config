@@ -6,18 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a NixOS configuration repository managed through Nix Flakes, supporting multiple hosts (`amateria`, `selenitic`, `spire`). Since all hosts share one repository, **always check the current hostname** (via `hostname` command) to determine which host you are on, and use the correct flake target (e.g. `.#selenitic`, `.#amateria`) accordingly. Never assume a specific host.
 
-**Refactor in progress** (branch `refactor/dendritic`): the repository is being migrated to the [dendritic pattern](https://github.com/mightyiam/dendritic) — `flake-parts` + `import-tree` with every non-entry-point `.nix` file as a flake-parts module. The plan lives at `~/.claude/plans/read-up-on-the-shimmering-galaxy.md` and the directory-structure section below will be rewritten in phase 11. During the migration the legacy tree (current `/hosts/`, `/home/`, `/users/`, `/overlays/`, `/modules/nixos/`, `/modules/home-manager/`) coexists with the new dendritic tree under `/modules/`; the legacy tree is deleted only at the end.
+The configuration uses the [**dendritic pattern**](https://github.com/mightyiam/dendritic): every non-entry-point `.nix` file under `./modules/` is a flake-parts module of the top-level configuration, auto-imported via [`vic/import-tree`](https://github.com/vic/import-tree). `flake.nix` itself is ~25 lines — inputs + `flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules)`. No `specialArgs` pass-through; modules read shared state from `config.*` (e.g. `config.user.username`, `config.hosts.<name>.theme`).
 
-The current (pre-refactor) configuration uses a modular architecture:
+Top level:
 
-- `/flake.nix`: Main flake definition with host configurations
-- `/users/`: Per-user configuration (imported by flake.nix)
-- `/hosts/`: Per-host NixOS configurations
-- `/home/`: Per-user Home Manager configurations
-- `/modules/nixos/`: Reusable NixOS modules (system-level)
-- `/modules/home-manager/`: Reusable Home Manager modules (user-level)
-- `/overlays/`: Package overlays for custom versions
-- `/secrets/`: Sops-encrypted secrets (git emails, API keys, etc.)
+- `/flake.nix`: 3-line `mkFlake + import-tree` entry point
+- `/modules/`: the entire dendritic tree (see Directory Structure below)
+- `/packages/`: custom packages (currently just `hatter-icon-theme`); referenced via overlay
+- `/secrets/`: sops-encrypted secrets (git emails, ssh host config, etc.)
 
 ## Formatting
 
@@ -116,221 +112,185 @@ nix flake check
 
 ```
 /
-├── flake.nix                           # Main flake definition with host configs
-├── flake.lock                          # Locked input versions
-├── users/                              # Per-user configurations (imported by flake.nix)
-│   └── jonas/
-│       └── default.nix                 # User config (password, ssh, git settings)
-├── hosts/                              # Per-host configurations
-│   └── amateria/
-│       ├── default.nix                 # Host-specific NixOS configuration
-│       └── hardware-configuration.nix  # Hardware-specific settings
-├── home/                               # Per-user home-manager configurations
-│   └── jonas/
-│       └── amateria/
-│           └── default.nix             # User+host specific home configuration
-├── secrets/                            # Sops-encrypted secrets
-│   └── secrets.yaml                    # Encrypted secrets (git emails, etc.)
-├── modules/
-│   ├── nixos/                          # NixOS modules (system-level)
-│   │   ├── common/                     # Common system configuration
-│   │   ├── desktop/
-│   │   │   └── niri/                   # Niri compositor module
-│   │   ├── programs/
-│   │   │   └── docker/                 # Docker configuration
-│   │   └── services/
-│   │       ├── bitdefender/            # BitDefender antivirus (containerized)
-│   │       ├── clamav/                 # ClamAV antivirus
-│   │       ├── glpi-agent/             # GLPI inventory agent
-│   │       ├── sops/                   # NixOS-level sops secrets
-│   │       ├── stylix/                 # Stylix theming service
-│   │       └── vpn/                    # VPN configuration
-│   └── home-manager/                   # Home Manager modules (user-level)
-│       ├── common/                     # Common user configuration & packages
-│       ├── desktop/
-│       │   ├── mako/                   # Notification daemon (for Niri)
-│       │   ├── niri/                   # Niri compositor user config
-│       │   ├── swww/                   # Wallpaper daemon (for Niri)
-│       │   └── waybar/                 # Waybar status bar (for Niri)
-│       └── programs/                   # Per-program configurations
-│           ├── brave/                  # Brave browser
-│           ├── claude-code/            # Claude Code CLI
-│           ├── direnv/
-│           ├── eza/
-│           ├── fuzzel/                 # Application launcher (for Niri)
-│           ├── fzf/
-│           ├── ghostty/                # Terminal emulator
-│           ├── git/
-│           ├── gtk/                    # GTK theming
-│           ├── hyprlock/               # Lock screen
-│           ├── kitty/                  # Terminal emulator
-│           ├── nixvim/                 # Neovim configuration
-│           ├── sops/                   # User-level sops secrets
-│           ├── ssh/
-│           ├── starship/               # Shell prompt
-│           ├── vesktop/                # Discord client
-│           ├── vscode/
-│           ├── yazi/                   # File manager
-│           ├── zed/
-│           └── zsh/
-├── overlays/                           # Package overlays
-│   └── default.nix
-├── old/                                # OLD/UNUSED: Previous flat configuration
-└── idk/                                # OLD/UNUSED: Earlier modular experiments
+├── flake.nix                              # 3-line dendritic entry point
+├── flake.lock
+├── packages/
+│   └── hatter-icon-theme/                 # custom KDE-dark icon theme
+├── secrets/
+│   ├── secrets.yaml                       # main sops file (git emails, BSC/VPN/GLPI creds)
+│   └── ssh.yaml                           # separate sops file for work SSH host include
+└── modules/                               # everything below is a flake-parts module
+    ├── flake-parts.nix                    # imports flake-parts.flakeModules.modules
+    ├── systems.nix                        # systems = [ "x86_64-linux" ]
+    ├── home-manager.nix                   # wires HM-as-NixOS-module; base + work HM buckets
+    ├── configurations/
+    │   └── nixos.nix                      # configurations.nixos.<name>.module → flake.nixosConfigurations
+    ├── meta/
+    │   ├── user.nix                       # typed options.user (username, ssh, git, hashedPassword)
+    │   └── hosts.nix                      # typed options.hosts.<name> (theme, hwmon/thermalZone, …)
+    ├── hosts/
+    │   ├── amateria/                      # Framework 16 — dual-boots Fedora; work machine
+    │   │   ├── _hardware-configuration.nix    # nixos-generate-config output (underscore: skipped by import-tree)
+    │   │   ├── hardware.nix               # thin wrapper importing _hardware-configuration.nix
+    │   │   ├── data.nix                   # config.hosts.amateria.{theme, hwmon, hardwareModule, …}
+    │   │   ├── imports.nix                # configurations.nixos.amateria.module.imports = [ base work ]
+    │   │   ├── hostname.nix
+    │   │   ├── state-version.nix
+    │   │   ├── bootloader.nix             # GRUB extraEntry chainloading Fedora
+    │   │   └── displays.nix               # niri.settings.outputs (eDP-1 + DP-3)
+    │   ├── selenitic/                     # ThinkPad T480s — personal
+    │   │   ├── _hardware-configuration.nix
+    │   │   ├── hardware.nix data.nix imports.nix hostname.nix state-version.nix displays.nix
+    │   └── spire/                         # AMD desktop — dual-boots CachyOS
+    │       ├── _hardware-configuration.nix
+    │       ├── hardware.nix data.nix imports.nix hostname.nix state-version.nix displays.nix
+    │       ├── bootloader.nix             # GRUB extraEntries for CachyOS + CachyOS-LTS
+    │       └── storage.nix                # encrypted data drive (boot.initrd.luks.devices."data" + fs mount)
+    ├── nixos/
+    │   ├── core/                          # foundational platform — writes flake.modules.nixos.base
+    │   │   ├── audio.nix boot.nix fonts.nix locale.nix networking.nix
+    │   │   ├── nix.nix overlays.nix packages.nix users.nix zsh.nix
+    │   ├── services/                      # background services — flake.modules.nixos.base
+    │   │   ├── openssh.nix printing.nix power.nix
+    │   │   ├── sops.nix stylix.nix clamav.nix
+    │   │   └── containers.nix docker.nix
+    │   ├── desktop/
+    │   │   └── niri.nix                   # niri-flake nixos module + greetd + xdg-portal + polkit + waybar/etc packages
+    │   └── work/                          # flake.modules.nixos.work — only amateria imports
+    │       └── bitdefender.nix vpn.nix glpi-agent.nix
+    └── home/
+        ├── core/                          # CLI/shell-oriented HM — flake.modules.homeManager.base
+        │   ├── packages.nix session.nix sops.nix ssh.nix
+        │   ├── git.nix zsh.nix starship.nix
+        │   ├── bat.nix btop.nix claude-code.nix
+        │   ├── direnv.nix eza.nix fzf.nix yazi.nix
+        │   └── nixvim/                    # multi-file nixvim subtree (enable, keymaps, autocommands, lsp, plugins/*)
+        ├── desktop/                       # niri compositor user side — flake.modules.homeManager.base
+        │   ├── niri/                      # enable, keybindings, power-menu
+        │   ├── waybar.nix waybar.css      # status bar + base16 stylix CSS
+        │   ├── mako.nix swww.nix fuzzel.nix hyprlock.nix gtk.nix
+        │   └── xdg.nix                    # GNOME Text Editor + Nemo + mimeApps defaults
+        ├── programs/                      # GUI applications — flake.modules.homeManager.base
+        │   ├── brave.nix obsidian.nix vesktop.nix
+        │   ├── ghostty.nix kitty.nix vscode.nix zed.nix
+        └── work/                          # flake.modules.homeManager.work
+            └── git.nix ssh.nix sops.nix waybar.nix      # work git includes, ssh key, BSC widget
 ```
+
+**Bucket convention**: every file in `modules/nixos/{core,services,desktop}/` writes to `flake.modules.nixos.base`. Every file in `modules/nixos/work/` writes to `flake.modules.nixos.work`. Same for `modules/home/` with `homeManager.base` / `homeManager.work`. Each host's `imports.nix` enumerates which buckets it pulls in.
+
+**Underscore-prefix convention**: `import-tree` skips files/dirs starting with `_`. Used today for `_hardware-configuration.nix` files (the verbatim `nixos-generate-config` output, not a flake-parts module).
 
 ### Configuration Pattern
 
-The flake uses a modular pattern with user and host definitions:
+User and host data live as **typed top-level options** under `config.*`. Modules read them directly — no `specialArgs` pass-through.
 
-**User Configuration** (in `users/${username}/default.nix`, imported by `flake.nix`):
+**User configuration** (`modules/meta/user.nix`): declares `options.user` (typed submodule with `username`, `fullName`, `homeDirectory`, `hashedPassword`, `ssh.{personalPrivateKey,workPrivateKey}`, `git.{name,emailOverrides}`) and populates `config.user`. Git email addresses are NOT in this file — they live in sops and are pulled in at activation time via `programs.git.includes`.
+
+**Host configuration** (`modules/meta/hosts.nix` + per-host `data.nix` files): declares `options.hosts.<name>` with `system`, `theme`, `stateVersion`, `subpixelLayout`, `thermalZone`, `hwmon`, `hardwareModule`. Each host's `modules/hosts/<host>/data.nix` populates one entry:
 
 ```nix
+{ inputs, ... }:
 {
-  username = "jonas";
-  fullName = "Jonas Schmoele";
-  homeDirectory = "/home/jonas";
-  hashedPassword = "$y$...";  # yescrypt hash
-  ssh = { ... };
-  git = {
-    name = "Jonas Schmoele";
-    # Directory -> sops key suffix mapping for per-project email overrides
-    emailOverrides = {
-      personal = "~/projects/personal";
-      work = "~/projects/work";
-    };
-  };
-}
-```
-
-Git email addresses are stored in sops-encrypted `secrets/secrets.yaml` (not in Nix files) and injected via `programs.git.includes` pointing to sops-decrypted secret files.
-
-**Host Configuration** (in `flake.nix`):
-
-```nix
-hosts = {
-  amateria = {
+  hosts.amateria = {
     system = "x86_64-linux";
     theme = "material-darker";
     stateVersion = "25.05";
-    desktopEnvironment = "niri";
-    thermalZone = null;  # integer index into /sys/class/thermal/thermal_zone*, or null
-    hwmon = null;        # null, or { path = "/sys/devices/.../hwmon"; input = "temp1_input"; }
-  };
-};
-```
-
-`thermalZone` and `hwmon` configure Waybar's temperature module. Use `thermalZone` on hosts with ACPI thermal zones (e.g. Intel laptops). Use `hwmon` on hosts where thermal zones are absent (e.g. AMD desktops) — it maps to Waybar's `hwmon-path-abs` + `input-filename`. Both can be null.
-
-**NixOS Configuration Builder**:
-The `mkNixosConfiguration` function creates a NixOS system configuration for a given hostname and username, automatically:
-
-- Loading host-specific config from `./hosts/${hostname}`
-- Loading user-specific home-manager config from `./home/${username}/${hostname}`
-- Passing `userConfig` and `hostConfig` to both NixOS and Home Manager modules
-- Providing module path variables (`nixosModules` and `nhModules`) for importing
-
-**Special Arguments Available Throughout**:
-
-NixOS modules receive:
-
-- `inputs`: All flake inputs
-- `outputs`: Flake outputs (including overlays)
-- `hostname`: Current hostname
-- `userConfig`: User configuration object
-- `hostConfig`: Host configuration object
-- `nixosModules`: Path to NixOS modules directory
-
-Home Manager modules receive:
-
-- `inputs`: All flake inputs
-- `outputs`: Flake outputs
-- `vscode-extensions`: VSCode extensions from nix-vscode-extensions
-- `userConfig`: User configuration object
-- `hostConfig`: Host configuration object
-- `nhModules`: Path to Home Manager modules directory
-
-### Configuration Files
-
-**hosts/amateria/default.nix**: Host-specific NixOS configuration that:
-
-- Imports hardware configuration
-- Imports modular NixOS components based on `hostConfig.desktopEnvironment`
-- Sets hostname via the `hostname` parameter
-
-**modules/nixos/common/default.nix**: Common system-level configuration including:
-
-- Bootloader (GRUB with EFI)
-- Latest kernel (`linuxPackages_latest`)
-- Networking (NetworkManager)
-- PipeWire audio
-- User account creation (from `userConfig`)
-- Docker with rootless mode (imported separately)
-- Container support (Podman)
-- Locale: en_US.UTF-8 / de_AT.UTF-8
-- System packages and fonts
-- Nix flake support and overlays
-
-**modules/nixos/desktop/**: Desktop environment modules:
-
-- `niri/`: Niri scrollable-tiling Wayland compositor with polkit, portals, and GREETD
-
-**home/jonas/amateria/default.nix**: User+host specific home configuration that:
-
-- Imports common home-manager configuration
-- Conditionally imports desktop modules based on `hostConfig.desktopEnvironment`
-
-**modules/home-manager/common/default.nix**: Common user-space configuration including:
-
-- Imports all program configurations
-- User packages (development tools, applications, etc.)
-- Session variables
-- Common program enables (bat, btop, git, etc.)
-
-**modules/home-manager/programs/**: Individual program configurations for git, zsh, nixvim, vscode, ghostty, sops, etc.
-
-**modules/home-manager/desktop/**: Desktop-related user modules:
-
-- `niri/`: Niri compositor configuration with keybindings, layouts, window rules, themed borders/corners
-- `waybar/`: Status bar configuration for Niri
-- `mako/`: Notification daemon configuration
-- `fuzzel/`: Application launcher (referenced in common imports)
-
-## Common Patterns
-
-### Adding New Applications
-
-1. **User-level application**: Create a new `.nix` file in `modules/home-manager/programs/` and import it in `modules/home-manager/common/default.nix`
-2. **System-level application**: Create a new `.nix` file in `modules/nixos/programs/` and import it in the appropriate host configuration or common module
-3. **Desktop-specific**: Add to `modules/home-manager/desktop/` or `modules/nixos/desktop/` and ensure conditional imports based on `hostConfig.desktopEnvironment`
-
-### Adding a New Host
-
-1. Create new directory `hosts/${hostname}/` with `default.nix` and `hardware-configuration.nix`
-2. Add host configuration to the `hosts` object in `flake.nix`
-3. Create corresponding home configuration at `home/${username}/${hostname}/default.nix`
-4. Register in `nixosConfigurations` using `mkNixosConfiguration "${hostname}" "${username}"`
-5. Check the [nixos-hardware module list](https://github.com/NixOS/nixos-hardware/blob/master/flake.nix) for device-specific modules and import them in the host's `default.nix` (e.g. `inputs.nixos-hardware.nixosModules.<device>`). If no board-specific module exists, use the relevant `common-cpu-*`, `common-gpu-*`, and `common-pc-ssd` modules.
-
-### Custom Package Overlays
-
-The repository uses overlays in `overlays/default.nix` to override package versions. These are automatically applied via `modules/nixos/common/default.nix`. Example pattern:
-
-```nix
-{
-  stable-packages = final: _prev: {
-    # Import stable packages with prefix
-    stable = import inputs.nixpkgs-stable { ... };
-  };
-
-  custom-packages = final: prev: {
-    package-name = prev.package-name.overrideAttrs (oldAttrs: {
-      version = "new-version";
-      src = ...;
-    });
+    subpixelLayout = "none";
+    hwmon = { path = "..."; input = "temp1_input"; };
+    hardwareModule = inputs.nixos-hardware.nixosModules.framework-16-7040-amd;
   };
 }
 ```
+
+`thermalZone` and `hwmon` configure Waybar's temperature module. Use `thermalZone` on hosts with ACPI thermal zones (e.g. Intel laptops). Use `hwmon` on hosts where zones are absent (AMD desktops) — it maps to Waybar's `hwmon-path-abs` + `input-filename`. Both can be null.
+
+**Bucket → host wiring** (`modules/hosts/<host>/imports.nix`): each host's imports.nix enumerates which buckets the host pulls in:
+
+```nix
+{ config, ... }:
+{
+  configurations.nixos.amateria.module = {
+    imports = (with config.flake.modules.nixos; [ base work ]) ++ [
+      config.hosts.amateria.hardwareModule
+    ];
+  };
+}
+```
+
+`amateria` is the only host that imports `work`. selenitic and spire use `[ base ]` alone.
+
+**Module-args access**: see "Dendritic pattern gotcha" above. Inside a function-form deferred module, destructure (`{ pkgs, config, ... }: ...`) — never use bare `nixosArgs:` with attribute access.
+
+**Reading per-host data inside HM modules**: the outer flake-parts `config` has `config.hosts.<name>`, and the inner home-manager evaluation gets the NixOS-side state via `osConfig.networking.hostName`. Alias the outer config via let-binding to avoid shadowing:
+
+```nix
+{ config, ... }:
+let hostsCfg = config.hosts; in
+{
+  flake.modules.homeManager.base.imports = [
+    ({ config, osConfig, ... }: {
+      programs.waybar.settings.mainBar.temperature.thermal-zone =
+        hostsCfg.${osConfig.networking.hostName}.thermalZone;
+    })
+  ];
+}
+```
+
+## Common Patterns
+
+### Adding a new CLI / shell program (home-manager)
+
+1. Create `modules/home/core/<name>.nix` (or `modules/home/programs/<name>.nix` if it's a GUI app).
+2. Write `flake.modules.homeManager.base.programs.<name> = { ... };` (constant form) or `flake.modules.homeManager.base.imports = [ ({ pkgs, ... }: { programs.<name>.X = pkgs.Y; }) ];` if you need `pkgs`.
+3. `git add` the new file — import-tree only sees git-tracked files.
+4. `nixfmt path/to/file.nix` per the formatting convention.
+
+### Adding a new NixOS service
+
+1. Create `modules/nixos/services/<name>.nix`.
+2. Write `flake.modules.nixos.base.services.<name> = { ... };`. If it's a work-only service, write to `flake.modules.nixos.work` instead.
+3. If the service comes from a flake input, the function-form pattern looks like:
+   ```nix
+   { inputs, ... }:
+   {
+     flake.modules.nixos.base.imports = [
+       inputs.foo.nixosModules.foo
+       ({ pkgs, ... }: { services.foo.enable = true; })
+     ];
+   }
+   ```
+
+### Adding a new host
+
+1. Pick a hostname; create `modules/hosts/<hostname>/`.
+2. Run `nixos-generate-config --show-hardware-config` and save the output to `modules/hosts/<hostname>/_hardware-configuration.nix` (underscore prefix is mandatory — without it, import-tree will try to load the file as a flake-parts module and fail).
+3. Create the scaffold (each is small; see existing hosts as templates):
+   - `hardware.nix` — `configurations.nixos.<host>.module.imports = [ ./_hardware-configuration.nix ];`
+   - `data.nix` — populates `config.hosts.<host>` with theme, stateVersion, hardwareModule, sensor data, etc.
+   - `imports.nix` — `configurations.nixos.<host>.module.imports = (with config.flake.modules.nixos; [ base ]) ++ [ config.hosts.<host>.hardwareModule ];`
+   - `hostname.nix` — `configurations.nixos.<host>.module.networking.hostName = "<host>";`
+   - `state-version.nix` — reads from `config.hosts.<host>.stateVersion`.
+   - `displays.nix` — `configurations.nixos.<host>.module.home-manager.users.${config.user.username}.programs.niri.settings.outputs = { ... };`
+   - Optional: `bootloader.nix`, `storage.nix`, etc. for host-specific extras.
+4. Check the [nixos-hardware module list](https://github.com/NixOS/nixos-hardware/blob/master/flake.nix) for a matching module and set `hardwareModule` in `data.nix`. For boards without a host-specific module, use an aggregating `{ imports = [ common-cpu-* common-gpu-* common-pc-ssd ]; }`.
+
+### Custom package overlays
+
+Overlays are inlined in `modules/nixos/core/overlays.nix`:
+
+```nix
+{ inputs, ... }:
+{
+  flake.modules.nixos.base.nixpkgs.overlays = [
+    (final: _prev: { unstable = import inputs.nixpkgs-unstable { ... }; })
+    (final: prev: { hatter-icon-theme = final.callPackage ../../../packages/hatter-icon-theme { }; })
+    inputs.claude-code-nix.overlays.default
+  ];
+}
+```
+
+Add new overlays here. Custom packages live under `/packages/<name>/` (see `hatter-icon-theme` as a template).
 
 ## Desktop Environment
 
@@ -365,7 +325,7 @@ Spire dual-boots NixOS + CachyOS. NixOS GRUB directly boots the CachyOS kernel f
 2. Mount CachyOS ESP: `sudo mount /dev/nvme2n1p1 /mnt`
 3. Check current kernel filenames: `ls /mnt/vmlinuz* /mnt/initramfs*`
 4. Check systemd-boot entries: `cat /mnt/loader/entries/*.conf`
-5. Update `hosts/spire/default.nix` `boot.loader.grub.extraEntries` with the correct kernel/initramfs filenames and boot args from step 4
+5. Update `modules/hosts/spire/bootloader.nix` `boot.loader.grub.extraEntries` with the correct kernel/initramfs filenames and boot args from step 4
 6. Rebuild: `sudo nixos-rebuild switch --flake .#spire`
 7. Unmount: `sudo umount /mnt`
 
@@ -379,12 +339,9 @@ This is a Git-tracked flake. Changes must be staged (`git add .`) for flake comm
 
 ### Modularity
 
-- Completely modular architecture separating concerns
-- Host-specific configurations in `hosts/`
-- User+host specific home configurations in `home/`
-- Reusable NixOS modules in `modules/nixos/`
-- Reusable Home Manager modules in `modules/home-manager/`
-- Easy to add new hosts or users
+- Dendritic pattern — every non-entry-point `.nix` under `./modules/` is a flake-parts module, auto-imported via `vic/import-tree`.
+- Host wiring lives in `modules/hosts/<host>/imports.nix`; bucket modules under `modules/nixos/` and `modules/home/` write to `flake.modules.{nixos,homeManager}.{base,work}`.
+- Adding a new host is a small `modules/hosts/<host>/` directory; adding a feature is a single new `.nix` file (no central import list to update — import-tree finds it automatically).
 
 ### Hardware Support
 
@@ -415,8 +372,8 @@ Common packages include:
 
 ## Notes
 
-- System state version: 25.05 (amateria, selenitic) / 25.11 (spire)
-- User hashedPassword is defined in `users/${username}/default.nix` (yescrypt)
+- System state version: 25.05 (amateria, selenitic) / 25.11 (spire), declared in each host's `modules/hosts/<host>/data.nix`
+- User hashedPassword (yescrypt) is in `modules/meta/user.nix`
 - Unfree packages are allowed
 - Experimental features enabled: nix-command, flakes
 - Auto-optimise Nix store enabled
