@@ -6,7 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a NixOS configuration repository managed through Nix Flakes, supporting multiple hosts (`amateria`, `selenitic`, `spire`). Since all hosts share one repository, **always check the current hostname** (via `hostname` command) to determine which host you are on, and use the correct flake target (e.g. `.#selenitic`, `.#amateria`) accordingly. Never assume a specific host.
 
-**Important**: The repository contains old/experimental code in `old/` and `idk/` directories that is NOT currently in use. The configuration has been completely restructured into a modular architecture using:
+**Refactor in progress** (branch `refactor/dendritic`): the repository is being migrated to the [dendritic pattern](https://github.com/mightyiam/dendritic) — `flake-parts` + `import-tree` with every non-entry-point `.nix` file as a flake-parts module. The plan lives at `~/.claude/plans/read-up-on-the-shimmering-galaxy.md` and the directory-structure section below will be rewritten in phase 11. During the migration the legacy tree (current `/hosts/`, `/home/`, `/users/`, `/overlays/`, `/modules/nixos/`, `/modules/home-manager/`) coexists with the new dendritic tree under `/modules/`; the legacy tree is deleted only at the end.
+
+The current (pre-refactor) configuration uses a modular architecture:
 
 - `/flake.nix`: Main flake definition with host configurations
 - `/users/`: Per-user configuration (imported by flake.nix)
@@ -16,8 +18,6 @@ This is a NixOS configuration repository managed through Nix Flakes, supporting 
 - `/modules/home-manager/`: Reusable Home Manager modules (user-level)
 - `/overlays/`: Package overlays for custom versions
 - `/secrets/`: Sops-encrypted secrets (git emails, API keys, etc.)
-
-**Ignore** the `old/` and `idk/` directories when working with the current configuration.
 
 ## Formatting
 
