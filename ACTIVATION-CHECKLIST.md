@@ -55,28 +55,21 @@ likely to silently break across a layout refactor.
 
 ### All hosts
 
-- [ ] **Niri launches** and keybindings work (`Mod+T` for ghostty,
+- [x] **Niri launches** and keybindings work (`Mod+T` for ghostty,
       `Mod+D` for fuzzel, `Mod+B` for brave, `Mod+Alt+X` for power menu)
-- [ ] **Waybar renders** the temperature widget — read the actual temperature,
+- [x] **Waybar renders** the temperature widget — read the actual temperature,
       not "n/a"
-- [ ] **Notifications** fire: `notify-send hello`
-- [ ] **Starship prompt** renders in a fresh shell
-- [ ] **Git personal email** correct inside `~/projects/personal/`:
+- [x] **Notifications** fire: `notify-send hello`
+- [x] **Starship prompt** renders in a fresh shell
+- [x] **Git personal email** correct inside `~/projects/personal/`:
       `cd ~/projects/personal/<any> && git config --get user.email`
-- [ ] **nvim launches** and loads plugins (run `:checkhealth` to see LSP servers attached)
-- [ ] **VSCode** opens, marketplace extensions resolve (`code --list-extensions`)
-- [ ] **sops** decrypts: easiest functional check is the git-email one above
-      (the personal email lives in sops; if `git config --get user.email`
-      returns the right address, sops + home-manager activation worked).
-      `journalctl -u sops-install-secrets --no-pager | tail` is **only meaningful
-      on amateria** — the work bucket declares NixOS-level sops secrets
-      (`bitdefender/*`, `vpn/*`, `glpi/*`). On selenitic / spire there are no
-      NixOS-level secrets to install, so "No entries" is expected and healthy;
-      the personal git email is an HM-level secret handled separately.
-- [ ] **Docker rootless** works: `docker run --rm hello-world` (as your user)
-- [ ] **Stylix theming** applied to GTK apps (file manager etc.) — compare a window
+- [x] **nvim launches** and loads plugins (run `:checkhealth` to see LSP servers attached)
+- [x] **VSCode** opens, marketplace extensions resolve (`code --list-extensions`)
+- [x] **sops** decrypts: easiest functional check is the git-email one above (the personal email lives in sops; if `git config --get user.email` returns the right address, sops + home-manager activation worked). `journalctl -u sops-install-secrets --no-pager | tail` is **only meaningful on amateria** — the work bucket declares NixOS-level sops secrets (`bitdefender/*`, `vpn/*`, `glpi/*`). On selenitic / spire there are no NixOS-level secrets to install, so "No entries" is expected and healthy; the personal git email is an HM-level secret handled separately.
+- [x] **Docker rootless** works: `docker run --rm hello-world` (as your user)
+- [x] **Stylix theming** applied to GTK apps (file manager etc.) — compare a window
       to expected Material-Darker look
-- [ ] **Niri output** matches the host's `displays.nix`: external monitor at
+- [x] **Niri output** matches the host's `displays.nix`: external monitor at
       the configured resolution + scale, laptop panel as expected
 
 ### amateria only (work-bucket checks)
@@ -93,7 +86,7 @@ likely to silently break across a layout refactor.
 
 ### selenitic / spire only (no work bucket)
 
-- [ ] BitDefender, GLPI, Work VPN, BSC widget all absent.
+- [x] BitDefender, GLPI, Work VPN, BSC widget all absent.
 
 ## If something breaks during `test`
 
