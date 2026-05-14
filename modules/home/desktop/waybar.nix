@@ -36,10 +36,10 @@ in
           "󰤨"
         ];
         audio-icons = [
-          ""
-          ""
-          ""
-          ""
+          ""
+          ""
+          ""
+          ""
         ];
         generic-percent-icons = [
           "▁"
@@ -52,10 +52,10 @@ in
           "█"
         ];
         temperature-icons = [
-          ""
-          ""
-          ""
-          ""
+          ""
+          ""
+          ""
+          ""
         ];
         brightness-icons = [
           "󰃞"
@@ -241,14 +241,14 @@ in
 
             cpu = {
               interval = 1;
-              format = " {usage}%";
+              format = " {usage}%";
               format-icons = generic-percent-icons;
               tooltip-format = "usage: {usage}%\nload: {load}";
             };
 
             memory = {
               interval = 1;
-              format = " {percentage}%";
+              format = " {percentage}%";
               format-icons = generic-percent-icons;
               tooltip-format = "{used} GiB\n{total} GiB";
             };
@@ -338,10 +338,10 @@ in
               format = "{icon}";
               tooltip-format = "Power profile: {profile}\nDriver: {driver}";
               format-icons = {
-                default = "";
-                performance = "";
-                balanced = "";
-                power-saver = "";
+                default = "";
+                performance = "";
+                balanced = "";
+                power-saver = "";
               };
             };
 
