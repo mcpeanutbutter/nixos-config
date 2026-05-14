@@ -4,13 +4,13 @@
   # so non-work hosts get neither.
   flake.modules.homeManager.work.imports = [
     (
-      { pkgs, ... }:
+      { lib, pkgs, ... }:
       {
         programs.waybar.settings.mainBar = {
-          # Appended to base's modules-right list via module-system list merge.
-          # Visual order differs slightly from the legacy layout (BSC ends up
-          # after custom/power instead of before it).
-          modules-right = [ "custom/BSC" ];
+          # mkOrder 1200 slots BSC between the base list (default priority 1000)
+          # and custom/power (mkAfter, priority 1500), restoring the legacy
+          # ordering where BSC sits just before the power button.
+          modules-right = lib.mkOrder 1200 [ "custom/BSC" ];
 
           "custom/BSC" = {
             exec = "${pkgs.writeShellScript "BSC-status" ''
@@ -32,6 +32,17 @@
             tooltip = true;
           };
         };
+
+        # Base CSS rounds night-light's right corner so it caps Pill 7 on
+        # non-work hosts. On work hosts BSC is the cap instead, so flatten
+        # night-light again. mkAfter ensures this rule wins over the base
+        # rule (which is at mkOrder 1200).
+        programs.waybar.style = lib.mkAfter ''
+          #custom-night-light {
+            margin: 0.3em 0em;
+            border-radius: 0px;
+          }
+        '';
       }
     )
   ];

@@ -158,7 +158,10 @@ in
 
             modules-center = [ "niri/workspaces" ];
 
-            # custom/BSC is appended by home/work/waybar.nix on work hosts.
+            # custom/power is appended at mkAfter priority by the sibling import
+            # below so it stays rightmost regardless of which buckets contribute.
+            # custom/BSC is inserted at mkOrder 1200 by home/work/waybar.nix on
+            # work hosts, slotting between custom/night-light and custom/power.
             modules-right = [
               "tray"
               "pulseaudio"
@@ -167,7 +170,6 @@ in
               "power-profiles-daemon"
               "backlight"
               "custom/night-light"
-              "custom/power"
             ];
 
             "niri/workspaces" = {
@@ -372,7 +374,9 @@ in
             };
           };
 
-          style = lib.mkAfter ''
+          # mkOrder 1200 sits after stylix's default-priority CSS (1000) but
+          # leaves mkAfter (1500) free for the work bucket to override.
+          style = lib.mkOrder 1200 ''
             ${builtins.readFile ./waybar.css}
 
             #custom-launcher {
@@ -390,6 +394,12 @@ in
             }
           '';
         };
+      }
+    )
+    (
+      { lib, ... }:
+      {
+        programs.waybar.settings.mainBar.modules-right = lib.mkAfter [ "custom/power" ];
       }
     )
   ];

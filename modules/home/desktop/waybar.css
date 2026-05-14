@@ -207,9 +207,12 @@ window#waybar * {
   color: @base0A;
 }
 
+/* Default: night-light caps Pill 7 on the right. On work hosts BSC sits between
+ * night-light and custom/power and takes over the cap; home/work/waybar.nix
+ * reverts night-light to flat there. */
 #custom-night-light {
-  margin: 0.3em 0em;
-  border-radius: 0px;
+  margin: 0.3em 0.3em 0.3em 0em;
+  border-radius: 0px 8px 8px 0px;
   color: @base0A;
 }
 
