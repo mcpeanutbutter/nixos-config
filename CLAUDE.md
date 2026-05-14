@@ -8,6 +8,8 @@ This is a NixOS configuration repository managed through Nix Flakes, supporting 
 
 The configuration uses the [**dendritic pattern**](https://github.com/mightyiam/dendritic): every non-entry-point `.nix` file under `./modules/` is a flake-parts module of the top-level configuration, auto-imported via [`vic/import-tree`](https://github.com/vic/import-tree). `flake.nix` itself is ~25 lines — inputs + `flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules)`. No `specialArgs` pass-through; modules read shared state from `config.*` (e.g. `config.user.username`, `config.hosts.<name>.theme`).
 
+**Refactor activation in progress** (branch `refactor/dendritic`): the code is on the new layout, but `nixos-rebuild switch` hasn't been run on all hosts yet. See **[`/ACTIVATION-CHECKLIST.md`](./ACTIVATION-CHECKLIST.md)** — it's the single source of truth for what's left. If a session is unsure where the refactor stands, read that file first.
+
 Top level:
 
 - `/flake.nix`: 3-line `mkFlake + import-tree` entry point
