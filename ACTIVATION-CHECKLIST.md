@@ -26,8 +26,8 @@ toplevel evaluates to a valid drvPath. Already passing locally:
 
 ### spire (AMD desktop — current host as of refactor)
 
-- [ ] `cd ~/nixos-config && git switch refactor/dendritic`
-- [ ] `nix flake check` — expect no errors (empty `flake.modules` warnings are OK)
+- [x] `cd ~/nixos-config && git switch refactor/dendritic`
+- [x] `nix flake check` — expect no errors (empty `flake.modules` warnings are OK)
 - [ ] `sudo nixos-rebuild test --flake .#spire` — activates new config without setting it as default boot
 - [ ] Spot-checks (see "Functional spot-checks" below). Mark each pass.
 - [ ] `sudo nixos-rebuild switch --flake .#spire` — sets new config as default
@@ -65,7 +65,14 @@ likely to silently break across a layout refactor.
       `cd ~/projects/personal/<any> && git config --get user.email`
 - [ ] **nvim launches** and loads plugins (run `:checkhealth` to see LSP servers attached)
 - [ ] **VSCode** opens, marketplace extensions resolve (`code --list-extensions`)
-- [ ] **sops** decrypts at activation: `journalctl -u sops-install-secrets --no-pager | tail`
+- [ ] **sops** decrypts: easiest functional check is the git-email one above
+      (the personal email lives in sops; if `git config --get user.email`
+      returns the right address, sops + home-manager activation worked).
+      `journalctl -u sops-install-secrets --no-pager | tail` is **only meaningful
+      on amateria** — the work bucket declares NixOS-level sops secrets
+      (`bitdefender/*`, `vpn/*`, `glpi/*`). On selenitic / spire there are no
+      NixOS-level secrets to install, so "No entries" is expected and healthy;
+      the personal git email is an HM-level secret handled separately.
 - [ ] **Docker rootless** works: `docker run --rm hello-world` (as your user)
 - [ ] **Stylix theming** applied to GTK apps (file manager etc.) — compare a window
       to expected Material-Darker look
