@@ -38,6 +38,21 @@
               hotkey-overlay.title = "Noctalia launcher";
             };
 
+            # base/keybindings.nix Mod+X spawns `loginctl lock-session`, which
+            # fires the logind Lock signal. On waybar hosts swayidle bridges
+            # that to hyprlock — noctalia doesn't listen for the signal, so
+            # we route the keybind directly through its lockScreen IPC.
+            "Mod+X" = lib.mkForce {
+              action.spawn = [
+                "noctalia-shell"
+                "ipc"
+                "call"
+                "lockScreen"
+                "lock"
+              ];
+              hotkey-overlay.title = "Lock screen";
+            };
+
             # Mod+Alt+X is only bound inside the waybar bucket, so on a
             # noctalia host the key is free — no mkForce needed.
             "Mod+Alt+X" = {
