@@ -1,19 +1,31 @@
 { config, ... }:
+let
+  hostsCfg = config.hosts;
+in
 {
-  flake.modules.nixos.base = nixosArgs: {
-    fonts.packages = with nixosArgs.pkgs; [
-      maple-mono.NF
-      dejavu_fonts
-    ];
+  flake.modules.nixos.base.imports = [
+    (
+      {
+        pkgs,
+        config,
+        ...
+      }:
+      {
+        fonts.packages = with pkgs; [
+          maple-mono.NF
+          dejavu_fonts
+        ];
 
-    fonts.fontconfig = {
-      antialias = true;
-      hinting = {
-        enable = true;
-        style = "slight";
-      };
-      # subpixel rendering depends on the physical panel — per-host data.
-      subpixel.rgba = config.hosts.${nixosArgs.config.networking.hostName}.subpixelLayout;
-    };
-  };
+        fonts.fontconfig = {
+          antialias = true;
+          hinting = {
+            enable = true;
+            style = "slight";
+          };
+          # subpixel rendering depends on the physical panel — per-host data.
+          subpixel.rgba = hostsCfg.${config.networking.hostName}.subpixelLayout;
+        };
+      }
+    )
+  ];
 }
