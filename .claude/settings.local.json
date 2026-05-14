@@ -13,7 +13,8 @@
       "Read(//etc/**)",
       "Bash(nix-prefetch-url:*)",
       "WebFetch(domain:www.bitdefender.com)",
-      "Bash(xargs -I{} sh -c 'test -f \"\"{}/flake.nix\"\" && head -1 \"\"{}/flake.nix\"\"')"
+      "Bash(xargs -I{} sh -c 'test -f \"\"{}/flake.nix\"\" && head -1 \"\"{}/flake.nix\"\"')",
+      "WebFetch(domain:www.vimjoyer.com)"
     ],
     "deny": [],
     "ask": []

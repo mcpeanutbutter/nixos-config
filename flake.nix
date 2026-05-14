@@ -6,6 +6,13 @@
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
 
+    # Dendritic pattern: flake-parts + auto-import via import-tree
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
+    };
+    import-tree.url = "github:vic/import-tree";
+
     # Home manager
     home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
@@ -42,110 +49,5 @@
     };
   };
 
-  outputs =
-    {
-      self,
-      nixpkgs,
-      home-manager,
-      ...
-    }@inputs:
-    let
-      inherit (self) outputs;
-      system = "x86_64-linux";
-      vscode-extensions = inputs.nix-vscode-extensions.extensions.${system};
-
-      # Define user configurations
-      users = {
-        jonas = import ./users/jonas;
-      };
-
-      # Define host configurations
-      hosts = {
-        amateria = {
-          system = "x86_64-linux";
-          theme = "material-darker";
-          stateVersion = "25.05";
-          desktopEnvironment = "niri";
-          thermalZone = null;
-          hwmon = {
-            path = "/sys/devices/pci0000:00/0000:00:18.3/hwmon";
-            input = "temp1_input"; # Tctl (CPU control temp)
-          };
-          subpixelLayout = "none"; # mixed OLED/IPS monitors, grayscale AA
-          workMachine = true;
-        };
-        selenitic = {
-          system = "x86_64-linux";
-          theme = "material-darker";
-          stateVersion = "25.05";
-          desktopEnvironment = "niri";
-          thermalZone = 5; # x86_pkg_temp (CPU package temp)
-          hwmon = null;
-          subpixelLayout = "rgb"; # standard IPS panel
-          workMachine = false;
-        };
-        spire = {
-          system = "x86_64-linux";
-          theme = "material-darker";
-          stateVersion = "25.11";
-          desktopEnvironment = "niri";
-          thermalZone = null;
-          hwmon = {
-            path = "/sys/devices/pci0000:00/0000:00:18.3/hwmon";
-            input = "temp1_input"; # Tctl (CPU control temp)
-          };
-          subpixelLayout = "none"; # OLED display
-          workMachine = false;
-        };
-      };
-
-      # Function for NixOS system configuration
-      mkNixosConfiguration =
-        hostname: username:
-        nixpkgs.lib.nixosSystem {
-          specialArgs = {
-            inherit inputs outputs hostname;
-            userConfig = users.${username};
-            hostConfig = hosts.${hostname};
-            nixosModules = "${self}/modules/nixos";
-          };
-          modules = [
-            ./hosts/${hostname}
-            inputs.stylix.nixosModules.stylix
-            inputs.sops-nix.nixosModules.sops
-
-            # Make home-manager as a module of nixos
-            # so that home-manager configuration will be deployed automatically when executing `nixos-rebuild switch`
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.backupFileExtension = "hm-backup";
-
-              home-manager.users.${username} = import ./home/${username}/${hostname};
-
-              home-manager.extraSpecialArgs = {
-                inherit inputs outputs vscode-extensions;
-                userConfig = users.${username};
-                hostConfig = hosts.${hostname};
-                nhModules = "${self}/modules/home-manager";
-              };
-
-              home-manager.sharedModules = [
-                inputs.nixvim.homeModules.nixvim
-                inputs.sops-nix.homeModules.sops
-              ];
-            }
-          ];
-        };
-    in
-    {
-      nixosConfigurations = {
-        amateria = mkNixosConfiguration "amateria" "jonas";
-        selenitic = mkNixosConfiguration "selenitic" "jonas";
-        spire = mkNixosConfiguration "spire" "jonas";
-      };
-
-      overlays = import ./overlays { inherit inputs; };
-    };
+  outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);
 }
