@@ -26,9 +26,6 @@
           };
         };
 
-        # PAM service for hyprlock authentication.
-        security.pam.services.hyprlock = { };
-
         # US keymap with altgr-intl (Euro, accented chars on AltGr combos).
         services.xserver.xkb = {
           layout = "us";
@@ -74,14 +71,10 @@
           };
         };
 
-        # Essential Niri-suite packages.
+        # Essential Niri-suite packages. Shell-specific tools (fuzzel, mako,
+        # waybar, hyprlock) live in the waybar bucket and are installed via
+        # home-manager when that bucket is active.
         environment.systemPackages = with pkgs; [
-          # Basic Wayland utilities
-          fuzzel # application launcher
-          mako # notification daemon
-          waybar # status bar
-          hyprlock # screen locker
-
           # Screenshot and clipboard
           grim
           slurp

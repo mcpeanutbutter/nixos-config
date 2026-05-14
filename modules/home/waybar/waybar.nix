@@ -3,7 +3,7 @@ let
   hostsCfg = config.hosts;
 in
 {
-  flake.modules.homeManager.base.imports = [
+  flake.modules.homeManager.waybar.imports = [
     (
       {
         config,

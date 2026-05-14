@@ -1,7 +1,7 @@
 {
   flake.modules.homeManager.base.imports = [
     (
-      { powerMenuScript, ... }:
+      { ... }:
       {
         programs.niri.settings.binds = {
           "Mod+Shift+Slash".action.show-hotkey-overlay = [ ];
@@ -36,11 +36,6 @@
             ];
             hotkey-overlay.title = "Lock screen";
           };
-          "Mod+Alt+X" = {
-            action.spawn = [ "${powerMenuScript}" ];
-            hotkey-overlay.title = "Power menu";
-          };
-
           # Media keys
           "XF86AudioRaiseVolume" = {
             action.spawn = [

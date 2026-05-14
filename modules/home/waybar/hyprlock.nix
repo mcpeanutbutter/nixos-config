@@ -1,5 +1,5 @@
 {
-  flake.modules.homeManager.base.imports = [
+  flake.modules.homeManager.waybar.imports = [
     (
       { config, ... }:
       let
