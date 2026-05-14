@@ -23,6 +23,44 @@ The current (pre-refactor) configuration uses a modular architecture:
 
 After modifying any `.nix` files, always run `nixfmt` on the changed files before committing or building. Example: `nixfmt path/to/file.nix`. This ensures consistent formatting across the repository.
 
+## Dendritic pattern gotcha: always destructure module function args
+
+When writing a `flake.modules.<class>.<bucket>` value as a function in a dendritic flake-parts module, **always destructure the args you use** (`{ pkgs, config, ... }: { ... }`). **Never** use a bare lambda with attribute access (`nixosArgs: { ... nixosArgs.pkgs.foo ... }`) — the module system may evaluate the function eagerly during imports-discovery (before `pkgs`/`config` are populated), and bare-arg attribute access fails with `error: attribute 'pkgs' missing`. Destructured args tell the module system upfront which args are required, so it defers evaluation correctly.
+
+If a function-form module needs `imports = [ ... ]` in its body, wrap the function inside the outer attrset's `imports` instead:
+
+```nix
+# BAD — fails when evaluated through imports-discovery:
+flake.modules.nixos.base = nixosArgs: {
+  imports = [ inputs.foo.nixosModules.bar ];
+  some.option = nixosArgs.pkgs.thing;  # ← attribute 'pkgs' missing
+};
+
+# GOOD:
+flake.modules.nixos.base.imports = [
+  inputs.foo.nixosModules.bar
+  ({ pkgs, ... }: {
+    some.option = pkgs.thing;
+  })
+];
+```
+
+If the inner function needs both the outer flake-parts `config` (`config.hosts.<name>...`) and the inner NixOS `config` (`config.networking.hostName`, ...), alias the outer one with a let-binding so the inner destructured `config` doesn't shadow it:
+
+```nix
+{ inputs, config, ... }:
+let hostsCfg = config.hosts; in
+{
+  flake.modules.nixos.base.imports = [
+    ({ pkgs, config, ... }: {
+      foo = hostsCfg.${config.networking.hostName}.bar;
+    })
+  ];
+}
+```
+
+Pattern reference: `mightyiam/infra/modules/style/stylix.nix`.
+
 ## Build and Development Commands
 
 ### System Configuration
