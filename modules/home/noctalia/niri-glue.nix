@@ -22,6 +22,24 @@
           # https://docs.noctalia.dev/v4/getting-started/faq/#configuration
           environment.QS_ICON_THEME = "Hatter-kde-dark";
 
+          # Set the overview wallpaper on the backdrop.
+          layer-rules = [
+            {
+              matches = [ { namespace = "^noctalia-overview*"; } ];
+              place-within-backdrop = true;
+            }
+          ];
+
+          overview = {
+            workspace-shadow.enable = true;
+          };
+
+          # layout = {
+          #   # Transparent so the backdrop wallpaper shows through.
+          #   background-color = "transparent";
+
+          # };
+
           # Keybinding parity with the waybar bucket. base/keybindings.nix
           # binds Mod+D to "fuzzel", which lives in the waybar bucket and
           # isn't installed when noctalia is active — override to noctalia's

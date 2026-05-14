@@ -11,6 +11,17 @@
         # "Configuration defaults" block). Trim further as you settle on
         # what you actually want vs. what was just-in-the-export.
         settings = {
+          # Pin the schema version so noctalia's migration loop is a
+          # no-op on first read. Without this, settingsVersion defaults
+          # to 0 and every migration runs — Migration45 in particular
+          # rewrites `bar.barType` to "simple" because it expects a
+          # legacy `bar.floating` boolean that's not in our JSON. The
+          # corrected adapter then tries to save back, but our
+          # settings.json is a read-only nix-store symlink, so the bug
+          # recurs every fresh login. Bump this when noctalia ships
+          # a new schema version (Commons/Settings.qml:28).
+          settingsVersion = 59;
+
           appLauncher = {
             density = "comfortable";
             iconMode = "native";
@@ -71,11 +82,11 @@
           general = {
             avatarImage = "/home/jonas/.face";
             clockFormat = "hh\nmm";
-            clockStyle = "analog";
+            clockStyle = "digital";
             enableLockScreenCountdown = false;
             enableLockScreenMediaControls = true;
             lockScreenAnimations = true;
-            lockScreenBlur = 0.5;
+            lockScreenBlur = 1;
             passwordChars = true;
             # shadowDirection = "bottom";
             # shadowOffsetX = 0;
@@ -113,8 +124,6 @@
             randomIntervalSec = 3600;
             transitionType = [ "fade" ];
             overviewEnabled = true;
-            # overviewBlur = 0.4;
-            # overviewTint = 0.6;
           };
         };
       };

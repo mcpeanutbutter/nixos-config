@@ -57,6 +57,9 @@
           # Disable client-side decorations for a cleaner look.
           prefer-no-csd = true;
 
+          # layer-rules = [
+          #   {matches = };
+          #  ];
           # Rounded corners on every window.
           window-rules = [
             {
@@ -81,9 +84,6 @@
             ];
 
             default-column-width.proportion = 1.0 / 3.0;
-
-            # Transparent so the backdrop wallpaper shows through.
-            background-color = "transparent";
 
             struts = {
               left = 24;
