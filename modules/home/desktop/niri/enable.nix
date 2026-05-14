@@ -1,7 +1,12 @@
 {
   flake.modules.homeManager.base.imports = [
     (
-      { config, pkgs, ... }:
+      {
+        config,
+        pkgs,
+        lib,
+        ...
+      }:
       {
         # Disable XDG autostart for blueman-applet (it races Waybar and loses
         # the tray icon). The systemd service below restarts it in order.
@@ -41,6 +46,8 @@
         };
 
         programs.niri.settings = {
+          xwayland-satellite.path = lib.getExe pkgs.xwayland-satellite;
+
           input.keyboard.xkb = {
             layout = "us";
             variant = "altgr-intl";

@@ -17,7 +17,6 @@
             dbeaver-bin
             devenv
             drawio
-            # element-desktop
             fastfetch
             gdk
             gemini-cli
@@ -38,7 +37,6 @@
             mpv
             pkgs.unstable.nixd
             nixfmt
-
             opentofu
             pdfarranger
             poetry
@@ -50,6 +48,7 @@
             stress-ng
             sysbench
             thunderbird
+            uv
           ];
       }
     )

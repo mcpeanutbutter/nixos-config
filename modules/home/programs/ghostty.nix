@@ -22,7 +22,7 @@
             # background-opacity = stylix.opacity.terminal, default 1.0).
             # Without mkForce, pkgs.formats.keyValue merges both as duplicate
             # keys and ghostty's last-wins parsing picks stylix's 1.0.
-            background-opacity = lib.mkForce 0.95;
+            background-opacity = lib.mkForce 0.90;
           };
         };
       }
