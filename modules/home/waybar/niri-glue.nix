@@ -45,6 +45,12 @@
             };
           }
         ];
+
+        layout = {
+          # Transparent so swww's backdrop wallpaper shows through the niri
+          # overview — paired with the swww-daemonbackdrop layer-rule above.
+          background-color = "transparent";
+        };
       };
     }
   ];

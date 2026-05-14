@@ -34,11 +34,12 @@
             workspace-shadow.enable = true;
           };
 
-          # layout = {
-          #   # Transparent so the backdrop wallpaper shows through.
-          #   background-color = "transparent";
-
-          # };
+          debug = {
+            # Noctalia sends xdg-activation tokens with an "invalid" serial
+            # that niri rejects by default — accept them so notification
+            # actions and window activation from noctalia work.
+            honor-xdg-activation-with-invalid-serial = true;
+          };
 
           # Keybinding parity with the waybar bucket. base/keybindings.nix
           # binds Mod+D to "fuzzel", which lives in the waybar bucket and

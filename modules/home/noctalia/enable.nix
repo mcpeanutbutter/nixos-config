@@ -88,9 +88,7 @@
             lockScreenAnimations = true;
             lockScreenBlur = 1;
             passwordChars = true;
-            # shadowDirection = "bottom";
-            # shadowOffsetX = 0;
-            # telemetryEnabled = true;
+            telemetryEnabled = false;
           };
           idle = {
             enabled = true;
@@ -121,7 +119,7 @@
           wallpaper = {
             automationEnabled = true;
             directory = "/home/jonas/Pictures/Wallpapers";
-            randomIntervalSec = 3600;
+            randomIntervalSec = 600;
             transitionType = [ "fade" ];
             overviewEnabled = true;
           };
