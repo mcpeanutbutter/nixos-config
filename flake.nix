@@ -27,11 +27,21 @@
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-    # Automated ricing
-    stylix.url = "github:danth/stylix/release-25.11";
+    # Automated ricing. Pinned to the merge commit of nix-community/stylix#2189
+    # (noctalia-shell foreground grays → accent colors) — the fix wasn't
+    # backported to release-25.11, and current master needs `services.displayManager.generic`
+    # which only exists on nixos-unstable. This commit is the sweet spot.
+    stylix.url = "github:danth/stylix/044ac0cc6d914f1dac22a728013bc3797f77cfab";
 
     # Niri compositor
     niri.url = "github:sodiboo/niri-flake";
+
+    # Noctalia shell (Quickshell-based). Upstream requires nixpkgs-unstable
+    # because it depends on a recent Quickshell.
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
 
     # Secrets management
     sops-nix = {

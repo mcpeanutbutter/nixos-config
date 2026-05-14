@@ -57,6 +57,17 @@ in
             popups = 1.0;
           };
 
+          # Icon theme. Propagates to gtk.iconTheme (via stylix/hm/icons.nix)
+          # and to the icon_theme key in qt5ct/qt6ct.conf (via stylix's qt
+          # target). Without this, Qt apps like noctalia-shell fall back to
+          # hicolor and show missing-icon checkerboards for most apps.
+          icons = {
+            enable = true;
+            package = pkgs.hatter-icon-theme;
+            dark = "Hatter-kde-dark";
+            light = "Hatter-kde-dark";
+          };
+
           targets = {
             # Disable browser theming to avoid "managed by organization" issues.
             chromium.enable = false;

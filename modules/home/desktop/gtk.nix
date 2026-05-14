@@ -6,10 +6,8 @@
         gtk = {
           enable = true;
 
-          iconTheme = {
-            package = pkgs.hatter-icon-theme;
-            name = "Hatter-kde-dark";
-          };
+          # iconTheme is set by stylix.icons (see modules/nixos/services/stylix.nix)
+          # — single source of truth so qt5ct/qt6ct get the same value.
 
           gtk3.extraConfig.gtk-application-prefer-dark-theme = true;
           gtk4.extraConfig.gtk-application-prefer-dark-theme = true;
