@@ -116,6 +116,11 @@
 
           # Electron apps under Wayland.
           environment.NIXOS_OZONE_WL = "1";
+
+          debug = {
+            # Allows notification actions and window activation from Noctalia.
+            honor-xdg-activation-with-invalid-serial = true;
+          };
         };
 
         # Helper script to toggle the laptop screen on/off for docking.

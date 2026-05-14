@@ -112,6 +112,9 @@
             directory = "/home/jonas/Pictures/Wallpapers";
             randomIntervalSec = 3600;
             transitionType = [ "fade" ];
+            overviewEnabled = true;
+            # overviewBlur = 0.4;
+            # overviewTint = 0.6;
           };
         };
       };
