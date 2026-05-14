@@ -6,6 +6,13 @@
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
 
+    # Dendritic pattern: flake-parts + auto-import via import-tree
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
+    };
+    import-tree.url = "github:vic/import-tree";
+
     # Home manager
     home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
