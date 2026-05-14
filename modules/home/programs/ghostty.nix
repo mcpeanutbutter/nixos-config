@@ -1,7 +1,7 @@
 {
   flake.modules.homeManager.base.imports = [
     (
-      { pkgs, ... }:
+      { pkgs, lib, ... }:
       {
         programs.ghostty = {
           enable = true;
@@ -18,7 +18,11 @@
             clipboard-read = "allow";
             clipboard-write = "allow";
             shell-integration = "zsh";
-            background-opacity = 0.95;
+            # mkForce overrides stylix's ghostty target (which sets
+            # background-opacity = stylix.opacity.terminal, default 1.0).
+            # Without mkForce, pkgs.formats.keyValue merges both as duplicate
+            # keys and ghostty's last-wins parsing picks stylix's 1.0.
+            background-opacity = lib.mkForce 0.95;
           };
         };
       }

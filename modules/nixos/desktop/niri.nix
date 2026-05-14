@@ -6,7 +6,7 @@
       { pkgs, ... }:
       {
         programs.niri.enable = true;
-        programs.niri.package = pkgs.niri;
+        programs.niri.package = pkgs.unstable.niri;
 
         # Dconf for GNOME app settings (e.g. GNOME Text Editor).
         programs.dconf.enable = true;
@@ -20,7 +20,7 @@
           enable = true;
           settings = {
             default_session = {
-              command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --remember-session --sessions ${pkgs.niri}/share/wayland-sessions";
+              command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --remember-session --sessions ${pkgs.unstable.niri}/share/wayland-sessions";
               user = "greeter";
             };
           };

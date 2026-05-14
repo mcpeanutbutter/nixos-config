@@ -1,7 +1,12 @@
 {
   flake.modules.homeManager.base.imports = [
     (
-      { pkgs, lib, ... }:
+      {
+        config,
+        pkgs,
+        lib,
+        ...
+      }:
       {
         programs.fuzzel = {
           enable = true;
@@ -23,6 +28,8 @@
               width = 2;
               radius = 8;
             };
+            # Semi-transparent background so niri's blur shows through.
+            colors.background = lib.mkForce "${config.lib.stylix.colors.base00}e6";
           };
         };
       }
