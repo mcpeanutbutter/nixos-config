@@ -9,6 +9,9 @@
     };
 
     initContent = ''
+      bindkey "^[[1;5D" backward-word
+      bindkey "^[[1;5C" forward-word
+
       nrs() { sudo nixos-rebuild switch --flake ~/nixos-config#"$(hostname)" "$@"; }
       workdir() {
         if [ -z "$1" ]; then
