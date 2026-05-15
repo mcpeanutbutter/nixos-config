@@ -31,6 +31,12 @@
           exec-arg = "-e";
         };
 
+        # Nemo's default thumbnail-limit is 10 MB, which excludes most
+        # phone/camera photos. Raise the cap so large local images thumb.
+        dconf.settings."org/nemo/preferences" = {
+          thumbnail-limit = lib.hm.gvariant.mkUint64 (256 * 1024 * 1024);
+        };
+
         # Register .nix files as a known MIME type (not in the standard DB).
         xdg.dataFile."mime/packages/text-x-nix.xml".text = ''
           <?xml version="1.0" encoding="UTF-8"?>
@@ -49,6 +55,7 @@
           defaultApplications =
             let
               editor = "org.gnome.TextEditor.desktop";
+              loupe = "org.gnome.Loupe.desktop";
             in
             {
               "inode/directory" = "nemo.desktop";
@@ -77,6 +84,13 @@
               "application/xml" = editor;
               "application/x-shellscript" = editor;
               "application/javascript" = editor;
+              "image/png" = loupe;
+              "image/jpeg" = loupe;
+              "image/gif" = loupe;
+              "image/bmp" = loupe;
+              "image/tiff" = loupe;
+              "image/x-icon" = loupe;
+              "image/svg+xml" = loupe;
             };
         };
       }

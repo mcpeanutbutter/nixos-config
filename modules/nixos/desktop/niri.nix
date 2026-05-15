@@ -40,6 +40,11 @@
         # Power management (not enabled by niri-flake defaults).
         services.upower.enable = true;
 
+        # Thumbnailer daemon used by Nemo over D-Bus. Without it, Nemo's
+        # inline GdkPixbuf fallback is unreliable — the actual cause of
+        # "thumbnails only sometimes appear".
+        services.tumbler.enable = true;
+
         # niri-flake pulls in xdg-desktop-portal-gnome but gnome.portal has
         # `UseIn=gnome`, so on niri none of its interfaces (ScreenCast, Settings,
         # Notification, ...) are auto-selected — screen sharing in Brave/Teams
