@@ -16,7 +16,8 @@
       "Bash(xargs -I{} sh -c 'test -f \"\"{}/flake.nix\"\" && head -1 \"\"{}/flake.nix\"\"')",
       "WebFetch(domain:www.vimjoyer.com)",
       "WebFetch(domain:nix-community.github.io)",
-      "WebFetch(domain:docs.noctalia.dev)"
+      "WebFetch(domain:docs.noctalia.dev)",
+      "Bash(nix-shell -p pulseaudio --run \"pactl list sinks\")"
     ],
     "deny": [],
     "ask": []
