@@ -4,7 +4,7 @@
     imports =
       (with config.flake.modules.nixos; [
         base
-        waybar
+        noctalia
       ])
       ++ [
         config.hosts.selenitic.hardwareModule

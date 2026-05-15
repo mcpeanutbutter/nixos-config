@@ -5,7 +5,7 @@
       (with config.flake.modules.nixos; [
         base
         work
-        waybar
+        noctalia
       ])
       ++ [
         config.hosts.amateria.hardwareModule

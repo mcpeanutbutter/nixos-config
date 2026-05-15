@@ -119,7 +119,7 @@
           wallpaper = {
             automationEnabled = true;
             directory = "/home/jonas/Pictures/Wallpapers";
-            randomIntervalSec = 600;
+            randomIntervalSec = 1800;
             transitionType = [ "fade" ];
             overviewEnabled = true;
           };
