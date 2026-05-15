@@ -18,11 +18,14 @@
             clipboard-read = "allow";
             clipboard-write = "allow";
             shell-integration = "zsh";
-            # mkForce overrides stylix's ghostty target (which sets
-            # background-opacity = stylix.opacity.terminal, default 1.0).
-            # Without mkForce, pkgs.formats.keyValue merges both as duplicate
-            # keys and ghostty's last-wins parsing picks stylix's 1.0.
-            background-opacity = lib.mkForce 0.90;
+          };
+          # Stylix's ghostty target hard-codes selection-background/foreground
+          # in themes.stylix, which makes selection-invert-fg-bg a no-op.
+          # Override those two leaves with ghostty's cell-foreground / cell-background
+          # keywords to invert per cell instead.
+          themes.stylix = {
+            selection-background = lib.mkForce "cell-foreground";
+            selection-foreground = lib.mkForce "cell-background";
           };
         };
       }
