@@ -9,6 +9,7 @@
         killall
         mesa
         sops
+        usbutils
       ];
     };
 }
