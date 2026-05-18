@@ -13,6 +13,27 @@
           enable = true;
           vaults.obsidian = {
             target = "Documents/obsidian";
+            settings.corePlugins = [
+              "backlink"
+              "bookmarks"
+              "canvas"
+              "command-palette"
+              "daily-notes"
+              "editor-status"
+              "file-explorer"
+              "file-recovery"
+              "global-search"
+              "graph"
+              "note-composer"
+              "outgoing-link"
+              "outline"
+              "page-preview"
+              "switcher"
+              "sync"
+              "tag-pane"
+              "templates"
+              "word-count"
+            ];
             settings.cssSnippets = [
               {
                 name = "Material Darker";
