@@ -1,8 +1,45 @@
 {
   flake.modules.homeManager.noctalia.imports = [
     (
-      { lib, ... }:
       {
+        config,
+        lib,
+        pkgs,
+        ...
+      }:
+      let
+        baseSettings = config.xdg.configFile."noctalia/settings.json".source;
+        mkBarVariant =
+          name: mv: mh:
+          pkgs.runCommand "noctalia-${name}.json" { } ''
+            ${pkgs.gnused}/bin/sed \
+              -e 's/"marginVertical": [0-9]\+/"marginVertical": ${toString mv}/' \
+              -e 's/"marginHorizontal": [0-9]\+/"marginHorizontal": ${toString mh}/' \
+              ${baseSettings} > $out
+          '';
+        tightSettings = mkBarVariant "tight" 0 0;
+        looseSettings = mkBarVariant "loose" 24 192;
+      in
+      {
+        # Bar-margin variant of niri-cycle-gaps: swaps the symlink at
+        # ~/.config/noctalia/settings.json to one of three pre-built nix-store
+        # JSONs. Noctalia's Settings.qml uses FileView with watchChanges=true
+        # and explicitly handles symlink/store-path swaps, so the bar reflows
+        # without restarting noctalia.
+        home.packages = [
+          (pkgs.writeShellScriptBin "noctalia-cycle-gaps" ''
+            #!/usr/bin/env bash
+            preset="''${1:-medium}"
+            case "$preset" in
+              tight)  path="${tightSettings}" ;;
+              medium) path="${baseSettings}"  ;;
+              loose)  path="${looseSettings}" ;;
+              *) echo "noctalia-cycle-gaps: unknown preset '$preset'" >&2; exit 1 ;;
+            esac
+            ln -sfn "$path" "$HOME/.config/noctalia/settings.json"
+          '')
+        ];
+
         programs.niri.settings = {
           # Spawn noctalia at session start. The HM module installs a
           # `noctalia-shell` wrapper that invokes `qs -c noctalia-shell`

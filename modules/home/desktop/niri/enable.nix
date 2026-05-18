@@ -7,6 +7,24 @@
         lib,
         ...
       }:
+      let
+        baseCfg = config.xdg.configFile.niri-config.source;
+        mkGapVariant =
+          name: gaps: l: r: t: b:
+          pkgs.runCommand "niri-${name}.kdl" { } ''
+            ${pkgs.gnused}/bin/sed \
+              -e 's/^    gaps [0-9][0-9]*/    gaps ${toString gaps}/' \
+              -e '/^    struts {/,/^    }/{
+                    s/^        left [0-9][0-9]*/        left ${toString l}/
+                    s/^        right [0-9][0-9]*/        right ${toString r}/
+                    s/^        top [0-9][0-9]*/        top ${toString t}/
+                    s/^        bottom [0-9][0-9]*/        bottom ${toString b}/
+                  }' \
+              ${baseCfg} > $out
+          '';
+        tightCfg = mkGapVariant "tight" 4 0 0 0 0;
+        looseCfg = mkGapVariant "loose" 24 48 48 16 48;
+      in
       {
         # Disable XDG autostart for blueman-applet (it races Waybar and loses
         # the tray icon). The systemd service below restarts it in order.
@@ -125,6 +143,29 @@
             else
               niri msg output eDP-1 off
               echo "Laptop screen disabled"
+            fi
+          '')
+
+          # Cycle the layout.gaps + layout.struts between tight / medium / loose
+          # presets by atomically reloading niri with one of three nix-built
+          # configs. Niri exposes no per-setting IPC for gaps/struts, so a full
+          # config reload via `load-config-file` is the only available mechanism.
+          # Note: any `nixos-rebuild switch` rewrites the watched config.kdl back
+          # to the medium preset; press the bind again to re-apply.
+          (pkgs.writeShellScriptBin "niri-cycle-gaps" ''
+            #!/usr/bin/env bash
+            state_file="''${XDG_RUNTIME_DIR:-/tmp}/niri-gap-preset"
+            current=$(cat "$state_file" 2>/dev/null || echo medium)
+            case "$current" in
+              tight)  next=medium; path="${baseCfg}"  ;;
+              medium) next=loose;  path="${looseCfg}" ;;
+              loose)  next=tight;  path="${tightCfg}" ;;
+              *)      next=medium; path="${baseCfg}"  ;;
+            esac
+            echo "$next" > "$state_file"
+            niri msg action load-config-file --path "$path"
+            if command -v noctalia-cycle-gaps >/dev/null 2>&1; then
+              noctalia-cycle-gaps "$next"
             fi
           '')
         ];

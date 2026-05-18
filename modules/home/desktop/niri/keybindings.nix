@@ -262,6 +262,10 @@
           "Mod+Escape".action.toggle-keyboard-shortcuts-inhibit = [ ];
           "Mod+Shift+E".action.quit = [ ];
           "Mod+Shift+P".action.power-off-monitors = [ ];
+          "Mod+Shift+G" = {
+            action.spawn = [ "niri-cycle-gaps" ];
+            hotkey-overlay.title = "Cycle gap preset (tight → medium → loose)";
+          };
         };
       }
     )
