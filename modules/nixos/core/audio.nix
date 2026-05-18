@@ -15,5 +15,10 @@
         "wireplumber.settings"."node.stream.restore-target" = false;
       };
     };
+    # Focusrite Scarlett interfaces sometimes vanish after resume when USB
+    # autosuspend kicks in. Keep them powered.
+    services.udev.extraRules = ''
+      ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="1235", ATTR{power/control}="on"
+    '';
   };
 }
