@@ -12,7 +12,17 @@
       bindkey "^[[1;5D" backward-word
       bindkey "^[[1;5C" forward-word
 
-      nrs() { sudo nixos-rebuild switch --flake ~/nixos-config#"$(hostname)" "$@"; }
+      nrs() {
+        local host="$(hostname)"
+        local newSys
+        newSys="$(nix build --no-link --print-out-paths "$HOME/nixos-config#nixosConfigurations.$host.config.system.build.toplevel")" || return
+        local cmd=switch
+        if [ "$(readlink -f "$newSys/kernel")" != "$(readlink -f /run/booted-system/kernel)" ]; then
+          cmd=boot
+          echo "kernel changed; using 'boot' — reboot to activate"
+        fi
+        sudo nixos-rebuild "$cmd" --flake ~/nixos-config#"$host" "$@"
+      }
       workdir() {
         if [ -z "$1" ]; then
           echo "Usage: workdir <title>" >&2
