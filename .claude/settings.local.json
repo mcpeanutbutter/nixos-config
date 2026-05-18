@@ -17,7 +17,8 @@
       "WebFetch(domain:www.vimjoyer.com)",
       "WebFetch(domain:nix-community.github.io)",
       "WebFetch(domain:docs.noctalia.dev)",
-      "Bash(nix-shell -p pulseaudio --run \"pactl list sinks\")"
+      "Bash(nix-shell -p pulseaudio --run \"pactl list sinks\")",
+      "WebFetch(domain:getsops.io)"
     ],
     "deny": [],
     "ask": []
