@@ -10,17 +10,26 @@
       let
         baseSettings = config.xdg.configFile."noctalia/settings.json".source;
         mkBarVariant =
-          name: mv: mh:
+          name: mv: mh: density:
           pkgs.runCommand "noctalia-${name}.json" { } ''
             ${pkgs.gnused}/bin/sed \
               -e 's/"marginVertical": [0-9]\+/"marginVertical": ${toString mv}/' \
               -e 's/"marginHorizontal": [0-9]\+/"marginHorizontal": ${toString mh}/' \
+              -e '/^  "bar": {/,/^  }/{
+                    s/"density": "[a-z]\+"/"density": "${density}"/
+                  }' \
               ${baseSettings} > $out
           '';
-        tightSettings = mkBarVariant "tight" 0 0;
-        looseSettings = mkBarVariant "loose" 24 192;
+        tightSettings = mkBarVariant "tight" 0 0 "compact";
+        looseSettings = mkBarVariant "loose" 40 192 "spacious";
       in
       {
+        # The cycle script repoints settings.json to a /nix/store path outside
+        # home-manager's managed files dir, which HM otherwise refuses to
+        # clobber on the next activation. Force HM to overwrite — every rebuild
+        # resets the symlink to the medium baseline anyway.
+        xdg.configFile."noctalia/settings.json".force = true;
+
         # Bar-margin variant of niri-cycle-gaps: swaps the symlink at
         # ~/.config/noctalia/settings.json to one of three pre-built nix-store
         # JSONs. Noctalia's Settings.qml uses FileView with watchChanges=true

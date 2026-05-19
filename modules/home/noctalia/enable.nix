@@ -28,8 +28,9 @@
           };
           bar = {
             barType = "floating";
+            position = "bottom";
             density = "comfortable";
-            marginVertical = 16;
+            marginVertical = 24;
             marginHorizontal = 128;
             useSeparateOpacity = true;
             widgets = {
@@ -39,7 +40,6 @@
                   id = "Launcher";
                   useDistroLogo = true;
                 }
-                { id = "Clock"; }
                 {
                   compactMode = false;
                   id = "SystemMonitor";
@@ -70,6 +70,7 @@
                 { id = "Brightness"; }
                 { id = "NightLight"; }
                 { id = "ControlCenter"; }
+                { id = "Clock"; }
               ];
             };
           };
@@ -86,7 +87,8 @@
             enableLockScreenCountdown = false;
             enableLockScreenMediaControls = true;
             lockScreenAnimations = true;
-            lockScreenBlur = 1;
+            # lockScreenBlur = 1;
+            lockScreenBlur = 0;
             passwordChars = true;
             telemetryEnabled = false;
           };
