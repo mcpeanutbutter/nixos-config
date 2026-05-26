@@ -46,6 +46,7 @@
               rust-lang.rust-analyzer
               ivandemchenko.roc-lang-unofficial
               golang.go
+              myriad-dreamin.tinymist
             ];
 
           profiles.default.userSettings = {

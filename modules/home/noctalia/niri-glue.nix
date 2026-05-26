@@ -10,18 +10,19 @@
       let
         baseSettings = config.xdg.configFile."noctalia/settings.json".source;
         mkBarVariant =
-          name: mv: mh: density:
+          name: mv: mh: density: barType:
           pkgs.runCommand "noctalia-${name}.json" { } ''
             ${pkgs.gnused}/bin/sed \
               -e 's/"marginVertical": [0-9]\+/"marginVertical": ${toString mv}/' \
               -e 's/"marginHorizontal": [0-9]\+/"marginHorizontal": ${toString mh}/' \
               -e '/^  "bar": {/,/^  }/{
                     s/"density": "[a-z]\+"/"density": "${density}"/
+                    s/"barType": "[a-z]\+"/"barType": "${barType}"/
                   }' \
               ${baseSettings} > $out
           '';
-        tightSettings = mkBarVariant "tight" 0 0 "compact";
-        looseSettings = mkBarVariant "loose" 40 192 "spacious";
+        tightSettings = mkBarVariant "tight" 0 0 "compact" "simple";
+        looseSettings = mkBarVariant "loose" 40 192 "spacious" "floating";
       in
       {
         # The cycle script repoints settings.json to a /nix/store path outside
