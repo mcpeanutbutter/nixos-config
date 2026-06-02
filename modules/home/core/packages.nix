@@ -35,6 +35,7 @@
             mongodb-compass
             mprime
             mpv
+            onefetch
             pkgs.unstable.nixd
             nixfmt
             opentofu

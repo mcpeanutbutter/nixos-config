@@ -12,6 +12,17 @@
       bindkey "^[[1;5D" backward-word
       bindkey "^[[1;5C" forward-word
 
+      autoload -Uz add-zsh-hook
+      _onefetch_last_root=""
+      _onefetch_chpwd() {
+        local root
+        root="$(git rev-parse --show-toplevel 2>/dev/null)" || { _onefetch_last_root=""; return; }
+        [[ "$root" == "$_onefetch_last_root" ]] && return
+        _onefetch_last_root="$root"
+        onefetch 2>/dev/null
+      }
+      add-zsh-hook chpwd _onefetch_chpwd
+
       nrs() {
         local host="$(hostname)"
         local newSys
