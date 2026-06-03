@@ -12,10 +12,7 @@
 
     # Custom-packages overlay (replaces the legacy overlays/default.nix
     # custom-packages entry).
-    (final: prev: {
-      # Fix missing xrdb alias — home-manager's xresources module expects pkgs.xrdb.
-      xrdb = prev.xorg.xrdb;
-
+    (final: _prev: {
       # Hatter rounded-square icon theme (KDE dark variant).
       hatter-icon-theme = final.callPackage ../../../packages/hatter-icon-theme { };
     })

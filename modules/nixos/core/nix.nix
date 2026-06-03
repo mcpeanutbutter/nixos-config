@@ -1,32 +1,37 @@
 { inputs, lib, ... }:
+let
+  # Flake inputs (incl. self), used for the registry and <input> channel paths.
+  flakeInputs = lib.filterAttrs (_: lib.isType "flake") inputs;
+in
 {
   flake.modules.nixos.base.imports = [
-    (
-      { config, ... }:
-      {
-        nixpkgs.config.allowUnfree = true;
+    {
+      nixpkgs.config.allowUnfree = true;
 
-        # Register flake inputs for `nix` commands. nixpkgs registry points at
-        # stable; use `nix shell nixpkgs-unstable#pkg` to reach unstable.
-        nix.registry = lib.mapAttrs (_: flake: { inherit flake; }) (
-          lib.filterAttrs (_: lib.isType "flake") inputs
-        );
+      # Register every flake input for `nix` commands (nix shell nixpkgs-stable#pkg, …).
+      nix.registry = lib.mapAttrs (_: flake: { inherit flake; }) flakeInputs;
 
-        # Make `<flake>` channel-style paths work too (etc/nix/path/<input>).
-        nix.nixPath = [ "/etc/nix/path" ];
-        environment.etc = lib.mapAttrs' (name: value: {
-          name = "nix/path/${name}";
-          value.source = value.flake;
-        }) config.nix.registry;
+      # Expose the same inputs as <input> channel paths via /etc/nix/path.
+      nix.nixPath = [ "/etc/nix/path" ];
+      environment.etc = lib.mapAttrs' (name: flake: {
+        name = "nix/path/${name}";
+        value.source = flake;
+      }) flakeInputs;
 
-        nix.settings = {
-          experimental-features = [
-            "nix-command"
-            "flakes"
-          ];
-          auto-optimise-store = true;
-        };
-      }
-    )
+      nix.settings = {
+        experimental-features = [
+          "nix-command"
+          "flakes"
+        ];
+        auto-optimise-store = true;
+      };
+
+      # Weekly GC of 30-day-old generations so the store and ESP don't fill up.
+      nix.gc = {
+        automatic = true;
+        dates = "weekly";
+        options = "--delete-older-than 30d";
+      };
+    }
   ];
 }

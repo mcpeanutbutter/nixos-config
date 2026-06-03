@@ -10,6 +10,8 @@
         efiSupport = true;
         device = "nodev";
         useOSProber = false;
+        # Cap GRUB menu entries so old generations can't silently fill the ESP.
+        configurationLimit = 64;
       };
 
       # Latest mainline kernel for best hardware support.

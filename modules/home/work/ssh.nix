@@ -10,10 +10,9 @@ in
         programs.ssh.includes = [
           config.sops.secrets."work-config".path
         ];
-        programs.ssh.matchBlocks.gitlab-work = {
-          host = "gitlab.bbf-it.at";
-          identityFile = workPrivateKey;
-          identitiesOnly = true;
+        programs.ssh.settings."gitlab.bbf-it.at" = {
+          IdentityFile = workPrivateKey;
+          IdentitiesOnly = true;
         };
       }
     )

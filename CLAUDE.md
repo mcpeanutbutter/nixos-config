@@ -85,7 +85,7 @@ Home Manager is integrated as a NixOS module in this configuration, so it's auto
 nix flake update
 
 # Update specific input
-nix flake update nixpkgs
+nix flake update nixpkgs-stable
 
 # Show flake metadata and outputs
 nix flake show
@@ -100,13 +100,18 @@ nix flake check
 
 **Key Flake Inputs**:
 
-- `nixpkgs` (nixos-25.11): Primary package source
-- `nixpkgs-unstable`: Unstable channel packages
-- `home-manager`: User-space configuration management, integrated as NixOS module
-- `nix-vscode-extensions`: VSCode extensions
-- `nixvim`: Neovim configuration framework
-- `stylix`: System-wide theming
-- `niri`: Niri compositor flake for Wayland window management
+Nixpkgs inputs are always qualified — there is no bare `nixpkgs`. Most inputs
+track stable; the unstable channel is pulled in selectively via the
+`pkgs.unstable.*` overlay (see `modules/nixos/core/overlays.nix`).
+
+- `nixpkgs-stable` (nixos-26.05): Primary package source; most inputs `follows` it
+- `nixpkgs-unstable`: Unstable channel, exposed selectively as `pkgs.unstable.*` (nixd, vscodium, jetbrains-idea-oss, zed LSPs)
+- `home-manager` (release-26.05): User-space configuration management, integrated as NixOS module
+- `nix-vscode-extensions`: VSCode extensions (follows stable)
+- `nixvim` (nixos-26.05): Neovim configuration framework (follows stable)
+- `stylix`: System-wide theming (tracks master, follows stable)
+- `niri`: Niri compositor flake — provides the NixOS module and the build-time config validator; the niri *package* itself comes from `nixpkgs-stable` (`pkgs.niri`, currently 26.04, which has `background-effect` blur)
+- `noctalia`: Quickshell-based desktop shell (follows stable)
 - `sops-nix`: Secrets management (age-encrypted)
 - `nixos-hardware`: Device-specific hardware optimizations (firmware updates, thermal management, SSD TRIM, GPU early KMS)
 

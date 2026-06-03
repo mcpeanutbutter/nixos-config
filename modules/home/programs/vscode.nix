@@ -9,7 +9,7 @@
         vsx = inputs.nix-vscode-extensions.extensions.${pkgs.stdenv.hostPlatform.system};
       in
       {
-        programs.vscode = {
+        programs.vscodium = {
           enable = true;
           package = pkgs.unstable.vscodium;
           profiles.default.extensions =
