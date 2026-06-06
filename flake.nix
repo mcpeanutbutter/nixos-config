@@ -27,9 +27,10 @@
       url = "github:nix-community/nixvim/nixos-26.05";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
-    # Tracks master; pin a commit if master ever regresses.
+    # Track the release branch matching nixpkgs-stable — master is developed
+    # against nixos-unstable and drifts on options like services.kmscon.config.
     stylix = {
-      url = "github:danth/stylix";
+      url = "github:nix-community/stylix/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
 

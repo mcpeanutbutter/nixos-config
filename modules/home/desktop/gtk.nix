@@ -1,16 +1,15 @@
 {
   flake.modules.homeManager.base.imports = [
     (
-      { pkgs, config, ... }:
+      { pkgs, ... }:
       {
         gtk = {
           enable = true;
 
           # iconTheme is set by stylix.icons (see modules/nixos/services/stylix.nix)
           # — single source of truth so qt5ct/qt6ct get the same value.
-
-          # Pin pre-26.05 behavior: gtk4 inherits the gtk3 theme (HM default became null).
-          gtk4.theme = config.gtk.theme;
+          # gtk3/gtk4 themes are set by stylix's gtk target (it assigns
+          # gtk.theme = adw-gtk3 and gtk.gtk4.theme = config.gtk.theme).
 
           gtk3.extraConfig.gtk-application-prefer-dark-theme = true;
           gtk4.extraConfig.gtk-application-prefer-dark-theme = true;

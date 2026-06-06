@@ -109,7 +109,7 @@ track stable; the unstable channel is pulled in selectively via the
 - `home-manager` (release-26.05): User-space configuration management, integrated as NixOS module
 - `nix-vscode-extensions`: VSCode extensions (follows stable)
 - `nixvim` (nixos-26.05): Neovim configuration framework (follows stable)
-- `stylix`: System-wide theming (tracks master, follows stable)
+- `stylix`: System-wide theming (`nix-community/stylix`, tracks the `release-26.05` branch matching nixpkgs-stable — NOT master, which targets nixos-unstable and drifts on options like `services.kmscon.config`; follows stable)
 - `niri`: Niri compositor flake — provides the NixOS module and the build-time config validator; the niri *package* itself comes from `nixpkgs-stable` (`pkgs.niri`, currently 26.04, which has `background-effect` blur)
 - `noctalia`: Quickshell-based desktop shell (follows stable)
 - `sops-nix`: Secrets management (age-encrypted)
