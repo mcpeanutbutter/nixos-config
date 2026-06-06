@@ -26,8 +26,8 @@
         looseCfg = mkGapVariant "loose" 24 48 48 48 16;
       in
       {
-        # Disable XDG autostart for blueman-applet (it races Waybar and loses
-        # the tray icon). The systemd service below restarts it in order.
+        # Disable XDG autostart for blueman-applet (it races the tray host and
+        # loses the tray icon). The systemd service below restarts it in order.
         xdg.configFile."autostart/blueman-applet.desktop".text = ''
           [Desktop Entry]
           Hidden=true
@@ -49,13 +49,11 @@
         systemd.user.services.blueman-applet = {
           Unit = {
             Description = "Blueman Applet";
-            After = [
-              "graphical-session.target"
-              "waybar.service"
-            ];
+            After = [ "graphical-session.target" ];
           };
           Service = {
-            # Wait for Waybar's StatusNotifierWatcher to be available on D-Bus.
+            # Wait for the tray host's StatusNotifierWatcher to be available on
+            # D-Bus (noctalia provides it).
             ExecStartPre = "${pkgs.bash}/bin/bash -c 'for i in $(seq 1 50); do ${pkgs.dbus}/bin/dbus-send --session --dest=org.freedesktop.DBus --type=method_call --print-reply /org/freedesktop/DBus org.freedesktop.DBus.GetNameOwner string:org.kde.StatusNotifierWatcher >/dev/null 2>&1 && exit 0; sleep 0.1; done; echo \"StatusNotifierWatcher not found, starting anyway\"; exit 0'";
             ExecStart = "${pkgs.blueman}/bin/blueman-applet";
             Restart = "on-failure";

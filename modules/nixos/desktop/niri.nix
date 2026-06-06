@@ -77,9 +77,9 @@
           };
         };
 
-        # Essential Niri-suite packages. Shell-specific tools (fuzzel, mako,
-        # waybar, hyprlock) live in the waybar bucket and are installed via
-        # home-manager when that bucket is active.
+        # Essential Niri-suite packages. The desktop shell (launcher, bar,
+        # notifications, lock screen) is provided by noctalia, configured in
+        # the noctalia bucket via home-manager.
         environment.systemPackages = with pkgs; [
           # Screenshot and clipboard
           grim

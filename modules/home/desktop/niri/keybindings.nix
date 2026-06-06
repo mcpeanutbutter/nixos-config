@@ -14,10 +14,6 @@
             ];
             hotkey-overlay.title = "GhosTTY Terminal";
           };
-          "Mod+D" = {
-            action.spawn = [ "fuzzel" ];
-            hotkey-overlay.title = "fuzzel launcher";
-          };
           "Mod+B" = {
             action.spawn = [ "brave" ];
             hotkey-overlay.title = "Brave Browser";
@@ -28,13 +24,6 @@
               "--app=https://claude.ai/"
             ];
             hotkey-overlay.title = "Claude AI";
-          };
-          "Mod+X" = {
-            action.spawn = [
-              "loginctl"
-              "lock-session"
-            ];
-            hotkey-overlay.title = "Lock screen";
           };
           # Media keys
           "XF86AudioRaiseVolume" = {

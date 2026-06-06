@@ -15,7 +15,7 @@
             staticTitle = true;
             disableMinSize = true;
 
-            # Tray integration with Waybar.
+            # Tray integration with the noctalia tray.
             tray = true;
             minimizeToTray = false;
             clickTrayToShowHide = true;

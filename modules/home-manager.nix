@@ -40,12 +40,6 @@
     ];
   };
 
-  flake.modules.nixos.waybar = {
-    home-manager.users.${config.user.username}.imports = [
-      config.flake.modules.homeManager.waybar
-    ];
-  };
-
   flake.modules.nixos.noctalia = {
     home-manager.users.${config.user.username}.imports = [
       config.flake.modules.homeManager.noctalia
@@ -55,6 +49,5 @@
   # Declare empty bucket containers so writers don't have to define them.
   flake.modules.homeManager.base = { };
   flake.modules.homeManager.work = { };
-  flake.modules.homeManager.waybar = { };
   flake.modules.homeManager.noctalia = { };
 }

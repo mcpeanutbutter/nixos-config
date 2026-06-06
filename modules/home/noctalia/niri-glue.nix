@@ -3,7 +3,6 @@
     (
       {
         config,
-        lib,
         pkgs,
         ...
       }:
@@ -88,12 +87,10 @@
             honor-xdg-activation-with-invalid-serial = true;
           };
 
-          # Keybinding parity with the waybar bucket. base/keybindings.nix
-          # binds Mod+D to "fuzzel", which lives in the waybar bucket and
-          # isn't installed when noctalia is active — override to noctalia's
-          # launcher IPC. Niri requires spawn args as a list of strings.
+          # Noctalia owns the launcher, lock, and session-menu keybinds.
+          # Niri requires spawn args as a list of strings.
           binds = {
-            "Mod+D" = lib.mkForce {
+            "Mod+D" = {
               action.spawn = [
                 "noctalia-shell"
                 "ipc"
@@ -104,11 +101,7 @@
               hotkey-overlay.title = "Noctalia launcher";
             };
 
-            # base/keybindings.nix Mod+X spawns `loginctl lock-session`, which
-            # fires the logind Lock signal. On waybar hosts swayidle bridges
-            # that to hyprlock — noctalia doesn't listen for the signal, so
-            # we route the keybind directly through its lockScreen IPC.
-            "Mod+X" = lib.mkForce {
+            "Mod+X" = {
               action.spawn = [
                 "noctalia-shell"
                 "ipc"
@@ -119,8 +112,6 @@
               hotkey-overlay.title = "Lock screen";
             };
 
-            # Mod+Alt+X is only bound inside the waybar bucket, so on a
-            # noctalia host the key is free — no mkForce needed.
             "Mod+Alt+X" = {
               action.spawn = [
                 "noctalia-shell"

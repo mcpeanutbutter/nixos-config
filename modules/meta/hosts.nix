@@ -30,27 +30,6 @@
             description = "fontconfig subpixel.rgba layout (per-host because monitor types vary).";
           };
 
-          # Waybar temperature widget — set exactly one of thermalZone or hwmon, or
-          # leave both null on machines with no usable temperature sensors.
-          thermalZone = lib.mkOption {
-            type = lib.types.nullOr lib.types.int;
-            default = null;
-            description = "Index into /sys/class/thermal/thermal_zone* (Intel/ACPI hosts).";
-          };
-
-          hwmon = lib.mkOption {
-            type = lib.types.nullOr (
-              lib.types.submodule {
-                options = {
-                  path = lib.mkOption { type = lib.types.str; };
-                  input = lib.mkOption { type = lib.types.str; };
-                };
-              }
-            );
-            default = null;
-            description = "hwmon path + input-filename (AMD hosts without ACPI thermal zones).";
-          };
-
           hardwareModule = lib.mkOption {
             type = lib.types.deferredModule;
             description = ''

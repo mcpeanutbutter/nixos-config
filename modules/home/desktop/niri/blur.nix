@@ -29,23 +29,6 @@
                       blur true
                   }
               }
-
-              layer-rule {
-                  match namespace="^launcher$"
-                  background-effect {
-                      blur true
-                      // Sample windows directly behind fuzzel; default (xray)
-                      // samples the desktop backdrop and looks broken.
-                      xray false
-                  }
-              }
-
-              layer-rule {
-                  match namespace="^waybar$"
-                  background-effect {
-                      blur true
-                  }
-              }
             ''
           );
       }
