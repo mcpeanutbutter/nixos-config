@@ -1,3 +1,4 @@
+{ inputs, ... }:
 {
   flake.modules.homeManager.base.imports = [
     (
@@ -27,6 +28,13 @@
 
         programs.nixvim = {
           enable = true;
+
+          # nixvim follows nixpkgs-stable (flake.nix), but leaving the
+          # `nixpkgs.source` default to be derived from that follows makes nixvim
+          # warn on every eval. Set it explicitly to the same input to silence
+          # the warning while keeping the single-nixpkgs setup.
+          nixpkgs.source = inputs.nixpkgs-stable;
+
           defaultEditor = true;
           clipboard.register = "unnamedplus";
           viAlias = true;

@@ -34,7 +34,7 @@
             marginHorizontal = 128;
             useSeparateOpacity = true;
             widgets = {
-              center = [ { id = "Workspace"; } ];
+
               left = [
                 {
                   id = "Launcher";
@@ -56,21 +56,58 @@
                   compactMode = false;
                   id = "MediaMini";
                 }
+                { id = "Spacer"; }
+                {
+                  id = "Taskbar";
+                  iconScale = 0.9;
+                  hideMode = "visible";
+                }
               ];
+
+              center = [ { id = "Clock"; } ];
+
               right = [
+                { id = "Workspace"; }
+                { id = "Spacer"; }
+                { id = "NotificationHistory"; }
                 {
                   colorizeIcons = false;
-                  drawerEnabled = false;
+                  drawerEnabled = true;
                   hidePassive = false;
                   id = "Tray";
                 }
-                { id = "NotificationHistory"; }
-                { id = "Battery"; }
-                { id = "Volume"; }
-                { id = "Brightness"; }
+
+                {
+                  id = "Volume";
+                  displayMode = "alwaysShow";
+                }
+                {
+                  id = "Microphone";
+                  displayMode = "alwaysShow";
+                }
+                {
+                  id = "Brightness";
+                  displayMode = "alwaysShow";
+                }
+                {
+                  id = "Battery";
+                  displayMode = "icon-always";
+                }
+                {
+                  id = "Network";
+                  displayMode = "alwaysShow";
+                }
+                {
+                  id = "VPN";
+                  displayMode = "alwaysShow";
+                }
+                {
+                  id = "Bluetooth";
+                  displayMode = "alwaysShow";
+                }
+
                 { id = "NightLight"; }
                 { id = "ControlCenter"; }
-                { id = "Clock"; }
               ];
             };
           };
