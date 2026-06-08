@@ -23,7 +23,7 @@
               ${baseCfg} > $out
           '';
         tightCfg = mkGapVariant "tight" 4 0 0 0 0;
-        looseCfg = mkGapVariant "loose" 24 48 48 48 16;
+        looseCfg = mkGapVariant "loose" 24 48 48 16 32;
       in
       {
         # Disable XDG autostart for blueman-applet (it races the tray host and
@@ -101,8 +101,8 @@
             struts = {
               left = 24;
               right = 24;
-              top = 24;
-              bottom = 0;
+              top = 0;
+              bottom = 24;
             };
 
             border = {

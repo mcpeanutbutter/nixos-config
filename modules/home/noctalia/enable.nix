@@ -28,7 +28,7 @@
           };
           bar = {
             barType = "floating";
-            position = "bottom";
+            position = "top";
             density = "comfortable";
             marginVertical = 24;
             marginHorizontal = 128;
@@ -60,7 +60,8 @@
                 {
                   id = "Taskbar";
                   iconScale = 0.9;
-                  hideMode = "visible";
+                  colorizeIcons = false;
+                  hideMode = "hidden";
                 }
               ];
 
