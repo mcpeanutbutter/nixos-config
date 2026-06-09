@@ -37,9 +37,14 @@
     # Niri compositor
     niri.url = "github:sodiboo/niri-flake";
 
-    # Quickshell-based; move to nixpkgs-unstable if 26.05's Quickshell is too old.
+    # Pinned to the legacy-v4 branch: the default branch went to the v5 C++
+    # rewrite (native Wayland/OpenGL-ES, no Quickshell), which renames the HM
+    # option to programs.noctalia and changes the settings schema to TOML —
+    # incompatible with everything in modules/home/noctalia/. legacy-v4 keeps
+    # programs.noctalia-shell and still gets v4 bugfixes. Revisit for a v5
+    # migration later.
     noctalia = {
-      url = "github:noctalia-dev/noctalia-shell";
+      url = "github:noctalia-dev/noctalia-shell/legacy-v4";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
 
