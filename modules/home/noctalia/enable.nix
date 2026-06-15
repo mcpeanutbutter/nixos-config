@@ -52,11 +52,7 @@
                   showMemoryUsage = true;
                   showNetworkStats = true;
                 }
-                {
-                  compactMode = false;
-                  id = "MediaMini";
-                }
-                { id = "Spacer"; }
+                { id = "Workspace"; }
                 {
                   id = "Taskbar";
                   iconScale = 0.9;
@@ -64,12 +60,12 @@
                   hideMode = "hidden";
                 }
               ];
-
               center = [ { id = "Clock"; } ];
-
               right = [
-                { id = "Workspace"; }
-                { id = "Spacer"; }
+                {
+                  compactMode = true;
+                  id = "MediaMini";
+                }
                 { id = "NotificationHistory"; }
                 {
                   colorizeIcons = false;
@@ -77,7 +73,6 @@
                   hidePassive = false;
                   id = "Tray";
                 }
-
                 {
                   id = "Volume";
                   displayMode = "alwaysShow";

@@ -101,7 +101,7 @@
             confirm = true;
           };
 
-          diagnostics = {
+          diagnostic.settings = {
             virtual_text = {
               prefix = "●";
             };
