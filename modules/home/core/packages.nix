@@ -17,7 +17,6 @@
             dbeaver-bin
             devenv
             drawio
-            fastfetch
             gdk
             gemini-cli
             gimp
