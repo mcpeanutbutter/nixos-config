@@ -43,9 +43,13 @@
             ms-toolsai.jupyter-renderers
             ms-toolsai.vscode-jupyter-cell-tags
             ms-toolsai.vscode-jupyter-slideshow
-            ms-pyright.pyright
             ms-python.python
             charliermarsh.ruff
+            # ty (Astral) is the Python language server — replaces ms-python's bundled
+            # Jedi (disabled via python.languageServer below) and the standalone Pyright.
+            # Unlike Jedi it speaks the LSP notebook protocol, so the Interactive Window
+            # stops throwing "Error in server: KeyError: 'vscode-notebook-cell:...'".
+            astral-sh.ty
 
             # Config
             tamasfe.even-better-toml
@@ -71,6 +75,13 @@
             "editor.renderWhitespace" = "all";
             "editor.fontLigatures" = true;
             "files.associations"."*.tftpl" = "jinja-yaml";
+
+            # Python: ty (Astral) is the sole language server. Disable ms-python's
+            # bundled Jedi — it can't handle Interactive-Window notebook cells and
+            # threw a KeyError per cell. Point ty at the nixpkgs binary; the
+            # extension's bundled ty is ancient (0.0.1-alpha.34) and FHS-linked.
+            "python.languageServer" = "None";
+            "ty.path" = [ "${pkgs.unstable.ty}/bin/ty" ];
 
             "nix.enableLanguageServer" = true;
             "nix.serverPath" = "nixd";
