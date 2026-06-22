@@ -1,7 +1,12 @@
 {
   flake.modules.homeManager.base.imports = [
     (
-      { config, pkgs, ... }:
+      {
+        config,
+        pkgs,
+        lib,
+        ...
+      }:
       let
         colors = config.lib.stylix.colors;
         rgb =
@@ -311,6 +316,18 @@
 
           exit 0
         '';
+
+        # Keys we manage declaratively. Merged into ~/.claude/settings.json at
+        # activation time rather than symlinked, so Claude Code can still write
+        # its own runtime prefs (effort, model, alwaysThinkingEnabled, …) to the
+        # same file — a store symlink would make /effort fail with EROFS.
+        managedSettings = (pkgs.formats.json { }).generate "claude-code-managed-settings.json" {
+          statusLine = {
+            command = "${statuslineScript}";
+            padding = 0;
+            type = "command";
+          };
+        };
       in
       {
         home.file.".claude/skills/skill-creator" = {
@@ -321,14 +338,22 @@
         programs.claude-code = {
           enable = true;
           package = pkgs.claude-code;
-          settings = {
-            statusLine = {
-              command = "${statuslineScript}";
-              padding = 0;
-              type = "command";
-            };
-          };
+          # settings intentionally unset — see managedSettings merge below.
         };
+
+        home.activation.claudeCodeSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          settings="$HOME/.claude/settings.json"
+          run ${pkgs.coreutils}/bin/mkdir -p "$HOME/.claude"
+          if [ -f "$settings" ]; then
+            # Merge managed keys over the existing file; mv replaces a leftover
+            # store symlink with a real, writable file on the first rebuild.
+            tmp=$(${pkgs.coreutils}/bin/mktemp)
+            run ${pkgs.jq}/bin/jq -s '.[0] * .[1]' "$settings" ${managedSettings} > "$tmp" \
+              && run ${pkgs.coreutils}/bin/mv "$tmp" "$settings"
+          else
+            run ${pkgs.coreutils}/bin/install -m600 ${managedSettings} "$settings"
+          fi
+        '';
       }
     )
   ];
