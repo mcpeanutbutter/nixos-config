@@ -26,7 +26,10 @@
         # helper) so its `-f` pattern can't match the helper's own cmdline.
         home.activation.restartNoctalia = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           runtimeDir="''${XDG_RUNTIME_DIR:-/run/user/$(${pkgs.coreutils}/bin/id -u)}"
-          sock="$(${pkgs.coreutils}/bin/ls -t "$runtimeDir"/niri.*.sock 2>/dev/null | ${pkgs.coreutils}/bin/head -n1)"
+          # `|| true`: the activation script runs under `set -e -o pipefail`, so
+          # when no socket matches (boot/headless) the failing glob `ls` would
+          # otherwise abort activation with exit 2 and skip every later step.
+          sock="$(${pkgs.coreutils}/bin/ls -t "$runtimeDir"/niri.*.sock 2>/dev/null | ${pkgs.coreutils}/bin/head -n1 || true)"
           if [ -n "$sock" ]; then
             $DRY_RUN_CMD ${pkgs.procps}/bin/pkill -f bin/quickshell 2>/dev/null || true
             $DRY_RUN_CMD ${pkgs.coreutils}/bin/sleep 0.3
