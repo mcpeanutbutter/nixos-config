@@ -56,10 +56,22 @@
             gamunu.opentofu
             redhat.ansible
             redhat.vscode-yaml
+            redhat.vscode-xml
             samuelcolvin.jinjahtml
             pbkit.vscode-pbkit
             esbenp.prettier-vscode
             inferrinizzard.prettier-sql-vscode
+
+            # CI / API tooling
+            gitlab.gitlab-workflow
+            # attr starts with a digit, so the `with marketplace` shorthand can't reach it
+            marketplace."42crunch".vscode-openapi
+
+            # Java / Kotlin (JVM)
+            jetbrains.kotlin-server
+            oracle.oracle-java
+            vscjava.vscode-gradle
+            vscjava.vscode-maven
 
             # Other languages
             ziglang.vscode-zig
@@ -90,6 +102,10 @@
               formatting.command = [ "nixfmt" ];
               options = { };
             };
+            # GitLab Duo (AI) off — the Workflow extension is here for CI lint + MRs.
+            "gitlab.duoCodeSuggestions.enabled" = false;
+            "gitlab.duoChat.enabled" = false;
+            "gitlab.duoAgentPlatform.enabled" = false;
             "redhat.telemetry.enabled" = false;
             # Extensions dir is immutable (mutableExtensionsDir = false); stop VSCodium
             # from trying to auto-update against it and emitting failure toasts.
