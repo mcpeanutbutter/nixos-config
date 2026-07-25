@@ -10,19 +10,8 @@
         # AcceleratedVideoDecodeLinuxGL, for playback). The other two disables
         # replicate nixpkgs' own defaults, which our appended --disable-features
         # would otherwise shadow (last --disable-features wins).
-        #
-        # --disable-gpu-rasterization: mitigation for whole-browser freezes on
-        # this 780M. Some pages (notably the redesigned GitLab MR/diff views)
-        # drive a renderer's cc Compositor thread into a busy-loop that jams the
-        # single shared Viz/GPU process, so *every* Brave window stops presenting
-        # (caught live: Compositor thread pegged at 100%, R state, no amdgpu
-        # error -> renderer-side, not the kernel driver). Moving tile raster off
-        # the GPU avoids the path that triggers it, while keeping hardware video
-        # *decode* and GPU compositing. This is a stopgap, not a cure -- the real
-        # fix is an upstream Chromium/Brave update; drop this flag once freezes
-        # stop recurring after a bump.
         brave = pkgs.brave.override {
-          commandLineArgs = "--disable-features=AcceleratedVideoEncoder,OutdatedBuildDetector,UseChromeOSDirectVideoDecoder --disable-gpu-rasterization";
+          commandLineArgs = "--disable-features=AcceleratedVideoEncoder,OutdatedBuildDetector,UseChromeOSDirectVideoDecoder";
         };
       in
       {
