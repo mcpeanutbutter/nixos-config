@@ -70,6 +70,13 @@
             options = "caps:escape";
           };
 
+          # Niri hardcodes XF86PowerOff -> suspend (and inhibits logind's own
+          # power-key handling). The Shokz OpenMeet UC dongle emits phantom
+          # power-key presses when the headset powers on, which suspended the
+          # system mid-transition ("screens go black, LED solid, hard reset").
+          # See the HandlePowerKey note in modules/nixos/services/power.nix.
+          input.power-key-handling.enable = false;
+
           # Disable client-side decorations for a cleaner look.
           prefer-no-csd = true;
 
