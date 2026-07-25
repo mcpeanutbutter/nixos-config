@@ -79,11 +79,12 @@
             # attr starts with a digit, so the `with marketplace` shorthand can't reach it
             marketplace."42crunch".vscode-openapi
 
-            # Java / Kotlin (JVM)
+            # Java / Kotlin / Scala (JVM)
             kotlin-server # patched jetbrains.kotlin-server, see let-binding above
             oracle.oracle-java
             vscjava.vscode-gradle
             vscjava.vscode-maven
+            scalameta.metals
 
             # Other languages
             ziglang.vscode-zig
@@ -127,6 +128,9 @@
             "workbench.editor.tabSizing" = "shrink";
             "zig.zls.enabled" = "on";
             "C_Cpp.default.configurationProvider" = "ms-vscode.cmake-tools";
+
+            # git
+            "git.blame.editorDecoration.enabled" = false;
           };
         };
       }
