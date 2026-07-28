@@ -18,14 +18,14 @@
             devenv
             drawio
             gdk
-            gemini-cli
+            pkgs.unstable.godot
             gimp
             glab
             handbrake
             htop
             inkscape
             jdk
-            pkgs.unstable.jetbrains.idea-oss
+            pkgs.unstable.jetbrains.idea
             kind
             kubectl
             libreoffice
