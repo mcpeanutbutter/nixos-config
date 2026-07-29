@@ -8,13 +8,13 @@
 
 stdenvNoCC.mkDerivation {
   pname = "hatter-icon-theme";
-  version = "unstable-2026-06-05";
+  version = "unstable-2026-07-25";
 
   src = fetchFromGitHub {
     owner = "Mibea";
     repo = "Hatter";
-    rev = "fa010e9f3ad43dd70ce840f0e1c9cc91c5365b8d";
-    hash = "sha256-W7ck3M+TGqeH7BJ9AfmJys2ZjU4lub4WfcswQZ63fM8=";
+    rev = "f582a508922736e55e4fd75aca82964cde108921";
+    hash = "sha256-8vOFxNKj6YaEBa9h5Y+Qs30HDN/CtYJuay8EfueGWVU=";
   };
 
   nativeBuildInputs = [ gtk3 ];
