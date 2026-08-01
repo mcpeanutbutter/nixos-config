@@ -52,6 +52,7 @@
             "helm"
             "html"
             "toml"
+            "gdscript"
 
             # Python tooling
             "ruff"

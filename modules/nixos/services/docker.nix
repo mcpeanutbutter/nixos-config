@@ -12,6 +12,12 @@
 {
   flake.modules.nixos.base = {
     virtualisation.docker.enable = true;
+    virtualisation.docker.daemon.settings.default-address-pools = [
+      {
+        base = "10.201.0.0/16";
+        size = 24;
+      }
+    ];
     # Module-system list merge with users.nix's extraGroups setting.
     users.users.${config.user.username}.extraGroups = [ "docker" ];
   };
