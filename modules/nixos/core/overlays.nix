@@ -15,6 +15,9 @@
     (final: _prev: {
       # Hatter rounded-square icon theme (KDE dark variant).
       hatter-icon-theme = final.callPackage ../../../packages/hatter-icon-theme { };
+
+      # Prebuilt roc nightly binary (newer than nixpkgs' pinned alpha).
+      roc-nightly = final.callPackage ../../../packages/roc-nightly { };
     })
 
     # Claude Code with rolling-release packaging.

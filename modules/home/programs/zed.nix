@@ -7,7 +7,10 @@
           enable = true;
           mutableUserSettings = false;
 
-          extraPackages = with pkgs.unstable; [
+          extraPackages = [
+            pkgs.roc-nightly
+          ]
+          ++ (with pkgs.unstable; [
             # Nix
             nixd
             nixfmt
@@ -35,28 +38,27 @@
             # Other
             zls
             sqls
-          ];
+          ]);
 
           extensions = [
-            "nix"
-            "rust"
-            "java"
-            "kotlin"
-            "scala"
-            "zig"
-            "dockerfile"
-            "sql"
-            "terraform"
-            "proto"
             "ansible"
+            "dockerfile"
+            "gdscript"
             "helm"
             "html"
-            "toml"
-            "gdscript"
-
-            # Python tooling
+            "java"
+            "kotlin"
+            "nix"
+            "proto"
+            "roc"
             "ruff"
+            "rust"
+            "scala"
+            "sql"
+            "terraform"
+            "toml"
             "ty"
+            "zig"
           ];
 
           userSettings = {
