@@ -72,7 +72,6 @@
             vim_mode = false;
             load_direnv = "shell_hook";
             format_on_save = "on";
-            soft_wrap = "editor_width";
             scroll_beyond_last_line = "one_page";
             show_completions_on_input = true;
             show_completion_documentation = true;
