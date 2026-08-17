@@ -25,7 +25,7 @@
         kotlin-server = marketplace.jetbrains.kotlin-server.overrideAttrs (old: {
           postInstall = (old.postInstall or "") + ''
             substituteInPlace "$out/share/vscode/extensions/jetbrains.kotlin-server/out/dist/extension.js" \
-              --replace-fail '(0,d.chmodSync)(n,493)' '0'
+              --replace-fail '(0,external_fs_.chmodSync)(e,493)' '0'
           '';
         });
       in

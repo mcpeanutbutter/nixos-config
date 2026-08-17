@@ -31,7 +31,6 @@
             libreoffice
             libnotify
             lm_sensors
-            mongodb-compass
             mprime
             mpv
             onefetch
