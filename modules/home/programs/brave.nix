@@ -52,6 +52,14 @@
             "Network"
             "Chat"
           ];
+          # Chromium derives an --app window's app-id from the URL and profile
+          # dir, so it matches no desktop entry and noctalia's taskbar has no
+          # icon to show (the launcher is fine — it reads this entry directly).
+          # Quickshell's heuristicLookup falls back to StartupWMClass, so naming
+          # the app-id here is what connects the window back to this entry.
+          # Same string the niri window rule keys on; see
+          # modules/home/desktop/niri/workspaces.nix.
+          settings.StartupWMClass = "brave-teams.cloud.microsoft__-Default";
         };
       }
     )

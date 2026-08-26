@@ -2,6 +2,36 @@
   flake.modules.homeManager.base.imports = [
     (
       { lib, ... }:
+      let
+        # MIME types that should open in the editor.
+        textMimes = [
+          "text/plain"
+          "text/markdown"
+          "text/x-nix"
+          "text/x-python"
+          "text/x-shellscript"
+          "text/x-csrc"
+          "text/x-chdr"
+          "text/x-c++src"
+          "text/x-java"
+          "text/x-rust"
+          "text/x-go"
+          "text/x-lua"
+          "text/xml"
+          "text/css"
+          "text/html"
+          "text/javascript"
+          "text/x-makefile"
+          "text/x-log"
+          "application/json"
+          "application/x-yaml"
+          "application/yaml"
+          "application/toml"
+          "application/xml"
+          "application/x-shellscript"
+          "application/javascript"
+        ];
+      in
       {
         # GNOME Text Editor preferences.
         dconf.settings."org/gnome/TextEditor" = {
@@ -48,42 +78,29 @@
           </mime-info>
         '';
 
+        # Zed's own entry runs `zeditor %U`, which drops the file into whichever
+        # workspace is already open. This hidden variant passes --new so files
+        # opened from the file manager get their own window; the visible Zed
+        # launcher entry keeps upstream behaviour.
+        xdg.desktopEntries.zed-new = {
+          name = "Zed (new window)";
+          exec = "zeditor --new %U";
+          icon = "zed";
+          mimeType = textMimes;
+          noDisplay = true;
+        };
+
         # Default application bindings — home-manager manages mimeapps.list as
         # a read-only symlink, so every association we want must be declared here.
         xdg.mimeApps = {
           enable = true;
           defaultApplications =
             let
-              editor = "org.gnome.TextEditor.desktop";
               loupe = "org.gnome.Loupe.desktop";
             in
-            {
+            lib.genAttrs textMimes (_: "zed-new.desktop")
+            // {
               "inode/directory" = "nemo.desktop";
-              "text/plain" = editor;
-              "text/markdown" = editor;
-              "text/x-nix" = editor;
-              "text/x-python" = editor;
-              "text/x-shellscript" = editor;
-              "text/x-csrc" = editor;
-              "text/x-chdr" = editor;
-              "text/x-c++src" = editor;
-              "text/x-java" = editor;
-              "text/x-rust" = editor;
-              "text/x-go" = editor;
-              "text/x-lua" = editor;
-              "text/xml" = editor;
-              "text/css" = editor;
-              "text/html" = editor;
-              "text/javascript" = editor;
-              "text/x-makefile" = editor;
-              "text/x-log" = editor;
-              "application/json" = editor;
-              "application/x-yaml" = editor;
-              "application/yaml" = editor;
-              "application/toml" = editor;
-              "application/xml" = editor;
-              "application/x-shellscript" = editor;
-              "application/javascript" = editor;
               "image/png" = loupe;
               "image/jpeg" = loupe;
               "image/gif" = loupe;

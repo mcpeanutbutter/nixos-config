@@ -31,7 +31,6 @@
             libreoffice
             libnotify
             lm_sensors
-            mprime
             mpv
             onefetch
             pkgs.unstable.nixd

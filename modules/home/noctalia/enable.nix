@@ -52,7 +52,18 @@
                   showMemoryUsage = true;
                   showNetworkStats = true;
                 }
-                { id = "Workspace"; }
+                {
+                  id = "Workspace";
+                  # Named workspaces (see modules/home/desktop/niri/workspaces.nix)
+                  # are invisible at the default labelMode "index". Pills read
+                  # "1 HUB"; unnamed workspaces keep their bare index.
+                  labelMode = "index+name";
+                  characterCount = 3;
+                  # A named workspace persists while empty, and the default
+                  # hides labels on unoccupied pills — which would leave it
+                  # blank until something opens there.
+                  showLabelsOnlyWhenOccupied = false;
+                }
                 {
                   id = "Taskbar";
                   iconScale = 0.9;
