@@ -10,10 +10,11 @@
           # KDL, only the name does — so ordering a second named workspace later
           # is a free rename of both keys.
           #
-          # open-on-output is deliberately unset: this file is shared by all
-          # three hosts and only amateria has a second monitor. Niri moves a
-          # workspace off a disconnected output and back when it returns, so
-          # undocked the workspace follows onto the laptop panel by itself.
+          # open-on-output stays unset here because this file is shared by all
+          # three hosts and only amateria has a second monitor. Niri does not
+          # default it to the external panel — left unpinned it put hub on
+          # eDP-1 — so amateria pins it in modules/hosts/amateria/displays.nix,
+          # which already owns that host's output config.
           workspaces.hub = { };
 
           # Cumulative with the matches-less rounded-corners rule in enable.nix:
