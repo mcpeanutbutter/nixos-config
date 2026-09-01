@@ -62,34 +62,18 @@
               fi
           }
 
-          format_commas() {
-              printf "%'d" "$1"
-          }
-
-          build_bar() {
+          pct_color() {
               local pct=$1
-              local width=$2
-              [ "$pct" -lt 0 ] 2>/dev/null && pct=0
-              [ "$pct" -gt 100 ] 2>/dev/null && pct=100
-
-              local filled=$(( pct * width / 100 ))
-              local empty=$(( width - filled ))
-
-              local bar_color
-              if [ "$pct" -ge 90 ]; then bar_color="$red"
-              elif [ "$pct" -ge 70 ]; then bar_color="$yellow"
-              elif [ "$pct" -ge 50 ]; then bar_color="$orange"
-              else bar_color="$green"
+              if   [ "$pct" -ge 90 ]; then printf '%s' "$red"
+              elif [ "$pct" -ge 70 ]; then printf '%s' "$yellow"
+              elif [ "$pct" -ge 50 ]; then printf '%s' "$orange"
+              else printf '%s' "$green"
               fi
-
-              local filled_str="" empty_str=""
-              for ((i=0; i<filled; i++)); do filled_str+="●"; done
-              for ((i=0; i<empty; i++)); do empty_str+="○"; done
-
-              printf "''${bar_color}''${filled_str}''${dim}''${empty_str}''${reset}"
           }
 
           model_name=$(echo "$input" | jq -r '.model.display_name // "Claude"')
+          # Only present for models that support effort levels (low|medium|high|xhigh|max).
+          effort=$(echo "$input" | jq -r '.effort.level // empty')
 
           size=$(echo "$input" | jq -r '.context_window.context_window_size // 200000')
           [ "$size" -eq 0 ] 2>/dev/null && size=200000
@@ -102,25 +86,9 @@
           used_tokens=$(format_tokens $current)
           total_tokens=$(format_tokens $size)
 
-          if [ "$size" -gt 0 ]; then
-              pct_used=$(( current * 100 / size ))
-          else
-              pct_used=0
-          fi
-          pct_remain=$(( 100 - pct_used ))
-
-          used_comma=$(format_commas $current)
-          remain_comma=$(format_commas $(( size - current )))
-
-          thinking_on=false
-          settings_path="$HOME/.claude/settings.json"
-          if [ -f "$settings_path" ]; then
-              thinking_val=$(jq -r '.alwaysThinkingEnabled // false' "$settings_path" 2>/dev/null)
-              [ "$thinking_val" = "true" ] && thinking_on=true
-          fi
-
           out=""
           out+="''${blue}''${model_name}''${reset}"
+          [ -n "$effort" ] && out+=" ''${dim}''${effort}''${reset}"
 
           cwd=$(echo "$input" | jq -r '.cwd // .workspace.current_dir // empty')
           if [ -n "$cwd" ]; then
@@ -135,15 +103,6 @@
 
           out+=" ''${dim}|''${reset} "
           out+="''${orange}''${used_tokens}/''${total_tokens}''${reset}"
-          out+=" ''${dim}|''${reset} "
-          out+="''${green}''${pct_used}%''${reset} ''${dim}used''${reset}"
-          out+=" ''${dim}|''${reset} "
-          out+="thinking: "
-          if $thinking_on; then
-              out+="''${orange}On''${reset}"
-          else
-              out+="''${dim}Off''${reset}"
-          fi
 
           get_oauth_token() {
               local token=""
@@ -257,58 +216,45 @@
 
           format_reset_time() {
               local iso_str="$1"
-              local style="$2"
               [ -z "$iso_str" ] || [ "$iso_str" = "null" ] && return
 
               local epoch
               epoch=$(iso_to_epoch "$iso_str")
               [ -z "$epoch" ] && return
 
-              case "$style" in
-                  time)
-                      date -j -r "$epoch" +"%l:%M%p" 2>/dev/null | sed 's/^ //' | tr '[:upper:]' '[:lower:]' || \
-                      date -d "@$epoch" +"%l:%M%P" 2>/dev/null | sed 's/^ //'
-                      ;;
-                  datetime)
-                      date -j -r "$epoch" +"%b %-d, %l:%M%p" 2>/dev/null | sed 's/  / /g; s/^ //' | tr '[:upper:]' '[:lower:]' || \
-                      date -d "@$epoch" +"%b %-d, %l:%M%P" 2>/dev/null | sed 's/  / /g; s/^ //'
-                      ;;
-                  *)
-                      date -j -r "$epoch" +"%b %-d" 2>/dev/null | tr '[:upper:]' '[:lower:]' || \
-                      date -d "@$epoch" +"%b %-d" 2>/dev/null
-                      ;;
-              esac
+              date -d "@$epoch" +"%l:%M%P" 2>/dev/null | sed 's/^ //' || \
+              date -j -r "$epoch" +"%l:%M%p" 2>/dev/null | sed 's/^ //' | tr '[:upper:]' '[:lower:]'
           }
 
           sep=" ''${dim}|''${reset} "
 
           if [ -n "$usage_data" ] && echo "$usage_data" | jq -e . >/dev/null 2>&1; then
-              bar_width=6
-
               five_hour_pct=$(echo "$usage_data" | jq -r '.five_hour.utilization // 0' | awk '{printf "%.0f", $1}')
               five_hour_reset_iso=$(echo "$usage_data" | jq -r '.five_hour.resets_at // empty')
-              five_hour_reset=$(format_reset_time "$five_hour_reset_iso" "time")
-              five_hour_bar=$(build_bar "$five_hour_pct" "$bar_width")
+              five_hour_reset=$(format_reset_time "$five_hour_reset_iso")
 
-              out+="''${sep}''${white}5h''${reset} ''${five_hour_bar} ''${cyan}''${five_hour_pct}%''${reset}"
+              out+="''${sep}''${white}5h''${reset} $(pct_color "$five_hour_pct")''${five_hour_pct}%''${reset}"
               [ -n "$five_hour_reset" ] && out+=" ''${dim}@''${five_hour_reset}''${reset}"
 
+              # Weekly windows always reset on the same Sunday-night boundary, so no @reset.
               seven_day_pct=$(echo "$usage_data" | jq -r '.seven_day.utilization // 0' | awk '{printf "%.0f", $1}')
-              seven_day_reset_iso=$(echo "$usage_data" | jq -r '.seven_day.resets_at // empty')
-              seven_day_reset=$(format_reset_time "$seven_day_reset_iso" "datetime")
-              seven_day_bar=$(build_bar "$seven_day_pct" "$bar_width")
+              out+="''${sep}''${white}7d all''${reset} $(pct_color "$seven_day_pct")''${seven_day_pct}%''${reset}"
 
-              out+="''${sep}''${white}7d''${reset} ''${seven_day_bar} ''${cyan}''${seven_day_pct}%''${reset}"
-              [ -n "$seven_day_reset" ] && out+=" ''${dim}@''${seven_day_reset}''${reset}"
+              # Fable is metered against its own weekly limit, exposed only as a
+              # model-scoped entry in .limits[] (the seven_day_* fields are all null).
+              fable_pct=$(echo "$usage_data" | jq -r \
+                  '[.limits[]? | select(.scope.model.display_name == "Fable") | .percent] | first // empty')
+              if [ -n "$fable_pct" ]; then
+                  fable_pct=$(echo "$fable_pct" | awk '{printf "%.0f", $1}')
+                  out+="''${sep}''${white}7d fable''${reset} $(pct_color "$fable_pct")''${fable_pct}%''${reset}"
+              fi
 
               extra_enabled=$(echo "$usage_data" | jq -r '.extra_usage.is_enabled // false')
               if [ "$extra_enabled" = "true" ]; then
-                  extra_pct=$(echo "$usage_data" | jq -r '.extra_usage.utilization // 0' | awk '{printf "%.0f", $1}')
                   extra_used=$(echo "$usage_data" | jq -r '.extra_usage.used_credits // 0' | awk '{printf "%.2f", $1/100}')
                   extra_limit=$(echo "$usage_data" | jq -r '.extra_usage.monthly_limit // 0' | awk '{printf "%.2f", $1/100}')
-                  extra_bar=$(build_bar "$extra_pct" "$bar_width")
 
-                  out+="''${sep}''${white}extra''${reset} ''${extra_bar} ''${cyan}\$''${extra_used}/\$''${extra_limit}''${reset}"
+                  out+="''${sep}''${white}extra''${reset} ''${cyan}\$''${extra_used}/\$''${extra_limit}''${reset}"
               fi
           fi
 
