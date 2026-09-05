@@ -27,24 +27,24 @@
       url = "github:nix-community/nixvim/nixos-26.05";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
-    # Track the release branch matching nixpkgs-stable — master is developed
-    # against nixos-unstable and drifts on options like services.kmscon.config.
+    # master: the noctalia (v5) stylix target only exists there, not on release-26.05.
     stylix = {
-      url = "github:nix-community/stylix/release-26.05";
+      url = "github:nix-community/stylix";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
 
     # Niri compositor
     niri.url = "github:sodiboo/niri-flake";
 
-    # Pinned to the legacy-v4 branch: the default branch went to the v5 C++
-    # rewrite (native Wayland/OpenGL-ES, no Quickshell), which renames the HM
-    # option to programs.noctalia and changes the settings schema to TOML —
-    # incompatible with everything in modules/home/noctalia/. legacy-v4 keeps
-    # programs.noctalia-shell and still gets v4 bugfixes. Revisit for a v5
-    # migration later.
+    # Noctalia v5 (native Wayland shell); HM module is programs.noctalia, TOML settings.
     noctalia = {
-      url = "github:noctalia-dev/noctalia-shell/legacy-v4";
+      url = "github:noctalia-dev/noctalia";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
+    };
+    # greetd greeter from the noctalia project; the shell syncs wallpaper +
+    # palette into it.
+    noctalia-greeter = {
+      url = "github:noctalia-dev/noctalia-greeter";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
 
