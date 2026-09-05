@@ -1,84 +1,46 @@
 {
   flake.modules.homeManager.noctalia.imports = [
     (
+      { pkgs, ... }:
       {
-        config,
-        pkgs,
-        ...
-      }:
-      let
-        baseSettings = config.xdg.configFile."noctalia/settings.json".source;
-        mkBarVariant =
-          name: mv: mh: density: barType:
-          pkgs.runCommand "noctalia-${name}.json" { } ''
-            ${pkgs.gnused}/bin/sed \
-              -e 's/"marginVertical": [0-9]\+/"marginVertical": ${toString mv}/' \
-              -e 's/"marginHorizontal": [0-9]\+/"marginHorizontal": ${toString mh}/' \
-              -e '/^  "bar": {/,/^  }/{
-                    s/"density": "[a-z]\+"/"density": "${density}"/
-                    s/"barType": "[a-z]\+"/"barType": "${barType}"/
-                  }' \
-              ${baseSettings} > $out
-          '';
-        tightSettings = mkBarVariant "tight" 0 0 "compact" "simple";
-        looseSettings = mkBarVariant "loose" 40 192 "spacious" "floating";
-      in
-      {
-        # The cycle script repoints settings.json to a /nix/store path outside
-        # home-manager's managed files dir, which HM otherwise refuses to
-        # clobber on the next activation. Force HM to overwrite — every rebuild
-        # resets the symlink to the medium baseline anyway.
-        xdg.configFile."noctalia/settings.json".force = true;
-
-        # Bar-margin variant of niri-cycle-gaps: swaps the symlink at
-        # ~/.config/noctalia/settings.json to one of three pre-built nix-store
-        # JSONs. Noctalia's Settings.qml uses FileView with watchChanges=true
-        # and explicitly handles symlink/store-path swaps, so the bar reflows
-        # without restarting noctalia.
+        # Bar-margin companion of niri-cycle-gaps (modules/home/desktop/niri/enable.nix).
+        # Noctalia merges ~/.config/noctalia/*.toml alphabetically and hot-reloads
+        # on write, so a drop-in sorted after config.toml overrides the bar
+        # geometry. Always write a file — deletions aren't picked up live, so the
+        # medium preset repeats the config.toml values instead of removing it.
         home.packages = [
           (pkgs.writeShellScriptBin "noctalia-cycle-gaps" ''
-            #!/usr/bin/env bash
-            preset="''${1:-medium}"
-            case "$preset" in
-              tight)  path="${tightSettings}" ;;
-              medium) path="${baseSettings}"  ;;
-              loose)  path="${looseSettings}" ;;
-              *) echo "noctalia-cycle-gaps: unknown preset '$preset'" >&2; exit 1 ;;
+            f="''${XDG_CONFIG_HOME:-$HOME/.config}/noctalia/zz-gaps.toml"
+            case "''${1:-medium}" in
+              tight)  edge=0;  ends=0;   thick=34 ;;
+              medium) edge=24; ends=128; thick=40 ;;
+              loose)  edge=40; ends=192; thick=46 ;;
+              *) echo "noctalia-cycle-gaps: unknown preset '$1'" >&2; exit 1 ;;
             esac
-            ln -sfn "$path" "$HOME/.config/noctalia/settings.json"
+            printf '[bar.default]\nmargin_edge = %s\nmargin_ends = %s\nthickness = %s\n' "$edge" "$ends" "$thick" > "$f"
           '')
         ];
 
         programs.niri.settings = {
-          # Spawn noctalia at session start. The HM module installs a
-          # `noctalia-shell` wrapper that invokes `qs -c noctalia-shell`
-          # internally; quickshell's bare `qs` is not on the user PATH.
-          spawn-at-startup = [
-            { command = [ "noctalia-shell" ]; }
-          ];
-
-          # Noctalia reads NOCTALIA_PAM_SERVICE to pick the PAM service for
-          # its lock screen. Niri propagates environment to spawn-at-startup
-          # processes, so the noctalia-shell process inherits this.
-          environment.NOCTALIA_PAM_SERVICE = "noctalia-lock";
-
-          # Force Quickshell's icon theme directly. Bypasses the QPlatformTheme
-          # plugin chain (qt5ct/qt6ct) which doesn't reliably propagate
-          # qt6ct.conf's icon_theme to Qt6 apps. See:
-          # https://docs.noctalia.dev/v4/getting-started/faq/#configuration
-          environment.QS_ICON_THEME = "Hatter-kde-dark";
-
-          # Set the overview wallpaper on the backdrop.
+          # Noctalia's blurred wallpaper copy becomes the overview backdrop.
           layer-rules = [
             {
-              matches = [ { namespace = "^noctalia-overview*"; } ];
+              matches = [ { namespace = "^noctalia-backdrop"; } ];
               place-within-backdrop = true;
             }
           ];
 
-          overview = {
-            workspace-shadow.enable = true;
-          };
+          overview.workspace-shadow.enable = true;
+
+          # Float the noctalia settings window.
+          window-rules = [
+            {
+              matches = [ { app-id = "dev.noctalia.Noctalia"; } ];
+              open-floating = true;
+              default-column-width.fixed = 1080;
+              default-window-height.fixed = 920;
+            }
+          ];
 
           debug = {
             # Noctalia sends xdg-activation tokens with an "invalid" serial
@@ -88,37 +50,31 @@
           };
 
           # Noctalia owns the launcher, lock, and session-menu keybinds.
-          # Niri requires spawn args as a list of strings.
           binds = {
             "Mod+D" = {
               action.spawn = [
-                "noctalia-shell"
-                "ipc"
-                "call"
+                "noctalia"
+                "msg"
+                "panel-toggle"
                 "launcher"
-                "toggle"
               ];
               hotkey-overlay.title = "Noctalia launcher";
             };
-
             "Mod+X" = {
               action.spawn = [
-                "noctalia-shell"
-                "ipc"
-                "call"
-                "lockScreen"
+                "noctalia"
+                "msg"
+                "session"
                 "lock"
               ];
               hotkey-overlay.title = "Lock screen";
             };
-
             "Mod+Alt+X" = {
               action.spawn = [
-                "noctalia-shell"
-                "ipc"
-                "call"
-                "sessionMenu"
-                "toggle"
+                "noctalia"
+                "msg"
+                "panel-toggle"
+                "session"
               ];
               hotkey-overlay.title = "Session menu";
             };

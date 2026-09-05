@@ -16,17 +16,6 @@
         # SSH keys require passphrase entry each time.
         services.gnome.gcr-ssh-agent.enable = false;
 
-        # Greetd login manager with tuigreet.
-        services.greetd = {
-          enable = true;
-          settings = {
-            default_session = {
-              command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --remember-session --sessions ${pkgs.niri}/share/wayland-sessions";
-              user = "greeter";
-            };
-          };
-        };
-
         # US keymap with altgr-intl (Euro, accented chars on AltGr combos).
         services.xserver.xkb = {
           layout = "us";

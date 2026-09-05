@@ -109,9 +109,9 @@ track stable; the unstable channel is pulled in selectively via the
 - `home-manager` (release-26.05): User-space configuration management, integrated as NixOS module
 - `nix-vscode-extensions`: VSCode extensions (follows stable)
 - `nixvim` (nixos-26.05): Neovim configuration framework (follows stable)
-- `stylix`: System-wide theming (`nix-community/stylix`, tracks the `release-26.05` branch matching nixpkgs-stable — NOT master, which targets nixos-unstable and drifts on options like `services.kmscon.config`; follows stable)
+- `stylix`: System-wide theming (`nix-community/stylix` master — the `noctalia` v5 target only exists there; follows stable)
 - `niri`: Niri compositor flake — provides the NixOS module and the build-time config validator; the niri *package* itself comes from `nixpkgs-stable` (`pkgs.niri`, currently 26.04, which has `background-effect` blur)
-- `noctalia`: Quickshell-based desktop shell (follows stable)
+- `noctalia`: Noctalia v5, native Wayland desktop shell (bar, launcher, notifications, lock, wallpaper). HM module `programs.noctalia`, TOML settings in `modules/home/noctalia/`, launched as a systemd user service, driven via `noctalia msg <verb>`. Colors come from the stylix `noctalia` target. Follows stable (built from source).
 - `sops-nix`: Secrets management (age-encrypted)
 - `nixos-hardware`: Device-specific hardware optimizations (firmware updates, thermal management, SSD TRIM, GPU early KMS)
 
@@ -303,7 +303,7 @@ Add new overlays here. Custom packages live under `/packages/<name>/` (see `hatt
 
 The configuration uses **Niri**, a scrollable-tiling Wayland compositor:
 
-- Display manager: GREETD with `agreety` greeter
+- Display manager: greetd with `noctalia-greeter` (`modules/nixos/noctalia/greeter.nix`); the shell syncs wallpaper + palette into it
 - Compositor: Niri with custom keybindings and window rules
 - Status bar: Waybar with custom styling
 - Launcher: Fuzzel
