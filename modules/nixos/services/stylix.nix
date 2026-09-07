@@ -81,6 +81,13 @@ in
           targets = {
             # Disable browser theming to avoid "managed by organization" issues.
             chromium.enable = false;
+
+            # This target patches gtksourceview{,4,5} through a nixpkgs overlay
+            # (postFixup copies stylix.xml into the package), which makes every
+            # consumer a cache miss on each nixpkgs bump — inkscape then rebuilds
+            # from source. The home-manager target installs the same file into
+            # ~/.local/share/gtksourceview-*/styles, so this is redundant.
+            gtksourceview.enable = false;
           };
         };
       }
