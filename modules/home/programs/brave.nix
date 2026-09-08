@@ -28,6 +28,10 @@
           exec = "${brave}/bin/brave --app=https://claude.ai/";
           icon = "claude";
           categories = [ "Utility" ];
+          # Reconnects the --app window to this entry so the taskbar finds the
+          # icon; see the microsoft-teams entry below for why. Verified with
+          # `niri msg windows`.
+          settings.StartupWMClass = "brave-claude.ai__-Default";
         };
 
         xdg.desktopEntries.youtube = {
