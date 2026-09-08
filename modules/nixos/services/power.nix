@@ -14,6 +14,12 @@
     # only picks this up on restart/reboot, not on nixos-rebuild switch.
     services.logind.settings.Login.HandlePowerKey = "ignore";
 
+    # On mains power a lid close locks the session instead of suspending on the
+    # spot; noctalia's 15-minute idle suspend takes over from there. Docked
+    # (more than one display) already falls to HandleLidSwitchDocked=ignore, and
+    # on battery HandleLidSwitch=suspend stays. Same restart caveat as above.
+    services.logind.settings.Login.HandleLidSwitchExternalPower = "lock";
+
     # Automount removable media (USB sticks, optical, etc.).
     services.udisks2.enable = true;
 

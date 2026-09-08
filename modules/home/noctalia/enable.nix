@@ -137,10 +137,30 @@
             # Schedule follows sunrise/sunset from location.
             nightlight.enabled = true;
 
+            # Every behavior needs an explicit `action`; without it noctalia logs
+            # "idle behavior 'x' ignored: needs an action" and drops it — which
+            # is why nothing locked or slept after the v5 migration. `timeout`
+            # runs from idle start; `locked_timeout` re-arms at lock time (so
+            # suspend lands at 300 + 600 = 15 min) and falls back to `timeout`
+            # when unset. Same policy on AC and battery — caffeine is the escape
+            # hatch when the machine has to stay awake.
             idle.behavior = {
-              screen-off.timeout = 300;
-              lock.enabled = false;
-              suspend.enabled = false;
+              lock = {
+                action = "lock";
+                timeout = 300;
+              };
+              screen-off = {
+                action = "screen_off";
+                timeout = 300;
+                # Re-blank shortly after waking an already-locked screen.
+                locked_timeout = 30;
+              };
+              # lock_before_suspend defaults to true, so this locks first.
+              suspend = {
+                action = "suspend";
+                timeout = 900;
+                locked_timeout = 600;
+              };
             };
 
             wallpaper = {
