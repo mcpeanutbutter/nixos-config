@@ -28,6 +28,42 @@
               # Push wallpaper + palette to noctalia-greeter (modules/nixos/noctalia/greeter.nix)
               # whenever they change; polkit lets our user do it without a prompt.
               greeter_sync.auto_sync = true;
+
+              # The lock screen reuses these actions minus `lock` and
+              # `lock_and_suspend` (lock_surface.cpp resolveSessionActions), so
+              # the stock list leaves no way to suspend from the lock screen.
+              # Respelling it swaps the default `lock_and_suspend` entry for a
+              # `suspend` one with a `command` override: the built-in plain
+              # suspend deliberately skips lock-before-sleep, while
+              # `systemctl suspend` goes through logind's PrepareForSleep, where
+              # noctalia locks first (lockscreen.lock_before_suspend) unless the
+              # session is already locked. One button that behaves on both
+              # surfaces. The other four entries are the upstream defaults — the
+              # array replaces the default list wholesale.
+              session.actions = [
+                {
+                  action = "lock";
+                  shortcut = "1";
+                }
+                {
+                  action = "logout";
+                  shortcut = "2";
+                }
+                {
+                  action = "suspend";
+                  command = "systemctl suspend";
+                  shortcut = "3";
+                }
+                {
+                  action = "reboot";
+                  shortcut = "4";
+                }
+                {
+                  action = "shutdown";
+                  variant = "destructive";
+                  shortcut = "5";
+                }
+              ];
             };
 
             # Stylix owns GTK/Qt/terminal theming.
@@ -161,6 +197,13 @@
                 timeout = 900;
                 locked_timeout = 600;
               };
+            };
+
+            # Show the wallpaper as-is behind the login box: no blur (default
+            # 0.5) and no darkening tint (default 0.3).
+            lockscreen = {
+              blur_intensity = 0.0;
+              tint_intensity = 0.0;
             };
 
             wallpaper = {
