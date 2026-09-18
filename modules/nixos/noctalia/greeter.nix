@@ -13,7 +13,7 @@
 
       # Enables greetd with noctalia-greeter-session as the default session
       # and accounts-daemon for user lookup.
-      programs.noctalia-greeter = {
+      services.displayManager.noctalia-greeter = {
         enable = true;
         # Lets the shell's greeter_sync apply wallpaper/palette via polkit
         # without a password prompt.
