@@ -6,7 +6,6 @@
     # settings (replaces matchBlocks): attr name = Host/Match header, values = OpenSSH directives.
     settings = {
       "*" = {
-        ForwardAgent = true;
         Compression = true;
       };
       "github.com" = {
