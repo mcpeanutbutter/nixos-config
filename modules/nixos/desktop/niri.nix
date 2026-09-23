@@ -83,9 +83,6 @@
           # Media control
           playerctl
 
-          # Network management
-          networkmanagerapplet # nm-applet for system tray
-
           # File management
           nemo-with-extensions # Cinnamon file manager (GTK, dual pane, extensions)
           cinnamon-desktop # gsettings schemas for Nemo (terminal, default apps)

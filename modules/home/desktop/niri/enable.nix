@@ -33,19 +33,6 @@
           Hidden=true
         '';
 
-        # System tray applets
-        systemd.user.services.nm-applet = {
-          Unit = {
-            Description = "Network Manager Applet";
-            After = [ "graphical-session.target" ];
-          };
-          Service = {
-            ExecStart = "${pkgs.networkmanagerapplet}/bin/nm-applet";
-            Restart = "on-failure";
-          };
-          Install.WantedBy = [ "graphical-session.target" ];
-        };
-
         systemd.user.services.blueman-applet = {
           Unit = {
             Description = "Blueman Applet";
