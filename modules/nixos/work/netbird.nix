@@ -9,7 +9,7 @@ in
       {
         # NetBird (WireGuard mesh VPN) — self-hosted management server.
         # Management URL and setup key live in sops (public-repo hygiene, as
-        # with the vpn/glpi servers). netbird's `environment` bakes values into
+        # with the glpi server). netbird's `environment` bakes values into
         # the unit at build time, so the URL can't be a sops value there;
         # instead it's fed to the login unit's `netbird up` via NB_MANAGEMENT_URL
         # in a sops-templated env file. The login oneshot loads the setup key
@@ -38,9 +38,8 @@ in
         # See https://wiki.nixos.org/wiki/Netbird.
         services.resolved.enable = true;
 
-        # Route NetworkManager's DNS (incl. the FortiVPN-pushed resolver) through
-        # resolved, so both VPNs' DNS coexist as per-link/split domains instead of
-        # contending over /etc/resolv.conf.
+        # Hand NetworkManager's DNS to resolved — the upstream default ("default")
+        # has NM overwrite /etc/resolv.conf, which fights resolved's stub.
         networking.networkmanager.dns = "systemd-resolved";
 
         # Let the desktop user drive the hardened client — both the netbird-work

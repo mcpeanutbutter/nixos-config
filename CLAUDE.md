@@ -124,7 +124,7 @@ track stable; the unstable channel is pulled in selectively via the
 ├── packages/
 │   └── hatter-icon-theme/                 # custom KDE-dark icon theme
 ├── secrets/
-│   ├── secrets.yaml                       # main sops file (git emails, BSC/VPN/GLPI creds)
+│   ├── secrets.yaml                       # main sops file (git emails, BSC/NetBird/GLPI creds)
 │   └── ssh.yaml                           # separate sops file for work SSH host include
 └── modules/                               # everything below is a flake-parts module
     ├── flake-parts.nix                    # imports flake-parts.flakeModules.modules
@@ -164,7 +164,7 @@ track stable; the unstable channel is pulled in selectively via the
     │   ├── desktop/
     │   │   └── niri.nix                   # niri-flake nixos module + greetd + xdg-portal + polkit + waybar/etc packages
     │   └── work/                          # flake.modules.nixos.work — only amateria imports
-    │       └── bitdefender.nix vpn.nix glpi-agent.nix
+    │       └── bitdefender.nix netbird.nix glpi-agent.nix mercury-license-lo.nix
     └── home/
         ├── core/                          # CLI/shell-oriented HM — flake.modules.homeManager.base
         │   ├── packages.nix session.nix sops.nix ssh.nix
