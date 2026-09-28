@@ -61,10 +61,10 @@ in
           };
 
           opacity = {
-            applications = 0.8;
-            terminal = 0.8;
-            desktop = 0.8;
-            popups = 0.8;
+            applications = 0.85;
+            terminal = 0.85;
+            desktop = 0.85;
+            popups = 0.85;
           };
 
           # Icon theme. Propagates to gtk.iconTheme (via stylix/hm/icons.nix)
