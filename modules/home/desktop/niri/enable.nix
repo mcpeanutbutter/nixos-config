@@ -71,10 +71,10 @@
           window-rules = [
             {
               geometry-corner-radius = {
-                top-left = 8.0;
-                top-right = 8.0;
-                bottom-right = 8.0;
-                bottom-left = 8.0;
+                top-left = 12.0;
+                top-right = 12.0;
+                bottom-right = 12.0;
+                bottom-left = 12.0;
               };
               clip-to-geometry = true;
             }
@@ -101,15 +101,22 @@
               bottom = 24;
             };
 
-            border = {
-              width = 4;
+            # Focus ring, not border: a border reserves its width on every
+            # window and niri cuts the shadow out under it, so a transparent
+            # inactive border leaves an unshadowed ring. The focus ring is only
+            # drawn on the active window and takes no layout space.
+            border.enable = false;
+            focus-ring = {
+              enable = true;
+              width = 3;
               active.gradient = {
                 from = "#${config.lib.stylix.colors.base0D}"; # Blue accent
                 to = "#${config.lib.stylix.colors.base0B}"; # Green accent
                 angle = -45;
                 in' = "oklch longer hue";
               };
-              inactive.color = "#${config.lib.stylix.colors.base03}";
+              # Active window on the unfocused monitor.
+              inactive.color = "#00000000";
             };
 
             shadow = {

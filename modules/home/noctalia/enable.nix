@@ -75,7 +75,7 @@
             bar.default = {
               thickness = 40;
               # Same corner radius as niri windows (modules/home/desktop/niri/enable.nix).
-              radius = 8;
+              radius = 12;
               margin_edge = 24;
               margin_ends = 128;
               # Monospace bar; the shell-wide font (launcher, panels) stays stylix sans.
