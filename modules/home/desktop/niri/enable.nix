@@ -119,14 +119,22 @@
               inactive.color = "#00000000";
             };
 
+            # Mirrors noctalia's surface shadow (src/shell/surface/shadow.cpp):
+            # 12px blur, direction "down" = (0, 2) offset, no spread, black at
+            # [shell.shadow] alpha (default 0.55) × background opacity.
             shadow = {
               enable = true;
-              softness = 8;
+              softness = 12;
+              spread = 0;
               offset = {
                 x = 0;
-                y = 6;
+                y = 2;
               };
-              color = "#00000040";
+              color =
+                let
+                  alpha = builtins.floor (0.55 * config.stylix.opacity.desktop * 255 + 0.5);
+                in
+                "#000000${lib.fixedWidthString 2 "0" (lib.toHexString alpha)}";
             };
           };
 

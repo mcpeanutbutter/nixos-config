@@ -54,10 +54,10 @@ in
               name = "Noto Color Emoji";
             };
             sizes = {
-              applications = 12;
-              terminal = 12;
+              applications = 11.5;
+              terminal = 11.5;
               desktop = 10;
-              popups = 12;
+              popups = 11.5;
             };
           };
 
