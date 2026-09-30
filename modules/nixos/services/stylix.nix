@@ -27,7 +27,8 @@ in
           base16Scheme = "${pkgs.base16-schemes}/share/themes/${
             hostsCfg.${config.networking.hostName}.theme
           }.yaml";
-          polarity = "dark";
+          # Follow the scheme's own `variant:` field (dark/light).
+          polarity = config.lib.stylix.colors.variant;
 
           cursor = {
             package = pkgs.bibata-cursors;
@@ -61,10 +62,10 @@ in
           };
 
           opacity = {
-            applications = 0.85;
-            terminal = 0.85;
-            desktop = 0.85;
-            popups = 0.85;
+            applications = 0.8;
+            terminal = 0.8;
+            desktop = 0.8;
+            popups = 0.8;
           };
 
           # Icon theme. Propagates to gtk.iconTheme (via stylix/hm/icons.nix)
@@ -75,7 +76,7 @@ in
             enable = true;
             package = pkgs.hatter-icon-theme;
             dark = "Hatter-kde-dark";
-            light = "Hatter-kde-dark";
+            light = "Hatter-kde";
           };
 
           targets = {

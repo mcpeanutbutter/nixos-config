@@ -3,7 +3,8 @@
     (
       { config, ... }:
       let
-        colors = config.lib.stylix.colors;
+        inherit (config.lib.stylix) colors;
+        inherit (config.stylix) polarity;
       in
       {
         # Stylix's obsidian target paints poorly — handle theming ourselves.
@@ -36,9 +37,9 @@
             ];
             settings.cssSnippets = [
               {
-                name = "Material Darker";
+                name = colors.scheme;
                 text = ''
-                  .theme-dark {
+                  .theme-${polarity} {
                     /* Base colors */
                     --color-base-00: #${colors.base00};
                     --color-base-05: #${colors.base00};

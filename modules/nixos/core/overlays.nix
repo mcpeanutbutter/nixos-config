@@ -13,7 +13,7 @@
     # Custom-packages overlay (replaces the legacy overlays/default.nix
     # custom-packages entry).
     (final: _prev: {
-      # Hatter rounded-square icon theme (KDE dark variant).
+      # Hatter rounded-square icon theme (Hatter, Hatter-kde, Hatter-kde-dark).
       hatter-icon-theme = final.callPackage ../../../packages/hatter-icon-theme { };
 
       # Prebuilt roc nightly binary (newer than nixpkgs' pinned alpha).

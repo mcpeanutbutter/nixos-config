@@ -43,7 +43,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = {
-    description = "Hatter - rounded square icon theme (KDE dark variant)";
+    description = "Hatter - rounded square icon theme (GNOME, KDE and KDE dark variants)";
     homepage = "https://github.com/Mibea/Hatter";
     license = lib.licenses.gpl3Plus;
     platforms = lib.platforms.linux;
