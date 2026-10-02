@@ -41,12 +41,15 @@
         # ends up with no ScreenCast backend. Make gnome the explicit default
         # for all portals, then override FileChooser to use the GTK portal
         # (avoids gnome's Nautilus delegation, which we don't have since we use
-        # Nemo).
+        # Nemo). This portals.conf shadows niri's own niri-portals.conf, so
+        # its Secret=gnome-keyring line has to be restated — without it the
+        # Secret portal is absent and Brave's keyring key provider fails.
         xdg.portal = {
           extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
           config.common = {
             default = [ "gnome" ];
             "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
+            "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
           };
         };
 
