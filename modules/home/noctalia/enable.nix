@@ -7,8 +7,8 @@
       {
         programs.noctalia = {
           enable = true;
-          # HM's startServices restarts the unit when the binary/config changes,
-          # so a rebuild picks up new noctalia versions without re-login.
+          # Launched as a systemd user unit; see X-SwitchMethod below for why a
+          # rebuild leaves it running.
           systemd.enable = true;
 
           # Only diffs against v5 defaults (https://docs.noctalia.dev/noctalia/configuration/shell/).
@@ -108,6 +108,7 @@
                 "network"
                 "bluetooth"
                 "nightlight"
+                "caffeine"
                 "control-center"
               ];
             };
@@ -200,10 +201,13 @@
             };
 
             # Show the wallpaper as-is behind the login box: no blur (default
-            # 0.5) and no darkening tint (default 0.3).
+            # 0.5) and no darkening tint (default 0.3). One lock/unlock effect
+            # instead of a random pick of six, at 450 ms instead of 1500.
             lockscreen = {
               blur_intensity = 0.0;
               tint_intensity = 0.0;
+              transition = [ "zoom" ];
+              transition_duration = 450;
             };
 
             wallpaper = {
@@ -219,6 +223,12 @@
             backdrop.enabled = true;
           };
         };
+
+        # Don't restart noctalia on rebuild. Every Brave crash since 2026-09
+        # landed within 1-2s of sd-switch restarting this unit (noctalia also
+        # segfaults on the way out). config.toml changes hot-reload anyway; a
+        # new noctalia package takes effect at next login.
+        systemd.user.services.noctalia.Unit.X-SwitchMethod = "keep-old";
 
         # Auto-enabled by stylix.autoEnable; explicit so the wiring is grep-able.
         stylix.targets.noctalia.enable = true;
