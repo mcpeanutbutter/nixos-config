@@ -48,6 +48,7 @@
             "html"
             "java"
             "kotlin"
+            "latex"
             "nix"
             "proto"
             "roc"
