@@ -7,6 +7,11 @@
       {
         programs.noctalia = {
           enable = true;
+          # Tagged release from nixpkgs-unstable: cache.nixos.org has it, while
+          # the flake input's own package (following nixpkgs-stable) is a
+          # from-source rebuild on every flake update. The input stays for
+          # its HM module, which HM release-26.05 doesn't ship.
+          package = pkgs.unstable.noctalia;
           # Launched as a systemd user unit; see X-SwitchMethod below for why a
           # rebuild leaves it running.
           systemd.enable = true;
