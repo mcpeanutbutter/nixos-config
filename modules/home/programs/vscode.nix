@@ -19,13 +19,15 @@
         # JetBrains' Kotlin extension chmod +x's its bundled intellij-server
         # launcher at activation — EROFS on the read-only store, so the LSP
         # never starts. The store copy is already executable and the extension
-        # has no external-server-path setting, so neuter the lone chmodSync
-        # call. --replace-fail makes a version bump that moves the code a
-        # loud build error instead of a silent regression.
+        # has no external-server-path setting, so swap the lone chmodSync
+        # reference for a no-op (matching only the callee, not the minified
+        # argument names, which change between releases). --replace-fail
+        # makes a version bump that drops the call a loud build error
+        # instead of a silent regression.
         kotlin-server = marketplace.jetbrains.kotlin-server.overrideAttrs (old: {
           postInstall = (old.postInstall or "") + ''
             substituteInPlace "$out/share/vscode/extensions/jetbrains.kotlin-server/out/dist/extension.js" \
-              --replace-fail '(0,external_fs_.chmodSync)(e,493)' '0'
+              --replace-fail '(0,external_fs_.chmodSync)' '(()=>{})'
           '';
         });
       in
