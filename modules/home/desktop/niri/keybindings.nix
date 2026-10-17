@@ -223,7 +223,10 @@
           "Mod+Shift+R".action.switch-preset-window-height = [ ];
           "Mod+Ctrl+R".action.reset-window-height = [ ];
           "Mod+F".action.maximize-column = [ ];
-          "Mod+Shift+F".action.fullscreen-window = [ ];
+          "Mod+Shift+F" = {
+            action.fullscreen-window = [ ];
+            hotkey-overlay.title = "Fullscreen window";
+          };
           "Mod+Ctrl+F".action.expand-column-to-available-width = [ ];
 
           # Interactive resize

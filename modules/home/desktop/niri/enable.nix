@@ -26,6 +26,9 @@
         looseCfg = mkGapVariant "loose" 24 48 48 16 32;
       in
       {
+        xdg.configFile."niri/gaps-tight.kdl".source = tightCfg;
+        xdg.configFile."niri/gaps-loose.kdl".source = looseCfg;
+
         # Disable XDG autostart for blueman-applet (it races the tray host and
         # loses the tray icon). The systemd service below restarts it in order.
         xdg.configFile."autostart/blueman-applet.desktop".text = ''
@@ -159,17 +162,22 @@
           # presets by atomically reloading niri with one of three nix-built
           # configs. Niri exposes no per-setting IPC for gaps/struts, so a full
           # config reload via `load-config-file` is the only available mechanism.
-          # Note: any `nixos-rebuild switch` rewrites the watched config.kdl back
-          # to the medium preset; press the bind again to re-apply.
+          # After `load-config-file --path`, niri watches that path instead of
+          # config.kdl, so the presets are loaded through stable symlinks in
+          # ~/.config/niri (xdg.configFile above): a rebuild retargets them and
+          # niri's watcher (which tracks symlink targets) reloads the active
+          # preset with the new config. A store path here would pin niri to the
+          # pre-rebuild config until the next press.
           (pkgs.writeShellScriptBin "niri-cycle-gaps" ''
             #!/usr/bin/env bash
             state_file="''${XDG_RUNTIME_DIR:-/tmp}/niri-gap-preset"
+            dir="''${XDG_CONFIG_HOME:-$HOME/.config}/niri"
             current=$(cat "$state_file" 2>/dev/null || echo medium)
             case "$current" in
-              tight)  next=medium; path="${baseCfg}"  ;;
-              medium) next=loose;  path="${looseCfg}" ;;
-              loose)  next=tight;  path="${tightCfg}" ;;
-              *)      next=medium; path="${baseCfg}"  ;;
+              tight)  next=medium; path="$dir/config.kdl"     ;;
+              medium) next=loose;  path="$dir/gaps-loose.kdl" ;;
+              loose)  next=tight;  path="$dir/gaps-tight.kdl" ;;
+              *)      next=medium; path="$dir/config.kdl"     ;;
             esac
             echo "$next" > "$state_file"
             niri msg action load-config-file --path "$path"

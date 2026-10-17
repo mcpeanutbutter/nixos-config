@@ -1,7 +1,18 @@
 {
   flake.modules.homeManager.noctalia.imports = [
     (
-      { pkgs, ... }:
+      {
+        config,
+        lib,
+        pkgs,
+        ...
+      }:
+      let
+        # Workspaces declared in config (modules/home/desktop/niri/workspaces.nix
+        # and per host) — the rename bind leaves them alone, since
+        # open-on-workspace rules match on their names.
+        configNames = map (ws: ws.name) (lib.attrValues config.programs.niri.settings.workspaces);
+      in
       {
         # Bar-margin companion of niri-cycle-gaps (modules/home/desktop/niri/enable.nix).
         # Noctalia merges ~/.config/noctalia/*.toml alphabetically and hot-reloads
@@ -68,6 +79,23 @@
                 "lock"
               ];
               hotkey-overlay.title = "Lock screen";
+            };
+            # Ad-hoc workspace names live only in the running niri instance, so
+            # they reset on reboot. Esc cancels (dmenu exits non-zero). An empty
+            # Enter is ignored by noctalia dmenu, so "-" clears the name instead.
+            "Mod+Shift+N" = {
+              action.spawn-sh = ''
+                case "$(niri msg --json workspaces | ${lib.getExe pkgs.jq} -r '.[] | select(.is_focused) | .name // ""')" in
+                  ${lib.concatStringsSep "|" configNames}) exit 0 ;;
+                esac
+                name=$(noctalia dmenu -p 'Workspace name (- clears)' </dev/null) || exit 0
+                case "$name" in
+                  "") ;;
+                  -) niri msg action unset-workspace-name ;;
+                  *) niri msg action set-workspace-name "$name" ;;
+                esac
+              '';
+              hotkey-overlay.title = "Name current workspace";
             };
             "Mod+Alt+X" = {
               action.spawn = [
