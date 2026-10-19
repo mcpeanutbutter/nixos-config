@@ -175,8 +175,14 @@
               };
             };
 
-            location.address = "Vienna";
-            # Schedule follows sunrise/sunset from location.
+            location = {
+              address = "Vienna";
+              # Fixed times instead of computed sun times. Each is the midpoint
+              # of a hard-coded 60 min fade: night 20:00→21:00, day 06:00→07:00.
+              custom_schedule = true;
+              sunset = "20:30";
+              sunrise = "06:30";
+            };
             nightlight.enabled = true;
 
             # Every behavior needs an explicit `action`; without it noctalia logs
