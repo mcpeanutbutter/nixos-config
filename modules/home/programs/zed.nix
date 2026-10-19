@@ -27,6 +27,11 @@
             # Rust
             rust-analyzer
 
+            # C / C++
+            clang-tools
+            neocmakelsp
+            gdb
+
             # Infrastructure
             terraform-ls
             dockerfile-language-server
@@ -49,6 +54,7 @@
             "java"
             "kotlin"
             "latex"
+            "neocmake"
             "nix"
             "proto"
             "roc"
@@ -63,7 +69,7 @@
           ];
 
           userSettings = {
-            agent.enabled = false;
+            agent_servers.claude-acp.type = "registry";
 
             telemetry = {
               diagnostics = false;
@@ -101,7 +107,7 @@
               show_onboarding_banner = true;
               show_project_items = true;
               show_branch_name = true;
-              show_branch_icon = true;
+              show_branch_status_icon = true;
             };
 
             status_bar = {
@@ -151,6 +157,7 @@
                 nixpkgs.expr = "import <nixpkgs> { }";
                 formatting.command = [ "nixfmt" ];
               };
+              clangd.binary.arguments = [ "--clang-tidy" ];
             };
 
             languages = {
