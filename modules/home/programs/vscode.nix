@@ -102,6 +102,10 @@
             "editor.renderWhitespace" = "all";
             "editor.fontLigatures" = true;
             "files.associations"."*.tftpl" = "jinja-yaml";
+            # Prettier and the built-in JSON extension both format (j)json; pick
+            # Prettier so project .prettierrc files are honoured.
+            "[json]"."editor.defaultFormatter" = "esbenp.prettier-vscode";
+            "[jsonc]"."editor.defaultFormatter" = "esbenp.prettier-vscode";
 
             # Python: ty (Astral) is the sole language server. Disable ms-python's
             # bundled Jedi — it can't handle Interactive-Window notebook cells and
@@ -122,9 +126,14 @@
             "gitlab.duoChat.enabled" = false;
             "gitlab.duoAgentPlatform.enabled" = false;
             "redhat.telemetry.enabled" = false;
+            # Kotlin by JetBrains' first-run wizard persists these two answers
+            # to the (read-only) user settings.json, so pre-answer them here;
+            # only its EULA step (stored in globalState) is left to click.
+            "intellij.region" = "europe";
+            "intellij.dataSharing" = "none";
             # Extensions dir is immutable (mutableExtensionsDir = false); stop VSCodium
             # from trying to auto-update against it and emitting failure toasts.
-            "extensions.autoUpdate" = false;
+            "extensions.autoUpdate" = "off";
             "extensions.autoCheckUpdates" = false;
             "terminal.integrated.defaultProfile.linux" = "zsh";
             "workbench.editor.tabSizing" = "shrink";
