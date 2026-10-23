@@ -54,6 +54,7 @@
             "java"
             "kotlin"
             "latex"
+            "material-icon-theme"
             "neocmake"
             "nix"
             "proto"
@@ -70,6 +71,8 @@
 
           userSettings = {
             agent_servers.claude-acp.type = "registry";
+
+            icon_theme = "Material Icon Theme";
 
             telemetry = {
               diagnostics = false;
@@ -115,7 +118,10 @@
               active_language_button = true;
             };
 
-            project_panel.button = true;
+            project_panel = {
+              button = true;
+              dock = "left";
+            };
             prettier.allowed = true;
 
             scrollbar.show = "auto";
