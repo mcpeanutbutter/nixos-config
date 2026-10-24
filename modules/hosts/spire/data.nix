@@ -2,7 +2,7 @@
 {
   hosts.spire = {
     system = "x86_64-linux";
-    theme = "dracula";
+    theme = "vesper";
     stateVersion = "25.11";
     subpixelLayout = "none"; # OLED display
     # AMD desktop with no host-specific nixos-hardware module — aggregate the
