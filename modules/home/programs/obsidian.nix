@@ -139,10 +139,9 @@
                     background-color: #${colors.base01};
                   }
 
-                  /* Cursor */
-                  .CodeMirror-cursors {
-                    color: #${colors.base0B};
-                    z-index: 5;
+                  /* Cursor: the native caret's width isn't stylable, only its shape */
+                  .cm-content {
+                    caret-shape: block;
                   }
                 '';
               }
