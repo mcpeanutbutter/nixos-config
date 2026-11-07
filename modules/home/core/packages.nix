@@ -48,6 +48,7 @@
             sysbench
             thunderbird
             uv
+            worktrunk
           ];
       }
     )
