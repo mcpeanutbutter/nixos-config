@@ -267,12 +267,36 @@
         # activation time rather than symlinked, so Claude Code can still write
         # its own runtime prefs (effort, model, alwaysThinkingEnabled, …) to the
         # same file — a store symlink would make /effort fail with EROFS.
+        # EnterWorktree outside .claude/worktrees/ is a safety-check prompt that
+        # allow rules can't silence; this hook approves it only for registered
+        # worktrees of the session's repo (wt puts them at ../<repo>.<branch>).
+        approveWorktree = pkgs.writeShellApplication {
+          name = "claude-approve-worktree";
+          runtimeInputs = with pkgs; [
+            coreutils
+            git
+            jq
+          ];
+          text = builtins.readFile ./claude/approve-worktree.sh;
+        };
+
         managedSettings = (pkgs.formats.json { }).generate "claude-code-managed-settings.json" {
           statusLine = {
             command = "${statuslineScript}";
             padding = 0;
             type = "command";
           };
+          hooks.PermissionRequest = [
+            {
+              matcher = "EnterWorktree";
+              hooks = [
+                {
+                  type = "command";
+                  command = "${approveWorktree}/bin/claude-approve-worktree";
+                }
+              ];
+            }
+          ];
         };
       in
       {
