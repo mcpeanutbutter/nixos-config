@@ -172,6 +172,8 @@ track stable; the unstable channel is pulled in selectively via the
         │   ├── git.nix zsh.nix starship.nix
         │   ├── bat.nix btop.nix claude-code.nix
         │   ├── direnv.nix eza.nix fzf.nix yazi.nix
+        │   ├── worktrunk.nix wt-submodules.sh   # wt + pre-start hook: offline submodule init in new worktrees
+        │   ├── claude/                    # global ~/.claude/CLAUDE.md + skills (out-of-store symlinks, edit in place)
         │   └── nixvim/                    # multi-file nixvim subtree (enable, keymaps, autocommands, lsp, plugins/*)
         ├── desktop/                       # niri compositor user side — flake.modules.homeManager.base
         │   ├── niri/                      # enable, keybindings, power-menu

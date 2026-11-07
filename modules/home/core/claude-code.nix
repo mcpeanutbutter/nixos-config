@@ -276,6 +276,13 @@
         };
       in
       {
+        # Out-of-store symlink into the repo checkout: writable in place
+        # (Claude Code, /memory), no rebuild needed, changes tracked in git.
+        home.file.".claude/CLAUDE.md".source =
+          config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/modules/home/core/claude/CLAUDE.md";
+        home.file.".claude/skills/worktree-cleanup".source =
+          config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/modules/home/core/claude/skills/worktree-cleanup";
+
         home.file.".claude/skills/skill-creator" = {
           source = "${anthropics-skills}/skills/skill-creator";
           recursive = true;
