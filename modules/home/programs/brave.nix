@@ -3,25 +3,39 @@
     (
       { pkgs, ... }:
       let
-        # nixpkgs' Brave wrapper force-enables AcceleratedVideoEncoder (VA-API
-        # H264 encode), which is broken in Chromium on this AMD iGPU: Teams /
-        # WebRTC screen-share captures fine but encodes 0 frames, so the remote
-        # sees a blank share. Disable only the encoder (keep hardware *decode*,
-        # AcceleratedVideoDecodeLinuxGL, for playback). The other two disables
-        # replicate nixpkgs' own defaults, which our appended --disable-features
-        # would otherwise shadow (last --disable-features wins).
-        brave = pkgs.brave.override {
-          commandLineArgs = "--disable-features=AcceleratedVideoEncoder,OutdatedBuildDetector,UseChromeOSDirectVideoDecoder";
-        };
+        # Brave comes from Flathub (modules/nixos/services/flatpak.nix). This
+        # wrapper keeps `brave` on PATH for the niri keybindings and the --app
+        # entries below. No flags: the old AcceleratedVideoEncoder disable only
+        # countered nixpkgs' wrapper force-enabling it, which the Flatpak
+        # doesn't do. If Teams screen-share goes blank again, put the flag in
+        # ~/.var/app/com.brave.Browser/config/brave-flags.conf.
+        brave = pkgs.writeShellScriptBin "brave" ''
+          exec ${pkgs.flatpak}/bin/flatpak run com.brave.Browser "$@"
+        '';
+
+        # nixpkgs build, dropped 2026-11-03 (NixOS/nixpkgs#582838); restore if it's re-added.
+        #
+        # # nixpkgs' Brave wrapper force-enables AcceleratedVideoEncoder (VA-API
+        # # H264 encode), which is broken in Chromium on this AMD iGPU: Teams /
+        # # WebRTC screen-share captures fine but encodes 0 frames, so the remote
+        # # sees a blank share. Disable only the encoder (keep hardware *decode*,
+        # # AcceleratedVideoDecodeLinuxGL, for playback). The other two disables
+        # # replicate nixpkgs' own defaults, which our appended --disable-features
+        # # would otherwise shadow (last --disable-features wins).
+        # brave = pkgs.brave.override {
+        #   commandLineArgs = "--disable-features=AcceleratedVideoEncoder,OutdatedBuildDetector,UseChromeOSDirectVideoDecoder";
+        # };
       in
       {
-        programs.chromium = {
-          enable = true;
-          package = brave;
-          extensions = [
-            # Example: { id = "cjpalhdlnbpafiamejdnhcphjbkeiagm"; } # uBlock Origin
-          ];
-        };
+        home.packages = [ brave ];
+
+        # programs.chromium = {
+        #   enable = true;
+        #   package = brave;
+        #   extensions = [
+        #     # Example: { id = "cjpalhdlnbpafiamejdnhcphjbkeiagm"; } # uBlock Origin
+        #   ];
+        # };
 
         xdg.desktopEntries.claude-ai = {
           name = "Claude AI";

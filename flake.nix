@@ -54,6 +54,9 @@
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
 
+    # Declarative flatpaks (Brave left nixpkgs 2026-11-03); no nixpkgs input to follow.
+    nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=latest";
+
     # Hardware-specific optimizations
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 

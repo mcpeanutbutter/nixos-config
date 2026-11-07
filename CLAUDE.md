@@ -113,6 +113,7 @@ track stable; the unstable channel is pulled in selectively via the
 - `niri`: Niri compositor flake — provides the NixOS module and the build-time config validator; the niri *package* itself comes from `nixpkgs-stable` (`pkgs.niri`, currently 26.04, which has `background-effect` blur)
 - `noctalia`: Noctalia v5, native Wayland desktop shell (bar, launcher, notifications, lock, wallpaper). HM module `programs.noctalia`, TOML settings in `modules/home/noctalia/`, launched as a systemd user service, driven via `noctalia msg <verb>`. Colors come from the stylix `noctalia` target. The input supplies only the HM module; the package is `pkgs.unstable.noctalia` (binary-cached). Same for `noctalia-greeter`: input for its NixOS module, package from `pkgs.unstable.noctalia-greeter`.
 - `sops-nix`: Secrets management (age-encrypted)
+- `nix-flatpak`: Declarative flatpaks (`services.flatpak.packages`, daily auto-update) in `modules/nixos/services/flatpak.nix`. Used for Brave (`com.brave.Browser`), which nixpkgs dropped 2026-11-03; `modules/home/programs/brave.nix` wraps `flatpak run` as `brave`.
 - `nixos-hardware`: Device-specific hardware optimizations (firmware updates, thermal management, SSD TRIM, GPU early KMS)
 
 **Directory Structure**:
@@ -159,7 +160,7 @@ track stable; the unstable channel is pulled in selectively via the
     │   │   ├── nix.nix overlays.nix packages.nix users.nix zsh.nix
     │   ├── services/                      # background services — flake.modules.nixos.base
     │   │   ├── openssh.nix printing.nix power.nix
-    │   │   ├── sops.nix stylix.nix clamav.nix
+    │   │   ├── sops.nix stylix.nix clamav.nix flatpak.nix
     │   │   └── containers.nix docker.nix
     │   ├── desktop/
     │   │   └── niri.nix                   # niri-flake nixos module + greetd + xdg-portal + polkit + waybar/etc packages
