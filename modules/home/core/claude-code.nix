@@ -288,6 +288,13 @@
           recursive = true;
         };
 
+        # Tools Claude reaches for in its Bash tool without checking first.
+        # Anything rarer comes via `nix shell nixpkgs#<pkg>` (see claude/CLAUDE.md).
+        home.packages = with pkgs; [
+          jq
+          python3
+        ];
+
         programs.claude-code = {
           enable = true;
           package = pkgs.claude-code;

@@ -39,7 +39,6 @@
             pdfarranger
             poetry
             postman
-            python3
             qalculate-qt
             ripgrep
             s-tui
