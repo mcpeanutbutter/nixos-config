@@ -36,8 +36,11 @@ Show one table (path, branch, class, last commit date) and ask which to remove (
 
 ## 5. Remove
 
+Always remove with `wt remove --foreground`, never `git worktree remove`: worktrees with initialised submodules (all of them, via the pre-start hook) make plain git refuse without `--force`, while `wt` handles them and still refuses dirty ones.
+
 - Merged: `wt remove --foreground <branch>`. If `wt` kept the branch (its merge check uses the local default branch, which may lag `origin/<default>`), re-run the step 3 check and then `git branch -D <branch>`.
-- Detached / prunable: `git worktree remove <path>` (`git worktree unlock` first if locked and confirmed), then `git worktree prune`.
+- Detached: `wt remove --foreground <path>` (`git worktree unlock <path>` first if locked and confirmed).
+- Prunable (directory already gone): `git worktree prune`.
 - Afterwards show `COLUMNS=120 wt list`.
 
 ## 6. Optionally: merged branches without a worktree
