@@ -15,12 +15,12 @@
             hotkey-overlay.title = "GhosTTY Terminal";
           };
           "Mod+B" = {
-            action.spawn = [ "brave" ];
-            hotkey-overlay.title = "Brave Browser";
+            action.spawn = [ "brave-origin" ];
+            hotkey-overlay.title = "Brave Origin";
           };
           "Mod+A" = {
             action.spawn = [
-              "brave"
+              "brave-origin"
               "--app=https://claude.ai/"
             ];
             hotkey-overlay.title = "Claude AI";

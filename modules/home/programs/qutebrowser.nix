@@ -4,7 +4,7 @@ in
 {
   flake.modules.homeManager.base.imports = [
     (
-      { config, ... }:
+      { config, pkgs, ... }:
       {
         # Managed bookmarks live in sops (same `url title` line format as
         # qutebrowser's bookmarks/urls). HM has no bookmarks option, and a
@@ -17,6 +17,10 @@ in
 
         programs.qutebrowser = {
           enable = true;
+          # 26.05 marks 3.7.0 insecure (its QtWebEngine still trusts the
+          # distrusted eMudhra CA); unstable ships the same version unflagged,
+          # so this sidesteps the label, not the gap.
+          package = pkgs.unstable.qutebrowser;
           extraConfig = ''
             import os
             import pathlib

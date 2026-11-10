@@ -9,6 +9,9 @@
 
           extraPackages = [
             pkgs.roc-nightly
+            # Stable until unstable has NixOS/nixpkgs#584736 (0.11.2 fails
+            # to build: missing pkg-config); then move back to the list below.
+            pkgs.neocmakelsp
           ]
           ++ (with pkgs.unstable; [
             # Nix
@@ -29,7 +32,6 @@
 
             # C / C++
             clang-tools
-            neocmakelsp
             gdb
 
             # Infrastructure
