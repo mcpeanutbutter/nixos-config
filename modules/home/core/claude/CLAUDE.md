@@ -2,6 +2,10 @@
 
 `~/.claude/CLAUDE.md` is an out-of-store symlink (home-manager `mkOutOfStoreSymlink`) to `~/nixos-config/modules/home/core/claude/CLAUDE.md`. It is writable: edit it directly, changes apply immediately without a rebuild, and they show up in that repo's git status. That repo is public: keep this file (and the skills next to it) free of employer, host, repo and internal-tool names.
 
+## Wrong session?
+
+I run several sessions in parallel and sometimes type or paste into the wrong one. If a message looks like it belongs elsewhere (unrelated to the session's topic or repo, or a file or task this session has no context for), don't act on it. Ask first whether I picked the right session, and wait for my answer.
+
 ## Shell
 
 - **Commands for me to paste:** my terminal splits long pasted lines mid-token. Break every long command into short lines with generous `\` continuations. No helper variables, no `#` comments (zsh `interactive_comments` is off): explanations go in prose outside the code block.
