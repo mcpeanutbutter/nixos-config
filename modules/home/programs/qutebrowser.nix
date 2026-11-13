@@ -16,7 +16,8 @@ in
         sops.secrets.${bookmarksSecret} = { };
 
         programs.qutebrowser = {
-          enable = true;
+          # enable = true;
+          enable = false;
           # 26.05 marks 3.7.0 insecure (its QtWebEngine still trusts the
           # distrusted eMudhra CA); unstable ships the same version unflagged,
           # so this sidesteps the label, not the gap.
