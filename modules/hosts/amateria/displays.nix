@@ -18,7 +18,7 @@
             refresh = 120.0;
           };
           position = {
-            x = 1707;
+            x = 2048;
             y = 0;
           };
           scale = 1.1;
