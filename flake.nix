@@ -28,8 +28,11 @@
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
     # master: the noctalia (v5) stylix target only exists there, not on release-26.05.
+    # TODO(unpin): pinned 2026-11-20 — newer master adds a prismlauncher target that sets
+    # programs.prismlauncher.themes, which HM release-26.05 lacks. Unpin once
+    # stylix guards it or HM 26.05 gains the option.
     stylix = {
-      url = "github:nix-community/stylix";
+      url = "github:nix-community/stylix/3e27b6c499e507df6e3bb8eca3614f5c95e28140";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
 

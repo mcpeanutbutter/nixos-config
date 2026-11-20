@@ -15,7 +15,8 @@
         codiumVersion = lib.concatMapStringsSep "." (c: toString (lib.toIntBase10 c)) (
           lib.splitString "." codium.version
         );
-        marketplace = (vsx.forVSCodeVersion codiumVersion).vscode-marketplace;
+        compatible = vsx.forVSCodeVersion codiumVersion;
+        marketplace = compatible.vscode-marketplace;
         # JetBrains' Kotlin extension chmod +x's its bundled intellij-server
         # launcher at activation — EROFS on the read-only store, so the LSP
         # never starts. The store copy is already executable and the extension
@@ -90,7 +91,10 @@
 
             # Other languages
             ziglang.vscode-zig
-            rust-lang.rust-analyzer
+            # TODO(unpin): added 2026-11-20 — back to plain `rust-lang.rust-analyzer`
+            # once pkgs.unstable.vscodium >= 1.144 (marketplace build needs ^1.144.0
+            # and the set only carries the newest build, so it got filtered out).
+            compatible.open-vsx.rust-lang.rust-analyzer
             ivandemchenko.roc-lang-unofficial
             golang.go
             myriad-dreamin.tinymist
