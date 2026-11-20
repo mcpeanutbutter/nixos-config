@@ -6,6 +6,10 @@
 
 I run several sessions in parallel and sometimes type or paste into the wrong one. If a message looks like it belongs elsewhere (unrelated to the session's topic or repo, or a file or task this session has no context for), don't act on it. Ask first whether I picked the right session, and wait for my answer.
 
+## Verify, and ask before deciding
+
+Check an assumption before you act on it: read the code, run the query, look at the data or the docs. If you can't verify it, or verifying would take too much effort, ask me instead of guessing. The same goes for decisions: when the right choice isn't obvious, ask me before you make it.
+
 ## Shell
 
 - **Commands for me to paste:** my terminal splits long pasted lines mid-token. Break every long command into short lines with generous `\` continuations. No helper variables, no `#` comments (zsh `interactive_comments` is off): explanations go in prose outside the code block.
