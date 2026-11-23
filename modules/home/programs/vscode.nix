@@ -82,12 +82,11 @@
             # attr starts with a digit, so the `with marketplace` shorthand can't reach it
             marketplace."42crunch".vscode-openapi
 
-            # Java / Kotlin / Scala (JVM)
+            # Java / Kotlin (JVM)
             kotlin-server # patched jetbrains.kotlin-server, see let-binding above
             oracle.oracle-java
             vscjava.vscode-gradle
             vscjava.vscode-maven
-            scalameta.metals
 
             # Other languages
             ziglang.vscode-zig
